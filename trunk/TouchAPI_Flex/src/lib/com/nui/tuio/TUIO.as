@@ -46,7 +46,7 @@ public class TUIO
 	
 	private static var RECORDED_XML:XML;
 		
-	private static var objectArray:Array;
+	private static var tuioObjList:Array;
 	private static var DEBUG_TEXT:TextField;
 	
 
@@ -83,7 +83,7 @@ public class TUIO
 		
 	private function start ():void
 	{
-		objectArray = new Array();
+		tuioObjList = new Array();
 		
 		if( DEBUG_MODE )
 		{
@@ -134,14 +134,14 @@ public class TUIO
 	{
 		RECORDED_XML = <OSCPackets></OSCPackets>;
 			
-		var buttonSprite:Sprite = new Sprite();
+		var record_btn:Sprite = new Sprite();
 	
-		buttonSprite.graphics.lineStyle( 2, 0x202020 );
-		buttonSprite.graphics.beginFill( 0xF80101,0.5 );
-		buttonSprite.graphics.drawRoundRect( 10, 10, 200, 200, 6 );				 
-		buttonSprite.addEventListener( TUIOEvent.DownEvent, stopRecording );
+		record_btn.graphics.lineStyle( 2, 0x202020 );
+		record_btn.graphics.beginFill( 0xF80101,0.5 );
+		record_btn.graphics.drawRoundRect( 10, 10, 200, 200, 6 );				 
+		record_btn.addEventListener( TUIOEvent.DownEvent, stopRecording );
 		
-		STAGE.addChild( buttonSprite );
+		STAGE.addChild( record_btn );
 	}
 
 	/**********************************************************
@@ -174,13 +174,13 @@ public class TUIO
 
 	public static function getObjectById( id:int ):TUIOObject
 	{
-		var listAmount:int = objectArray.length;
+		var listAmount:int = tuioObjList.length;
 		
 		for( var i:int = 0; i < listAmount; i++ )
 		{
-			if( objectArray[ i ].ID == id )
+			if( tuioObjList[ i ].ID == id )
 			{
-				return objectArray[ i ];
+				return tuioObjList[ i ];
 			}
 		}	
 		return null;
@@ -192,15 +192,14 @@ public class TUIO
 
 	public static function processXML( xml:XML ):void
 	{
+		// XML-Mode
 		var node:XML;
-		var fseq:String;
+				
+		// list with all TUIO-Objects
+		var tuioObjList:Array;
 		
-		
-		var objArray:Array;
-		var displayObjArray:Array;							
-		var dobj:Object = null;
-		
-		var tuioObj:Object;
+		// TUIO-Object
+		var tuioObj:TUIOObject;
 		
 		// type can be set / alive
 		var type:String;
@@ -208,6 +207,9 @@ public class TUIO
 		// store positions
 		var localPoint:Point;
 		var stagePoint:Point
+
+		// fseq
+		var fseq:String;
 		
 		// sessionID
 		var sID:int;
@@ -247,7 +249,7 @@ public class TUIO
 			
 			if( node.ARGUMENT[ 0 ] && node.ARGUMENT[ 0 ].@VALUE == 'alive' )
 			{
-				for each ( var obj:TUIOObject in objectArray )
+				for each ( var obj:TUIOObject in tuioObjList )
 				{
 					obj.isAlive = false;
 				}
@@ -266,11 +268,10 @@ public class TUIO
 			if( node.ARGUMENT[ 0 ] )
 			{
 				stagePoint = new Point( x,y );
-				objArray = STAGE.stage.getObjectsUnderPoint( stagePoint );
+				tuioObjList = STAGE.stage.getObjectsUnderPoint( stagePoint );
 				
 				if( node.@NAME == '/tuio/2Dobj' )
 				{		
-					
 					type = node.ARGUMENT[0].@VALUE;				
 					
 					if( type == 'set' )
@@ -292,7 +293,7 @@ public class TUIO
 							tuioObj = new TUIOObject( '2Dobj', id, x, y, X, Y, sID, a );
 							STAGE.addChild( tuioObj.spr );
 							
-							objectArray.push( tuioObj );
+							tuioObjList.push( tuioObj );
 						} else {
 							tuioObj.spr.x = x;
 							tuioObj.spr.y = y;								
@@ -301,13 +302,13 @@ public class TUIO
 							tuioObj.dX = X;
 							tuioObj.dY = Y;
 							
-							tuioObj.setObjOver( dobj );
+							//tuioObj.setObjOver( dobj );
 						}
 					}
 				} else if( node.@NAME == '/tuio/2Dcur' )
 				{
-			
-					type = node.ARGUMENT[ 0 ].@VALUE;				
+					type = node.ARGUMENT[ 0 ].@VALUE;	
+								
 					if( type == 'set' )
 					{
 						id = node.ARGUMENT[ 1 ].@VALUE;
@@ -324,7 +325,7 @@ public class TUIO
 							tuioObj = new TUIOObject( '2Dcur', id, x, y, X, Y, -1, 0 );
 							tuioObj.area = a;
 							STAGE.addChild( tuioObj.spr );								
-							objectArray.push( tuioObj );
+							tuioObjList.push( tuioObj );
 						} else {
 							tuioObj.spr.x = x;
 							tuioObj.spr.y = y;
@@ -332,8 +333,9 @@ public class TUIO
 							tuioObj.y = y;
 							tuioObj.area = a;								
 							tuioObj.dX = X;
-							tuioObj.dY = Y;								
-							tuioObj.setObjOver( dobj );
+							tuioObj.dY = Y;	
+														
+							//tuioObj.setObjOver( dobj );
 						}	
 					}	
 				}
@@ -345,19 +347,19 @@ public class TUIO
 			DEBUG_TEXT.y = -2000;
 			DEBUG_TEXT.x = -2000;				
 			
-			for ( var i:int=0; i<objectArray.length; i++ )
+			for ( var i:int=0; i<tuioObjList.length; i++ )
 			{
-				if( objectArray[i].isAlive == false )
+				if( tuioObjList[i].isAlive == false )
 				{
-					objectArray[i].kill();
-					STAGE.removeChild(objectArray[i].spr);
-					objectArray.splice(i, 1);
+					tuioObjList[i].kill();
+					STAGE.removeChild(tuioObjList[i].spr);
+					tuioObjList.splice(i, 1);
 					i--;
 	
 				} else {
 				//DEBUG DATA
 			    if(DEBUG_MODE)
-						DEBUG_TEXT.appendText( '  ' + i + ' - ' + objectArray[i].ID + '  X: ' + int(objectArray[i].x) + '  Y: ' + int(objectArray[i].y) + '  \n' );
+						DEBUG_TEXT.appendText( '  ' + i + ' - ' + tuioObjList[i].ID + '  X: ' + int(tuioObjList[i].x) + '  Y: ' + int(tuioObjList[i].y) + '  \n' );
 						DEBUG_TEXT.y = 780;
 						DEBUG_TEXT.x = 1400;				
 				}
@@ -374,7 +376,7 @@ public class TUIO
 	{	
 		var tapDP:Array = new Array();
 		//trace('Load Touch Events');	
-		//tapDP.push({Count:i, ID:objectArray[i].ID, X:objectArray[i].x, Y:objectArray[i].y});
+		//tapDP.push({Count:i, ID:tuioObjList[i].ID, X:tuioObjList[i].x, Y:tuioObjList[i].y});
 		tapDP.push( { Count:'1', ID:'23', X:'752.50', Y:'458.45' } ); 
 		return tapDP;						  
 	}
