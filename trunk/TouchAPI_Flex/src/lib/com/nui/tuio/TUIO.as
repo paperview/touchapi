@@ -8,7 +8,7 @@
  * $LastChangedDate$
  * $URL$
  * 
- */
+ */	
 	
 import flash.display.Sprite;
 import flash.events.DataEvent;
@@ -258,16 +258,19 @@ public class TUIO
 					{
 						getObjectById( aliveItem.@VALUE ).isAlive = true;
 					}	
-				} 
-				  					
+				}   					
 			}
 			
 			// detect new blobs / input
 			
 			if( node.ARGUMENT[ 0 ] )
 			{
+				stagePoint = new Point( x,y );
+				objArray = STAGE.stage.getObjectsUnderPoint( stagePoint );
+				
 				if( node.@NAME == '/tuio/2Dobj' )
-				{
+				{		
+					
 					type = node.ARGUMENT[0].@VALUE;				
 					
 					if( type == 'set' )
@@ -282,23 +285,11 @@ public class TUIO
 						A = Number( node.ARGUMENT[ 8 ].@VALUE );
 						m = node.ARGUMENT[ 9 ].@VALUE;
 						r = node.ARGUMENT[ 10 ].@VALUE;
-						
-						// send object update event..
-						
-						stagePoint = new Point( x,y );
-						objArray = STAGE.stage.getObjectsUnderPoint( stagePoint );
-						displayObjArray = STAGE.stage.getObjectsUnderPoint( stagePoint );							
-						dobj = null;
-						
-						// if(displayObjArray.length > 0)								
-						//	dobj = displayObjArray[displayObjArray.length-1];										
-	
-						
-					
+				
 						tuioObj = getObjectById( id );
 						if( tuioObj == null )
 						{
-							tuioObj = new TUIOObject( '2Dobj', id, x, y, X, Y, sID, a, dobj );
+							tuioObj = new TUIOObject( '2Dobj', id, x, y, X, Y, sID, a );
 							STAGE.addChild( tuioObj.spr );
 							
 							objectArray.push( tuioObj );
@@ -311,17 +302,6 @@ public class TUIO
 							tuioObj.dY = Y;
 							
 							tuioObj.setObjOver( dobj );
-						}
-						try
-						{
-							if( tuioObj.obj && tuioObj.obj.parent )
-							{							
-								localPoint = tuioObj.obj.parent.globalToLocal( stagePoint );							
-								tuioObj.obj.dispatchEvent( new TUIOEvent( TUIOEvent.MoveEvent, true, false, x, y, localPoint.x, localPoint.y, tuioObj.obj, false, false, false,true, m, '2Dobj', id, sID, a ) );
-							}
-						} catch ( e:Error )
-						{
-							trace( 'Dispatch Event Failed ' + tuioObj.name );
 						}
 					}
 				} else if( node.@NAME == '/tuio/2Dcur' )
@@ -337,23 +317,11 @@ public class TUIO
 						Y = Number( node.ARGUMENT[ 5 ].@VALUE );
 						m = node.ARGUMENT[ 6 ].@VALUE;
 						a = node.ARGUMENT[ 7 ].@VALUE;							
-						
-						stagePoint = new Point( x,y );					
-						displayObjArray = STAGE.stage.getObjectsUnderPoint( stagePoint );
-						dobj = null;
-						if( displayObjArray.length > 0 )
-						{								
-							dobj = displayObjArray[ displayObjArray.length-1 ];							
-						}								
-						var sztmp:String = '';
-						//	for(var i=0; i<displayObjArray.length; i++)
-						//	sztmp += (displayObjArray[i] is InteractiveObject) + ",";
-						//	trace(sztmp);
-	
+
 						tuioObj = getObjectById( id );
 						if( tuioObj == null )
 						{
-							tuioObj = new TUIOObject( '2Dcur', id, x, y, X, Y, -1, 0, dobj );
+							tuioObj = new TUIOObject( '2Dcur', id, x, y, X, Y, -1, 0 );
 							tuioObj.area = a;
 							STAGE.addChild( tuioObj.spr );								
 							objectArray.push( tuioObj );
@@ -366,21 +334,8 @@ public class TUIO
 							tuioObj.dX = X;
 							tuioObj.dY = Y;								
 							tuioObj.setObjOver( dobj );
-						}
-						
-						try
-						{
-							if( tuioObj.obj && tuioObj.obj.parent )
-							{							
-								localPoint = tuioObj.obj.parent.globalToLocal( stagePoint );							
-								tuioObj.obj.dispatchEvent( new TUIOEvent( TUIOEvent.MoveEvent, true, false, x, y, localPoint.x, localPoint.y, tuioObj.obj, false, false, false,true, m, '2Dobj', id, sID, a ) );
-							}
-						} catch ( e:Error )
-						{
-							trace( 'Dispatch Event Failed ' + tuioObj.name );
 						}	
-						}
-					
+					}	
 				}
 			}
 		}		
