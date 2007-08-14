@@ -1,4 +1,4 @@
-package {
+﻿package {
 import com.nui.tuio.TUIO;
 
 import flash.display.Sprite;
@@ -9,7 +9,7 @@ public class Main extends Sprite
 {
 	public function Main()
 	{		
-		TUIO.init( this, 'nui.mine.nu', 3000, Capabilities.screenResolutionX, Capabilities.screenResolutionY, '', false );	
+		TUIO.init( this, 'nui.mine.nu', 3000, Capabilities.screenResolutionX, Capabilities.screenResolutionY, '', true );	
 	}
 }
 }
