@@ -157,14 +157,14 @@ public class TUIO
 	{
 		RECORDED_XML = <OSCPackets></OSCPackets>;
 			
-		var buttonSprite:Sprite = new Sprite();
+		var record_btn:Sprite = new Sprite();
 	
-		buttonSprite.graphics.lineStyle( 2, 0x202020 );
-		buttonSprite.graphics.beginFill( 0xF80101,0.5 );
-		buttonSprite.graphics.drawRoundRect( 10, 10, 200, 200, 6 );				 
-		buttonSprite.addEventListener( TUIOEvent.DownEvent, stopRecording );
+		record_btn.graphics.lineStyle( 2, 0x202020 );
+		record_btn.graphics.beginFill( 0xF80101,0.5 );
+		record_btn.graphics.drawRoundRect( 10, 10, 200, 200, 6 );				 
+		record_btn.addEventListener( TUIOEvent.DownEvent, stopRecording );
 		
-		STAGE.addChild( buttonSprite );
+		STAGE.addChild( record_btn );
 	}
 
 	/**********************************************************
@@ -215,14 +215,16 @@ public class TUIO
 
 	public static function processXML( xml:XML ):void
 	{
+		// XML-Node
 		var node:XML;
+		
+		// fseq
 		var fseq:String;
 		
-		
-		var objArray:Array;
-		var displayObjArray:Array;							
-		var dobj:Object = null;
-		
+		// list of TUIO-Objects
+		var tuioObjList:Array;
+
+		// TUIO-Object
 		var tuioObj:Object;
 		
 		// type can be set / alive
@@ -289,7 +291,7 @@ public class TUIO
 			if( node.ARGUMENT[ 0 ] )
 			{
 				stagePoint = new Point( x,y );
-				objArray = STAGE.stage.getObjectsUnderPoint( stagePoint );
+				tuioObjList = STAGE.stage.getObjectsUnderPoint( stagePoint );
 				
 				if( node.@NAME == '/tuio/2Dobj' )
 				{		
@@ -324,7 +326,7 @@ public class TUIO
 							tuioObj.dX = X;
 							tuioObj.dY = Y;
 							
-							tuioObj.setObjOver( dobj );
+							//tuioObj.setObjOver( dobj );
 						}
 					}
 				} else if( node.@NAME == '/tuio/2Dcur' )
@@ -356,7 +358,7 @@ public class TUIO
 							tuioObj.area = a;								
 							tuioObj.dX = X;
 							tuioObj.dY = Y;								
-							tuioObj.setObjOver( dobj );
+							//tuioObj.setObjOver( dobj );
 						}	
 					}	
 				}
