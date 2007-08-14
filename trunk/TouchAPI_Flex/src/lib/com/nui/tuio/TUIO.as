@@ -1,4 +1,4 @@
-﻿package com.nui.tuio {
+﻿﻿package com.nui.tuio {
 
 /**
  * LastChanged:
@@ -8,9 +8,9 @@
  * $LastChangedDate$
  * $URL$
  * 
- */	
-
-/**
+ */
+ 
+  /**
  * Copyright (c) 2007 Christian Moore, www.nuigroup.com, Jens Franke, www.jensfranke.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,7 +30,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.   
- */
+ */	
 	
 import flash.display.Sprite;
 import flash.events.DataEvent;
@@ -68,7 +68,7 @@ public class TUIO
 	
 	private static var RECORDED_XML:XML;
 		
-	private static var tuioObjList:Array;
+	private static var objectArray:Array;
 	private static var DEBUG_TEXT:TextField;
 	
 
@@ -95,6 +95,7 @@ public class TUIO
 			RECORD_MODE = recordMode;
 			
 			INSTANCE.start();
+			
 		}
 		return INSTANCE;	
 	}
@@ -105,7 +106,7 @@ public class TUIO
 		
 	private function start ():void
 	{
-		tuioObjList = new Array();
+		objectArray = new Array();
 		
 		if( DEBUG_MODE )
 		{
@@ -156,14 +157,14 @@ public class TUIO
 	{
 		RECORDED_XML = <OSCPackets></OSCPackets>;
 			
-		var record_btn:Sprite = new Sprite();
+		var buttonSprite:Sprite = new Sprite();
 	
-		record_btn.graphics.lineStyle( 2, 0x202020 );
-		record_btn.graphics.beginFill( 0xF80101,0.5 );
-		record_btn.graphics.drawRoundRect( 10, 10, 200, 200, 6 );				 
-		record_btn.addEventListener( TUIOEvent.DownEvent, stopRecording );
+		buttonSprite.graphics.lineStyle( 2, 0x202020 );
+		buttonSprite.graphics.beginFill( 0xF80101,0.5 );
+		buttonSprite.graphics.drawRoundRect( 10, 10, 200, 200, 6 );				 
+		buttonSprite.addEventListener( TUIOEvent.DownEvent, stopRecording );
 		
-		STAGE.addChild( record_btn );
+		STAGE.addChild( buttonSprite );
 	}
 
 	/**********************************************************
@@ -196,13 +197,13 @@ public class TUIO
 
 	public static function getObjectById( id:int ):TUIOObject
 	{
-		var listAmount:int = tuioObjList.length;
+		var listAmount:int = objectArray.length;
 		
 		for( var i:int = 0; i < listAmount; i++ )
 		{
-			if( tuioObjList[ i ].ID == id )
+			if( objectArray[ i ].ID == id )
 			{
-				return tuioObjList[ i ];
+				return objectArray[ i ];
 			}
 		}	
 		return null;
@@ -214,14 +215,15 @@ public class TUIO
 
 	public static function processXML( xml:XML ):void
 	{
-		// XML-Mode
 		var node:XML;
-				
-		// list with all TUIO-Objects
-		var tuioObjList:Array;
+		var fseq:String;
 		
-		// TUIO-Object
-		var tuioObj:TUIOObject;
+		
+		var objArray:Array;
+		var displayObjArray:Array;							
+		var dobj:Object = null;
+		
+		var tuioObj:Object;
 		
 		// type can be set / alive
 		var type:String;
@@ -229,9 +231,6 @@ public class TUIO
 		// store positions
 		var localPoint:Point;
 		var stagePoint:Point
-
-		// fseq
-		var fseq:String;
 		
 		// sessionID
 		var sID:int;
@@ -271,7 +270,7 @@ public class TUIO
 			
 			if( node.ARGUMENT[ 0 ] && node.ARGUMENT[ 0 ].@VALUE == 'alive' )
 			{
-				for each ( var obj:TUIOObject in tuioObjList )
+				for each ( var obj:TUIOObject in objectArray )
 				{
 					obj.isAlive = false;
 				}
@@ -290,10 +289,11 @@ public class TUIO
 			if( node.ARGUMENT[ 0 ] )
 			{
 				stagePoint = new Point( x,y );
-				tuioObjList = STAGE.stage.getObjectsUnderPoint( stagePoint );
+				objArray = STAGE.stage.getObjectsUnderPoint( stagePoint );
 				
 				if( node.@NAME == '/tuio/2Dobj' )
 				{		
+					
 					type = node.ARGUMENT[0].@VALUE;				
 					
 					if( type == 'set' )
@@ -315,7 +315,7 @@ public class TUIO
 							tuioObj = new TUIOObject( '2Dobj', id, x, y, X, Y, sID, a );
 							STAGE.addChild( tuioObj.spr );
 							
-							tuioObjList.push( tuioObj );
+							objectArray.push( tuioObj );
 						} else {
 							tuioObj.spr.x = x;
 							tuioObj.spr.y = y;								
@@ -324,13 +324,13 @@ public class TUIO
 							tuioObj.dX = X;
 							tuioObj.dY = Y;
 							
-							//tuioObj.setObjOver( dobj );
+							tuioObj.setObjOver( dobj );
 						}
 					}
 				} else if( node.@NAME == '/tuio/2Dcur' )
 				{
-					type = node.ARGUMENT[ 0 ].@VALUE;	
-								
+			
+					type = node.ARGUMENT[ 0 ].@VALUE;				
 					if( type == 'set' )
 					{
 						id = node.ARGUMENT[ 1 ].@VALUE;
@@ -347,7 +347,7 @@ public class TUIO
 							tuioObj = new TUIOObject( '2Dcur', id, x, y, X, Y, -1, 0 );
 							tuioObj.area = a;
 							STAGE.addChild( tuioObj.spr );								
-							tuioObjList.push( tuioObj );
+							objectArray.push( tuioObj );
 						} else {
 							tuioObj.spr.x = x;
 							tuioObj.spr.y = y;
@@ -355,9 +355,8 @@ public class TUIO
 							tuioObj.y = y;
 							tuioObj.area = a;								
 							tuioObj.dX = X;
-							tuioObj.dY = Y;	
-														
-							//tuioObj.setObjOver( dobj );
+							tuioObj.dY = Y;								
+							tuioObj.setObjOver( dobj );
 						}	
 					}	
 				}
@@ -369,19 +368,19 @@ public class TUIO
 			DEBUG_TEXT.y = -2000;
 			DEBUG_TEXT.x = -2000;				
 			
-			for ( var i:int=0; i<tuioObjList.length; i++ )
+			for ( var i:int=0; i<objectArray.length; i++ )
 			{
-				if( tuioObjList[i].isAlive == false )
+				if( objectArray[i].isAlive == false )
 				{
-					tuioObjList[i].kill();
-					STAGE.removeChild(tuioObjList[i].spr);
-					tuioObjList.splice(i, 1);
+					objectArray[i].kill();
+					STAGE.removeChild(objectArray[i].spr);
+					objectArray.splice(i, 1);
 					i--;
 	
 				} else {
 				//DEBUG DATA
 			    if(DEBUG_MODE)
-						DEBUG_TEXT.appendText( '  ' + i + ' - ' + tuioObjList[i].ID + '  X: ' + int(tuioObjList[i].x) + '  Y: ' + int(tuioObjList[i].y) + '  \n' );
+						DEBUG_TEXT.appendText( '  ' + i + ' - ' + objectArray[i].ID + '  X: ' + int(objectArray[i].x) + '  Y: ' + int(objectArray[i].y) + '  \n' );
 						DEBUG_TEXT.y = 780;
 						DEBUG_TEXT.x = 1400;				
 				}
@@ -398,7 +397,7 @@ public class TUIO
 	{	
 		var tapDP:Array = new Array();
 		//trace('Load Touch Events');	
-		//tapDP.push({Count:i, ID:tuioObjList[i].ID, X:tuioObjList[i].x, Y:tuioObjList[i].y});
+		//tapDP.push({Count:i, ID:objectArray[i].ID, X:objectArray[i].x, Y:objectArray[i].y});
 		tapDP.push( { Count:'1', ID:'23', X:'752.50', Y:'458.45' } ); 
 		return tapDP;						  
 	}
