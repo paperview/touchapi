@@ -3,10 +3,10 @@
 /**
  * LastChanged:
  * 
- * $Author: $
- * $Revision: $
- * $LastChangedDate: $
- * $URL: $
+ * $Author$
+ * $Revision$
+ * $LastChangedDate$
+ * $URL$
  * 
  */
 	
