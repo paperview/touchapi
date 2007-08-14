@@ -1,4 +1,14 @@
 ﻿package com.nui.tuio {
+
+/**
+ * LastChanged:
+ * 
+ * $Author: $
+ * $Revision: $
+ * $LastChangedDate: $
+ * $URL: $
+ * 
+ */
 	
 import flash.display.Sprite;
 import flash.events.DataEvent;
