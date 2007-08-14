@@ -1,4 +1,15 @@
 ﻿package com.nui.tuio {
+	
+/**
+ * LastChanged:
+ * 
+ * $Author$
+ * $Revision$
+ * $LastChangedDate$
+ * $URL$
+ * 
+ */
+ 	
 	import flash.events.*;
 	import flash.xml.*;
 	import flash.net.*

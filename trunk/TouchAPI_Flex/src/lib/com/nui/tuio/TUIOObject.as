@@ -1,4 +1,15 @@
 ﻿package com.nui.tuio {
+	
+/**
+ * LastChanged:
+ * 
+ * $Author$
+ * $Revision$
+ * $LastChangedDate$
+ * $URL$
+ * 
+ */
+ 	
 	import flash.display.*;
 	import flash.events.*;
 	import flash.geom.*;
