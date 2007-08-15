@@ -162,7 +162,7 @@ public class TUIO
 		record_btn.graphics.lineStyle( 2, 0x202020 );
 		record_btn.graphics.beginFill( 0xF80101,0.5 );
 		record_btn.graphics.drawRoundRect( 10, 10, 200, 200, 6 );				 
-		record_btn.addEventListener( TUIOEvent.DownEvent, stopRecording );
+		record_btn.addEventListener( TUIOEvent.DOWN, stopRecording );
 		
 		STAGE.addChild( record_btn );
 	}
@@ -374,7 +374,8 @@ public class TUIO
 			{
 				if( objectArray[i].isAlive == false )
 				{
-					objectArray[i].kill();
+					// TODO: cast objects
+					objectArray[i].dispose();
 					STAGE.removeChild(objectArray[i].spr);
 					objectArray.splice(i, 1);
 					i--;
