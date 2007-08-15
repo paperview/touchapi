@@ -341,13 +341,13 @@ public class TUIO
 						X = Number( node.ARGUMENT[ 4 ].@VALUE );
 						Y = Number( node.ARGUMENT[ 5 ].@VALUE );
 						m = node.ARGUMENT[ 6 ].@VALUE;
-						a = node.ARGUMENT[ 7 ].@VALUE;							
+						//a = node.ARGUMENT[ 7 ].@VALUE;							
 
 						tuioObj = getObjectById( id );
 						if( tuioObj == null )
 						{
 							tuioObj = new TUIOObject( '2Dcur', id, x, y, X, Y, -1, 0 );
-							tuioObj.area = a;
+							//tuioObj.area = a;
 							STAGE.addChild( tuioObj.spr );								
 							objectArray.push( tuioObj );
 						} else {
@@ -355,7 +355,7 @@ public class TUIO
 							tuioObj.spr.y = y;
 							tuioObj.x = x;
 							tuioObj.y = y;
-							tuioObj.area = a;								
+							//tuioObj.area = a;								
 							tuioObj.dX = X;
 							tuioObj.dY = Y;								
 							//tuioObj.setObjOver( dobj );
