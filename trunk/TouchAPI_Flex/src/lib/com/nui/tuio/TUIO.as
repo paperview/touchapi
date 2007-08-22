@@ -406,7 +406,7 @@ public class TUIO
 	}
 
 	/**********************************************************
-	 * STOOP_RECORDING
+	 * STOP_RECORDING
 	***********************************************************/
 	
 	private static function stopRecording( e:TUIOEvent ):void
