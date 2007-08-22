@@ -395,7 +395,7 @@ public class TUIO
 	 * GET_TOUCH_EVENTS
 	***********************************************************/
 	
-	// TODO: dead function?
+	// TODO: Pushes Touch Events into a Datagrid Component.
 	public static function getTouchEvents():Array 
 	{	
 		var tapDP:Array = new Array();

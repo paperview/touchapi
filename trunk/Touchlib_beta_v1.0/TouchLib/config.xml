@@ -33,10 +33,10 @@
         <threshold value="0" />
     </backgroundremove>
     <brightnesscontrast label="brightnesscontrast4">
-        <brightness value="0.301961" />
-        <contrast value="0.819608" />
+        <brightness value="0.129412" />
+        <contrast value="0.419608" />
     </brightnesscontrast>
     <rectify label="rectify5">
-        <level value="0" />
+        <level value="133" />
     </rectify>
 </filtergraph>

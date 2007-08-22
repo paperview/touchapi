@@ -25,19 +25,19 @@
 
 </screen>
 <filtergraph>
-    <cvcapture label="capture1">
-        <source value="../tests/rear4.avi" />
+    <cvcapture label="cvcapture0">
+        <source value="cam" />
     </cvcapture>
-    <mono label="mono2" />
-    <smooth label="smooth1" />
-    <backgroundremove label="background4">
+    <mono label="mono1" />
+    <smooth label="smooth2" />
+    <backgroundremove label="backgroundremove3">
         <threshold value="0" />
     </backgroundremove>
-    <highpass label="highpass">
-        <filter value="6" />
-        <scale value="32" />
-    </highpass>
-    <rectify label="rectify6">
-        <level value="59" />
+    <brightnesscontrast label="brightnesscontrast4">
+        <brightness value="0.301961" />
+        <contrast value="0.819608" />
+    </brightnesscontrast>
+    <rectify label="rectify5">
+        <level value="0" />
     </rectify>
 </filtergraph>
