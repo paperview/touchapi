@@ -44,6 +44,7 @@ public class TUIOEvent extends Event
 		this.buttonDown = buttonDown;
 		this.relatedObject = relatedObject;
 		super(type, bubbles, cancelable);			
+        //super(type, bubbles, cancelable, localX, localY, relatedObject, ctrlKey, altKey, shiftKey, buttonDown, delta);	
 	}
 }
 }

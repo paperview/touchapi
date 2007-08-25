@@ -17,7 +17,7 @@ import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
-import flash.filters.DropShadowFilter;
+//import flash.filters.DropShadowFilter;
 
 	public class TUIOObject 
 	{
@@ -52,16 +52,16 @@ import flash.filters.DropShadowFilter;
 
 			spr = new MovieClip();
 			spr.graphics.beginFill(0xFFFFFF , 0.5);					
-			spr.graphics.drawCircle(0,0,10);
+			spr.graphics.drawCircle(0,0,5);
 			spr.graphics.endFill();
 			spr.graphics.lineStyle(1, 0x000000, 1);	
-			//spr.graphics.drawCircle(0,0,10);		
-			//spr.graphics.drawCircle(0,0,11);		
-			//spr.graphics.lineStyle(1, 0xFFFFFF, 1);			
-			//spr.graphics.drawCircle(0,0,12);		
+			spr.graphics.drawCircle(0,0,10);		
+			spr.graphics.drawCircle(0,0,11);		
+			spr.graphics.lineStyle(1, 0xFFFFFF, 1);			
+			spr.graphics.drawCircle(0,0,12);		
 			//spr.blendMode="invert";		
-			var dropshadow:DropShadowFilter=new DropShadowFilter(0,90, 0xFFFFFF, 0.5, 20, 20);
-			spr.filters=new Array(dropshadow);
+			//var dropshadow:DropShadowFilter=new DropShadowFilter(0,90, 0xFFFFFF, 0.5, 20, 20);
+			//spr.filters=new Array(dropshadow);
 			spr.x = x;
 			spr.y = y;  			
 			
@@ -72,14 +72,14 @@ import flash.filters.DropShadowFilter;
         	format.size = 10;
 			DEBUG_TEXT.defaultTextFormat = format;
 			DEBUG_TEXT.autoSize = TextFieldAutoSize.LEFT;
-			DEBUG_TEXT.background = false;	
-			DEBUG_TEXT.backgroundColor = 0xFFFFFF;	
+			DEBUG_TEXT.background = true;	
+			DEBUG_TEXT.backgroundColor = 0x000000;	
 			DEBUG_TEXT.border = true;	
 			DEBUG_TEXT.text = '';
 			DEBUG_TEXT.appendText( ' ' + ID);
 			//DEBUG_TEXT.appendText( 'var' + ID +"var"+ sID + " (x:" + int(x) + ", y:" + int(y) + ")");
 			
-			DEBUG_TEXT.x = 10;
+			DEBUG_TEXT.x = 15;
 			DEBUG_TEXT.y = -8;  
 			spr.addChild(DEBUG_TEXT);
 			//DEBUG_TEXT.text = '';

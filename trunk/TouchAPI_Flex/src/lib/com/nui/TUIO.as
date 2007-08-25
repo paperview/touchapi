@@ -130,8 +130,8 @@ public class TUIO
         
 		DEBUG_TEXT.defaultTextFormat = format;
 		DEBUG_TEXT.autoSize = TextFieldAutoSize.LEFT;
-		DEBUG_TEXT.background = false;	
-		DEBUG_TEXT.backgroundColor = 0xFFFFFF;	
+		DEBUG_TEXT.background = true;	
+		DEBUG_TEXT.backgroundColor = 0x000000;	
 		DEBUG_TEXT.border = true;	
 	
 		
@@ -304,8 +304,7 @@ public class TUIO
 						if( tuioObj == null )
 						{
 							tuioObj = new TUIOObject( '2Dobj', id, x, y, X, Y, sID, a );
-							STAGE.addChild( tuioObj.spr );
-							
+							STAGE.addChild( tuioObj.spr );							
 							objectArray.push( tuioObj );
 						} else {
 							tuioObj.spr.x = x;
@@ -313,8 +312,7 @@ public class TUIO
 							tuioObj.x = x;
 							tuioObj.y = y;
 							tuioObj.dX = X;
-							tuioObj.dY = Y;
-							
+							tuioObj.dY = Y;							
 							//tuioObj.setObjOver( dobj );
 						}
 					}
@@ -356,8 +354,6 @@ public class TUIO
 		if(DEBUG_MODE)
 		{
 			DEBUG_TEXT.text = '';
-			DEBUG_TEXT.y = -2000;
-			DEBUG_TEXT.x = -2000;				
 			
 			for ( var i:int=0; i<objectArray.length; i++ )
 			{
@@ -372,7 +368,7 @@ public class TUIO
 				} else {
 				//DEBUG DATA
 			    if(DEBUG_MODE)
-						DEBUG_TEXT.appendText( '  ' + (i+1) + ' - ' + objectArray[i].ID + '  X: ' + int(objectArray[i].x) + '  Y: ' + int(objectArray[i].y) + '  \n' );
+						DEBUG_TEXT.appendText((i+1) + ' - ' + objectArray[i].ID + '  X: ' + int(objectArray[i].x) + '  Y: ' + int(objectArray[i].y) + '  \n' );
 						DEBUG_TEXT.y = STAGE_HEIGHT-250;
 						DEBUG_TEXT.x = STAGE_WIDTH-250;				
 				}
@@ -407,7 +403,7 @@ public class TUIO
 	
 	private static function connectHandler( e:Event ):void 
 	{
-		trace( 'connectHandler:' + e );
+		trace( 'TUIO Socket Enabled:' + e );
 	}
 
 	/**********************************************************
