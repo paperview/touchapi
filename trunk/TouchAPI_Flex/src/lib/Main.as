@@ -10,7 +10,7 @@
  * 
  */	
 	
-import com.nui.tuio.TUIO;
+import com.nui.TUIO;
 import flash.display.Sprite;
 import flash.system.Capabilities;
 
