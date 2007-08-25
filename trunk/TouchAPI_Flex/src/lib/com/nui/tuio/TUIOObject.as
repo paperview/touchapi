@@ -32,13 +32,14 @@
  * THE SOFTWARE.   
  */
  
-	import flash.display.*;
-	import flash.events.*;
-	import flash.geom.*;
-	import flash.net.*;
-	import flash.text.*;
-	import flash.xml.*;
-	import flash.filters.DropShadowFilter;
+import flash.display.Sprite;
+import flash.display.DisplayObject;	
+import flash.display.MovieClip;	
+import flash.geom.Point;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
+import flash.filters.DropShadowFilter;
 
 	public class TUIOObject 
 	{
@@ -100,8 +101,8 @@
 			DEBUG_TEXT.appendText( ' ' + ID);
 			//DEBUG_TEXT.appendText( 'var' + ID +"var"+ sID + " (x:" + int(x) + ", y:" + int(y) + ")");
 			
-			DEBUG_TEXT.x = -5;
-			DEBUG_TEXT.y = 0;  
+			DEBUG_TEXT.x = -10;
+			DEBUG_TEXT.y = 10;  
 			spr.addChild(DEBUG_TEXT);
 			//DEBUG_TEXT.text = '';
 

@@ -45,6 +45,8 @@ import flash.net.XMLSocket;
 import flash.system.System;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
+
 
 public class TUIO
 {	
@@ -142,9 +144,18 @@ public class TUIO
 	
 	private function activateDebugMode():void
 	{
+		var format:TextFormat = new TextFormat();
 		DEBUG_TEXT = new TextField();
+        format.font = "Verdana";
+     	format.color = 0xFFFFFF;
+        format.size = 10;
+        
+		DEBUG_TEXT.defaultTextFormat = format;
 		DEBUG_TEXT.autoSize = TextFieldAutoSize.LEFT;
-		DEBUG_TEXT.background = true;	
+		DEBUG_TEXT.background = false;	
+		DEBUG_TEXT.backgroundColor = 0xFFFFFF;	
+		DEBUG_TEXT.border = true;	
+	
 		
 		STAGE.addChild( DEBUG_TEXT );
 	}
@@ -383,27 +394,14 @@ public class TUIO
 				} else {
 				//DEBUG DATA
 			    if(DEBUG_MODE)
-						DEBUG_TEXT.appendText( '  ' + i + ' - ' + objectArray[i].ID + '  X: ' + int(objectArray[i].x) + '  Y: ' + int(objectArray[i].y) + '  \n' );
-						DEBUG_TEXT.y = 250;
-						DEBUG_TEXT.x = 250;				
+						DEBUG_TEXT.appendText( '  ' + (i+1) + ' - ' + objectArray[i].ID + '  X: ' + int(objectArray[i].x) + '  Y: ' + int(objectArray[i].y) + '  \n' );
+						DEBUG_TEXT.y = STAGE_HEIGHT-250;
+						DEBUG_TEXT.x = STAGE_WIDTH-250;				
 				}
 			}
 		}
 	}
 
-	/**********************************************************
-	 * GET_TOUCH_EVENTS
-	***********************************************************/
-	
-	// TODO: Pushes Touch Events into a Datagrid Component.
-	public static function getTouchEvents():Array 
-	{	
-		var tapDP:Array = new Array();
-		//trace('Load Touch Events');	
-		//tapDP.push({Count:i, ID:objectArray[i].ID, X:objectArray[i].x, Y:objectArray[i].y});
-		tapDP.push( { Count:'1', ID:'23', X:'752.50', Y:'458.45' } ); 
-		return tapDP;						  
-	}
 
 	/**********************************************************
 	 * STOP_RECORDING

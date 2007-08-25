@@ -9,15 +9,9 @@
  * $URL$
  * 
  */
-	
-import flash.events.*;
-import flash.xml.*;
-import flash.net.*
-import flash.display.*;
-import flash.geom.*;
-import flash.text.*;
-import flash.net.*;
-import flash.utils.describeType;	
+import flash.events.Event;
+import flash.display.DisplayObject;	
+
 public class TUIOEvent extends Event
 {
 	public static var MOVE:String = 'com.nui.tuio.TUIOEvent.MOVE';
