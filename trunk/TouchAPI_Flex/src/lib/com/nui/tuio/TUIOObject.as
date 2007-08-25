@@ -56,6 +56,7 @@
 		public var obj;
 		public var spr:Sprite;		
 		private var color:int;
+		private static var DEBUG_TEXT:TextField;
 
 		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int = -1, ang:Number = 0, o = null)
 		{
@@ -68,38 +69,23 @@
 			sID = sid;
 			angle = ang;
 			isAlive = true;		
-/* FLAME ON
-var myFlame:Flame=new Flame();
-var myBitmapData:BitmapData = new BitmapData(400, 500, false, 0x000000);
 
-stage.addEventListener(Event.ENTER_FRAME, drawFlame);
-function drawFlame(myevent:Event):void {
-	var myMatrix:Matrix = new Matrix();
-	myMatrix.translate(mouseX, mouseY + 3);
-	myBitmapData.draw(myFlame, myMatrix);
-	var myBlur:BlurFilter = new BlurFilter(2, 10, 2);
-	myBitmapData.applyFilter(myBitmapData, myBitmapData.rect, myBitmapData.rect.topLeft, myBlur);
-	var myPoint:Point = new Point(0, -3);
-	myBitmapData.copyPixels(myBitmapData, myBitmapData.rect, myPoint);
-}
-var myBitmap:Bitmap=new Bitmap(myBitmapData);
-addChild(myBitmap);
-*/
 			spr = new MovieClip();
 			spr.graphics.beginFill( 0xFFFFFF , 0.5);					
-			spr.graphics.drawCircle(0,0,7);
+			spr.graphics.drawCircle(0,0,10);
 			spr.graphics.endFill();
 			spr.graphics.lineStyle(1, 0x000000, 1);	
-			spr.graphics.drawCircle(0,0,7);		
-			spr.graphics.drawCircle(0,0,11);		
-			spr.graphics.lineStyle(1, 0xFFFFFF, 1);			
-			spr.graphics.drawCircle(0,0,12);		
+			spr.graphics.drawCircle(0,0,10);		
+			//spr.graphics.drawCircle(0,0,11);		
+			//spr.graphics.lineStyle(1, 0xFFFFFF, 1);			
+			//spr.graphics.drawCircle(0,0,12);		
 			//spr.blendMode="invert";		
 			//var dropshadow:DropShadowFilter=new DropShadowFilter(0,90, 0x000000, 1, 50, 50);
 			//spr.filters=new Array(dropshadow);
 			spr.x = x;
-			spr.y = y;  		
-
+			spr.y = y;  			
+		
+			
 			try {
  	 			obj = o;
 			} catch (e:Error)
@@ -113,9 +99,6 @@ addChild(myBitmap);
 			{
 				try
 				{	
-				spr.graphics.beginFill( 0xFFFFFF , 1);					
-				spr.graphics.drawCircle(0,0,7);
-				spr.graphics.endFill();
 				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
 					trace("Down : " + localPoint.x + "," + localPoint.y);
 					obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OVER, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));													

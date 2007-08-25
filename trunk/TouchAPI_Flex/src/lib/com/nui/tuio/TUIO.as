@@ -43,9 +43,6 @@ import flash.net.URLLoader;
 import flash.net.URLRequest;
 import flash.net.XMLSocket;
 import flash.system.System;
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
-import flash.text.TextFormat;
 
 public class TUIO
 {	
@@ -57,7 +54,7 @@ public class TUIO
 	private static var STAGE_WIDTH:int;
 	private static var STAGE_HEIGHT:int;	
 			
-    	private static var DEBUG_MODE:Boolean = true;
+    private static var DEBUG_MODE:Boolean = true;
 	private static var RECORD_MODE:Boolean;
 		
 	private static var SOCKET:XMLSocket;
@@ -70,8 +67,6 @@ public class TUIO
 	private static var RECORDED_XML:XML;
 		
 	private static var objectArray:Array;
-	private static var DEBUG_TEXT:TextField;
-	
 
 	/**********************************************************
 	 * INIT
@@ -142,18 +137,25 @@ public class TUIO
 	***********************************************************/
 	
 	private function activateDebugMode():void
-	{
-		DEBUG_TEXT = new TextField();
-		DEBUG_TEXT.autoSize = TextFieldAutoSize.LEFT;
-		DEBUG_TEXT.background = true;	
-		 
+	{	
+		/*
 		var format:TextFormat = new TextFormat();
         format.font = "Verdana";
-        format.color = 0xFF0000;
+        format.color = 0xFFFFFF;
         format.size = 10;
+        
+		DEBUG_TEXT = new TextField();
+		DEBUG_TEXT.autoSize = TextFieldAutoSize.LEFT;
+		//DEBUG_TEXT.background = true;	
+		DEBUG_TEXT.backgroundColor = 0xFFFFFF;	
+		DEBUG_TEXT.border = false;	
+		DEBUG_TEXT.defaultTextFormat = format;
 
-        DEBUG_TEXT.defaultTextFormat = format;
+		
 		STAGE.addChild( DEBUG_TEXT );
+		
+*/
+  
 	}
 
 	/**********************************************************
@@ -372,10 +374,10 @@ public class TUIO
 		}		
 		if(DEBUG_MODE)
 		{
-			DEBUG_TEXT.text = '';
-			DEBUG_TEXT.y = -2000;
-			DEBUG_TEXT.x = -2000;				
-			
+			/*		*/
+			/*DEBUG_TEXT.text = '';*/
+		
+	
 			for ( var i:int=0; i<objectArray.length; i++ )
 			{
 				if( objectArray[i].isAlive == false )
@@ -388,11 +390,11 @@ public class TUIO
 	
 				} else {
 				//DEBUG DATA
-			    if(DEBUG_MODE)
+			/*    if(DEBUG_MODE)
 						//DEBUG_TEXT.appendText( '  ' + i + ' - ' + objectArray[i].ID + '  X: ' + int(objectArray[i].x) + '  Y: ' + int(objectArray[i].y) + '  \n' );
-						DEBUG_TEXT.appendText( '  ' + i + ' - ' + objectArray[i].ID + '  \n' );
+						DEBUG_TEXT.appendText( '  ' + (i+1) + ' - ' + objectArray[i].ID + '  \n' );
 						DEBUG_TEXT.y = int(objectArray[i].y);
-						DEBUG_TEXT.x = int(objectArray[i].x+25);			
+						DEBUG_TEXT.x = int(objectArray[i].x+25);	*/		
 				}
 			}
 		}
@@ -493,7 +495,7 @@ public class TUIO
 		}
 		else
 		{
-			throw new Error( 'TUIO is a singleton, use TUIO.init' );
+			throw new Error( 'TUIO is a singleton, please use TUIO.init' );
 		}
 	}
 }

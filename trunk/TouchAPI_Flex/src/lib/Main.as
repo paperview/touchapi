@@ -11,7 +11,6 @@
  */	
 	
 import com.nui.tuio.TUIO;
-
 import flash.display.Sprite;
 import flash.system.Capabilities;
 
