@@ -45,6 +45,7 @@ import flash.net.XMLSocket;
 import flash.system.System;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
 
 public class TUIO
 {	
@@ -145,7 +146,13 @@ public class TUIO
 		DEBUG_TEXT = new TextField();
 		DEBUG_TEXT.autoSize = TextFieldAutoSize.LEFT;
 		DEBUG_TEXT.background = true;	
-		
+		 
+		var format:TextFormat = new TextFormat();
+        format.font = "Verdana";
+        format.color = 0xFF0000;
+        format.size = 10;
+
+        DEBUG_TEXT.defaultTextFormat = format;
 		STAGE.addChild( DEBUG_TEXT );
 	}
 
@@ -163,7 +170,6 @@ public class TUIO
 		record_btn.graphics.beginFill( 0xF80101,0.5 );
 		record_btn.graphics.drawRoundRect( 10, 10, 200, 200, 6 );				 
 		record_btn.addEventListener( TUIOEvent.DOWN, stopRecording );
-		
 		STAGE.addChild( record_btn );
 	}
 
@@ -383,9 +389,10 @@ public class TUIO
 				} else {
 				//DEBUG DATA
 			    if(DEBUG_MODE)
-						DEBUG_TEXT.appendText( '  ' + i + ' - ' + objectArray[i].ID + '  X: ' + int(objectArray[i].x) + '  Y: ' + int(objectArray[i].y) + '  \n' );
-						DEBUG_TEXT.y = 780;
-						DEBUG_TEXT.x = 1400;				
+						//DEBUG_TEXT.appendText( '  ' + i + ' - ' + objectArray[i].ID + '  X: ' + int(objectArray[i].x) + '  Y: ' + int(objectArray[i].y) + '  \n' );
+						DEBUG_TEXT.appendText( '  ' + i + ' - ' + objectArray[i].ID + '  \n' );
+						DEBUG_TEXT.y = int(objectArray[i].y);
+						DEBUG_TEXT.x = int(objectArray[i].x+25);			
 				}
 			}
 		}
