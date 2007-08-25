@@ -38,6 +38,7 @@
 	import flash.net.*;
 	import flash.text.*;
 	import flash.xml.*;
+	import flash.filters.DropShadowFilter;
 
 	public class TUIOObject 
 	{
@@ -56,7 +57,7 @@
 		public var obj;
 		public var spr:Sprite;		
 		private var color:int;
-		private static var DEBUG_TEXT:TextField;
+		private var DEBUG_TEXT:TextField;
 
 		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int = -1, ang:Number = 0, o = null)
 		{
@@ -71,21 +72,43 @@
 			isAlive = true;		
 
 			spr = new MovieClip();
-			spr.graphics.beginFill( 0xFFFFFF , 0.5);					
+			spr.graphics.beginFill(0xFFFFFF , 0.5);					
 			spr.graphics.drawCircle(0,0,10);
 			spr.graphics.endFill();
 			spr.graphics.lineStyle(1, 0x000000, 1);	
-			spr.graphics.drawCircle(0,0,10);		
+			//spr.graphics.drawCircle(0,0,10);		
 			//spr.graphics.drawCircle(0,0,11);		
 			//spr.graphics.lineStyle(1, 0xFFFFFF, 1);			
 			//spr.graphics.drawCircle(0,0,12);		
 			//spr.blendMode="invert";		
-			//var dropshadow:DropShadowFilter=new DropShadowFilter(0,90, 0x000000, 1, 50, 50);
-			//spr.filters=new Array(dropshadow);
+			var dropshadow:DropShadowFilter=new DropShadowFilter(0,90, 0xFFFFFF, 0.5, 20, 20);
+			spr.filters=new Array(dropshadow);
 			spr.x = x;
 			spr.y = y;  			
-		
 			
+			var format:TextFormat = new TextFormat();
+			DEBUG_TEXT = new TextField();
+        	format.font = "Verdana";
+     		format.color = 0xFFFFFF;
+        	format.size = 10;
+			DEBUG_TEXT.defaultTextFormat = format;
+			DEBUG_TEXT.autoSize = TextFieldAutoSize.LEFT;
+			DEBUG_TEXT.background = false;	
+			DEBUG_TEXT.backgroundColor = 0xFFFFFF;	
+			DEBUG_TEXT.border = true;	
+			DEBUG_TEXT.text = '';
+			DEBUG_TEXT.appendText( ' ' + ID);
+			//DEBUG_TEXT.appendText( 'var' + ID +"var"+ sID + " (x:" + int(x) + ", y:" + int(y) + ")");
+			
+			DEBUG_TEXT.x = -5;
+			DEBUG_TEXT.y = 0;  
+			spr.addChild(DEBUG_TEXT);
+			//DEBUG_TEXT.text = '';
+
+
+
+		
+
 			try {
  	 			obj = o;
 			} catch (e:Error)
@@ -99,6 +122,9 @@
 			{
 				try
 				{	
+				spr.graphics.beginFill( 0xFFFFFF , 1);					
+				spr.graphics.drawCircle(0,0,7);
+				spr.graphics.endFill();
 				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
 					trace("Down : " + localPoint.x + "," + localPoint.y);
 					obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OVER, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));													
@@ -144,7 +170,7 @@
 			}
 		}
 		
-		public function dispose():void
+		public function disposeObject():void
 		{
 			trace("End: " + ID);		
 			if(obj && obj.parent)
