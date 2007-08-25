@@ -1,12 +1,12 @@
-﻿﻿package com.nui.tuio {
+﻿﻿package com.nui {
 
 /**
  * LastChanged:
  * 
- * $Author$
- * $Revision$
- * $LastChangedDate$
- * $URL$
+ * $Author: naturalui $
+ * $Revision: 66 $
+ * $LastChangedDate: 2007-08-25 08:11:49 -0500 (Sat, 25 Aug 2007) $
+ * $URL: https://touchapi.googlecode.com/svn/trunk/TouchAPI_Flex/src/lib/com/nui/tuio/TUIO.as $
  * 
  */
 

@@ -1,12 +1,12 @@
-﻿package com.nui.tuio {
+﻿package com.nui {
 	
 /**
  * LastChanged:
  * 
- * $Author$
- * $Revision$
- * $LastChangedDate$
- * $URL$
+ * $Author: naturalui $
+ * $Revision: 65 $
+ * $LastChangedDate: 2007-08-25 08:10:12 -0500 (Sat, 25 Aug 2007) $
+ * $URL: https://touchapi.googlecode.com/svn/trunk/TouchAPI_Flex/src/lib/com/nui/tuio/TUIOEvent.as $
  * 
  */
 import flash.events.Event;
@@ -14,11 +14,11 @@ import flash.display.DisplayObject;
 
 public class TUIOEvent extends Event
 {
-	public static var MOVE:String = 'com.nui.tuio.TUIOEvent.MOVE';
-	public static var DOWN:String = 'com.nui.tuio.TUIOEvent.DOWN';		
-	public static var UP:String = 'com.nui.tuio.TUIOEvent.UP';				
-	public static var ROLL_OVER:String = 'com.nui.tuio.TUIOEvent.ROLL_OVER';						
-	public static var ROLL_OUT:String = 'com.nui.tuio.TUIOEvent.ROLL_OUT';
+	public static var MOVE:String = 'com.nui.TUIOEvent.MOVE';
+	public static var DOWN:String = 'com.nui.TUIOEvent.DOWN';		
+	public static var UP:String = 'com.nui.TUIOEvent.UP';				
+	public static var ROLL_OVER:String = 'com.nui.TUIOEvent.ROLL_OVER';						
+	public static var ROLL_OUT:String = 'com.nui.TUIOEvent.ROLL_OUT';
 	
 	public var TUIOClass:String;
 	public var sID:int;
@@ -44,8 +44,6 @@ public class TUIOEvent extends Event
 		this.buttonDown = buttonDown;
 		this.relatedObject = relatedObject;
 		super(type, bubbles, cancelable);			
-        //super(type, bubbles, cancelable, localX, localY, relatedObject, ctrlKey, altKey, shiftKey, buttonDown, delta);
-		
 	}
 }
 }

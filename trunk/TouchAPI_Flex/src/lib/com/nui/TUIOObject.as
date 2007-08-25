@@ -1,12 +1,12 @@
-﻿package com.nui.tuio {
+﻿package com.nui {
 	
 /**
  * LastChanged:
  * 
- * $Author$
- * $Revision$
- * $LastChangedDate$
- * $URL$
+ * $Author: naturalui $
+ * $Revision: 66 $
+ * $LastChangedDate: 2007-08-25 08:11:49 -0500 (Sat, 25 Aug 2007) $
+ * $URL: https://touchapi.googlecode.com/svn/trunk/TouchAPI_Flex/src/lib/com/nui/tuio/TUIOObject.as $
  * 
  */ 
 
@@ -33,12 +33,12 @@ import flash.filters.DropShadowFilter;
 		public var pressure:Number;		
 		private var isNew:Boolean;
 		public var isAlive:Boolean;		
-		public var obj;
+		public var obj:DisplayObject;
 		public var spr:Sprite;		
 		private var color:int;
 		private var DEBUG_TEXT:TextField;
 
-		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int = -1, ang:Number = 0, o = null)
+		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int = -1, ang:Number = 0, o:DisplayObject = null)
 		{
 			TUIOClass = cls;
 			ID = id;
@@ -79,14 +79,10 @@ import flash.filters.DropShadowFilter;
 			DEBUG_TEXT.appendText( ' ' + ID);
 			//DEBUG_TEXT.appendText( 'var' + ID +"var"+ sID + " (x:" + int(x) + ", y:" + int(y) + ")");
 			
-			DEBUG_TEXT.x = -10;
-			DEBUG_TEXT.y = 10;  
+			DEBUG_TEXT.x = 10;
+			DEBUG_TEXT.y = -8;  
 			spr.addChild(DEBUG_TEXT);
 			//DEBUG_TEXT.text = '';
-
-
-
-		
 
 			try {
  	 			obj = o;
@@ -132,9 +128,8 @@ import flash.filters.DropShadowFilter;
 						obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OVER, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));					
 					}
 				} else if(obj != o) 
-				{
-					
-					var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));								
+				{					
+					//var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));								
 					obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OUT, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));
 					if(o)
 					{
