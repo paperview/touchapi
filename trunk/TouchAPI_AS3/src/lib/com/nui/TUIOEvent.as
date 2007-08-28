@@ -10,8 +10,6 @@
  * 
  */
 import flash.events.Event;	
-import flash.events.MouseEvent;
-//import flash.display.DisplayObject;	
 import flash.display.InteractiveObject;	
 
 
@@ -48,7 +46,6 @@ public class TUIOEvent extends Event
 		this.buttonDown = buttonDown;
 		this.relatedObject = relatedObject;
 		super(type, bubbles, cancelable);	
-		//super(type, bubbles, cancelable, localX, localY); 		
         //super(type, bubbles, cancelable, localX, localY, relatedObject, ctrlKey, altKey, shiftKey, buttonDown, delta);	
 	}	
 	

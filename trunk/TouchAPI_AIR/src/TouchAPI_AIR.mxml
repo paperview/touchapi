@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="absolute"
+				creationComplete="init();">
+	<mx:Style>
+		Application
+		{
+			background-color: "";
+			background-image: "";
+			margin-top: 0;
+			margin-right: 0;
+			margin-bottom: 0;
+			margin-left: 0;
+		}
+	</mx:Style>
+	<mx:Script>
+		<![CDATA[
+
+			import mx.managers.PopUpManager;
+			import com.nui.TUIO;
+			import mx.core.UIComponent;
+			import flash.system.Capabilities;	
+			
+			private function initTUIO():void
+			{ 
+			TUIO.init(touchAPI, 'nui.mine.nu', 3000, Capabilities.screenResolutionX, Capabilities.screenResolutionY, '', false ); 	  
+			}		
+			private var controls:Controls;
+
+			private function init():void
+			{
+				var win:NativeWindow = systemManager.stage.window;
+				win.maximize();
+				controls = new Controls();
+				controls.drawingCanvas = drawingCanvas;
+				controls.shell = Shell.shell;
+				PopUpManager.addPopUp(controls, clickCanvas, false);
+				controls.x = 10;
+				controls.y = 10;
+				win.visible = true;
+			}
+
+			private function onMouseDown():void
+			{
+				drawingCanvas.graphics.lineStyle(controls.lineWidth.value, controls.color.selectedColor, controls.lineAlpha.value/10);
+				drawingCanvas.graphics.moveTo(stage.mouseX, stage.mouseY);
+			}
+			
+			private function onMouseMove(e:MouseEvent):void
+			{
+				if (!e.buttonDown)
+				{
+					return;
+				}
+				drawingCanvas.graphics.lineTo(stage.mouseX, stage.mouseY);
+				e.updateAfterEvent();
+			}
+
+
+]]>
+</mx:Script>
+<mx:Canvas backgroundImage="img/grid.png" width="100%" height="100%" backgroundAlpha="0.5"/>
+<mx:Canvas id="clickCanvas" width="100%" height="100%" alpha=".08" backgroundColor="#ffffff" mouseDown="onMouseDown();" mouseMove="onMouseMove(event);"/>
+<mx:Canvas id="drawingCanvas" width="100%" height="100%"/>
+<mx:UIComponent id="touchAPI" creationComplete="initTUIO()"/>
+</mx:Application>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>TouchAPI_AIR</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>com.adobe.flexbuilder.project.flexbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>com.adobe.flexbuilder.apollo.apollobuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>com.adobe.flexbuilder.apollo.apollonature</nature>
+		<nature>com.adobe.flexbuilder.project.flexnature</nature>
+		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>bin</name>
+			<type>2</type>
+			<location>P:/TouchAPI/AIR</location>
+		</link>
+		<link>
+			<name>[source path] lib</name>
+			<type>2</type>
+			<location>H:/Desktop/TouchAPI_SVN/trunk/TouchAPI_AS3/src/lib</location>
+		</link>
+	</linkedResources>
+</projectDescription>

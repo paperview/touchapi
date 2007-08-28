@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns="http://www.adobe.com/2006/mxml" layout="absolute">
+<Script>
+<![CDATA[	
+			import com.nui.TUIO;
+			import mx.core.UIComponent;
+			import flash.system.Capabilities;	
+			
+			private function initTUIO():void
+			{ 
+			TUIO.init(touchAPI, 'nui.mine.nu', 3000, Capabilities.screenResolutionX, Capabilities.screenResolutionY, '', false ); 	  
+			}		
+]]>
+</Script>
+<UIComponent id="touchAPI" creationComplete="initTUIO()" width="100%" height="100%"/>
+</Application>	

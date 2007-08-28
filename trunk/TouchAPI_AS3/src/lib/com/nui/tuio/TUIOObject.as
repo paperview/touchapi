@@ -1,15 +1,4 @@
-﻿package com.nui {
-	
-/**
- * LastChanged:
- * 
- * $Author: naturalui $
- * $Revision: 66 $
- * $LastChangedDate: 2007-08-25 08:11:49 -0500 (Sat, 25 Aug 2007) $
- * $URL: https://touchapi.googlecode.com/svn/trunk/TouchAPI_Flex/src/lib/com/nui/tuio/TUIOObject.as $
- * 
- */ 
-
+﻿package com.nui.tuio {
 import flash.display.Sprite;
 import flash.display.DisplayObject;	
 import flash.display.InteractiveObject;	
@@ -18,7 +7,7 @@ import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
-//import flash.filters.DropShadowFilter;
+import flash.utils.Timer;
 
 	public class TUIOObject 
 	{
@@ -28,19 +17,19 @@ import flash.text.TextFormat;
 		public var dY:Number;						
 		public var area:Number;		
 		public var TUIOClass:String;		// cur or Obj.. 
+		public var sID:int;
 		public var ID:int;
-		public var sID:int;	
-		public var xid:int;
+		public var fingerID:int;
 		public var angle:Number;		
 		public var pressure:Number;		
 		private var isNew:Boolean;
 		public var isAlive:Boolean;		
-		public var obj:InteractiveObject;
+		public var obj;
 		public var spr:Sprite;		
-		private var color:int;
+		private var color:int;	
 		private var DEBUG_TEXT:TextField;
 
-		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int, ang:Number = 0, o:InteractiveObject = null)
+		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int, ang:Number = 0, o = null)
 		{
 			TUIOClass = cls;
 			ID = id;	
@@ -86,16 +75,14 @@ import flash.text.TextFormat;
 			spr.addChild(DEBUG_TEXT);
 			//DEBUG_TEXT.text = '';
 
+
 			try {
  	 			obj = o;
-			} catch (e:Error)
+			} catch (e)
 			{
 				obj = null;
 			}
-			
-			//trace("------------------------------------------------------");			
-			//trace("Start " + ID + ", " + sID + " (" + int(px) + "," + int(py) + ")");
-			
+						
 			if(obj)
 			{
 				try
@@ -105,11 +92,11 @@ import flash.text.TextFormat;
 				spr.graphics.endFill();
 				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
 					//trace("Down : " + localPoint.x + "," + localPoint.y);
-					obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OVER, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));													
-					obj.dispatchEvent(new TUIOEvent(TUIOEvent.DOWN, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));									
-				} catch (e:Error)
+					obj.dispatchEvent(new TUIOEvent(TUIOEvent.RollOverEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));													
+					obj.dispatchEvent(new TUIOEvent(TUIOEvent.DownEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));									
+				} catch (e)
 				{
-						//trace("Failed : " + e);
+						trace("Failed : " + e);
 //					trace(obj.name);
 					obj = null;
 				}
@@ -118,7 +105,7 @@ import flash.text.TextFormat;
 			isNew = true;
 		}
 		
-		public function setObjOver(o:InteractiveObject):void
+		public function setObjOver(o:DisplayObject)
 		{
 			try {
 				
@@ -128,33 +115,34 @@ import flash.text.TextFormat;
 					if(obj) 
 					{
 						var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
-						obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OVER, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));					
+						obj.dispatchEvent(new TUIOEvent(TUIOEvent.RollOverEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));					
 					}
 				} else if(obj != o) 
-				{					
+				{
+					
 					var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));								
-					obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OUT, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));
+					obj.dispatchEvent(new TUIOEvent(TUIOEvent.RollOutEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));
 					if(o)
 					{
 						localPoint = obj.parent.globalToLocal(new Point(x, y));
-						o.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OVER, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));
+						o.dispatchEvent(new TUIOEvent(TUIOEvent.RollOverEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));
 					}
 					obj = o;								
 				}
-			} catch (e:Error)
+			} catch (e)
 			{
 //				trace("ERROR " + e);
 			}
 		}
 		
-		public function disposeObject():void
+		public function kill()
 		{
 			//trace("End: " + ID);		
 			if(obj && obj.parent)
 			{				
 				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
-				obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OUT, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));				
-				obj.dispatchEvent(new TUIOEvent(TUIOEvent.UP, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));									
+				obj.dispatchEvent(new TUIOEvent(TUIOEvent.RollOutEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));				
+				obj.dispatchEvent(new TUIOEvent(TUIOEvent.UpEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));									
 			}			
 			obj = null;
 		}
