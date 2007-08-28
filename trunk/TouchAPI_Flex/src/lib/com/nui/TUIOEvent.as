@@ -19,7 +19,7 @@ public class TUIOEvent extends Event
 {
 	public static const MOVE:String = 'com.nui.TUIOEvent.MOVE';
 	public static const DOWN:String = 'com.nui.TUIOEvent.DOWN';		
-	public static const DOUBLE_DOWN:String = "com.nui.TUIOEvent.DDOWN"; //double tap/click
+	public static const DOUBLE_DOWN:String = "com.nui.TUIOEvent.DOUBLE_OWN"; //double tap/click
 	public static const UP:String = 'com.nui.TUIOEvent.UP';				
 	public static const ROLL_OVER:String = 'com.nui.TUIOEvent.ROLL_OVER';						
 	public static const ROLL_OUT:String = 'com.nui.TUIOEvent.ROLL_OUT';
