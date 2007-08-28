@@ -78,7 +78,8 @@ import flash.text.TextFormat;
 			DEBUG_TEXT.backgroundColor = 0x000000;	
 			DEBUG_TEXT.border = true;	
 			DEBUG_TEXT.text = '';
-			DEBUG_TEXT.appendText('  '+(sID+1)+'  ');
+			//DEBUG_TEXT.appendText('  '+(sID+1)+'  ');
+			DEBUG_TEXT.appendText('  '+ID+'  ');
 			//DEBUG_TEXT.appendText( 'var' + ID +"var"+ sID + " (x:" + int(x) + ", y:" + int(y) + ")");
 			
 			DEBUG_TEXT.x = 15;
