@@ -11,6 +11,7 @@
  */
 
 import flash.display.Sprite;
+import flash.display.InteractiveObject;
 import flash.events.DataEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
@@ -26,6 +27,7 @@ import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
 
+
 public class TUIO
 {	
 	private static var INSTANCE:TUIO;	
@@ -36,7 +38,7 @@ public class TUIO
 	private static var STAGE_WIDTH:int;
 	private static var STAGE_HEIGHT:int;	
 			
-    	private static var DEBUG_MODE:Boolean = true;
+    private static var DEBUG_MODE:Boolean = true;
 	private static var RECORD_MODE:Boolean;
 		
 	private static var SOCKET:XMLSocket;
@@ -133,6 +135,7 @@ public class TUIO
 		DEBUG_TEXT.background = true;	
 		DEBUG_TEXT.backgroundColor = 0x000000;	
 		DEBUG_TEXT.border = true;	
+		DEBUG_TEXT.borderColor = 0x333333;	
 	
 		
 		STAGE.addChild( DEBUG_TEXT );
@@ -288,7 +291,8 @@ public class TUIO
 					type = node.ARGUMENT[0].@VALUE;				
 					
 					if( type == 'set' )
-					{
+					{   
+						var dobj:InteractiveObject = null;
 						sID = node.ARGUMENT[ 1 ].@VALUE;
 						id = node.ARGUMENT[ 2 ].@VALUE;
 						x = Number( node.ARGUMENT[ 3 ].@VALUE ) * STAGE_WIDTH;
@@ -303,7 +307,7 @@ public class TUIO
 						tuioObj = getObjectById( id );
 						if( tuioObj == null )
 						{
-							tuioObj = new TUIOObject( '2Dobj', id, x, y, X, Y, sID, a );
+							tuioObj = new TUIOObject('2Dobj', id, x, y, X, Y, sID, a );
 							STAGE.addChild( tuioObj.spr );							
 							objectArray.push( tuioObj );
 						} else {
@@ -313,7 +317,7 @@ public class TUIO
 							tuioObj.y = y;
 							tuioObj.dX = X;
 							tuioObj.dY = Y;							
-							//tuioObj.setObjOver( dobj );
+							tuioObj.setObjOver( dobj );
 						}
 					}
 				} else if( node.@NAME == '/tuio/2Dcur' )
@@ -321,7 +325,8 @@ public class TUIO
 			
 					type = node.ARGUMENT[ 0 ].@VALUE;				
 					if( type == 'set' )
-					{
+					{	
+						var dobj:InteractiveObject = null;
 						id = node.ARGUMENT[ 1 ].@VALUE;
 						x = Number( node.ARGUMENT[ 2 ].@VALUE ) * STAGE_WIDTH;
 						y = Number( node.ARGUMENT[ 3 ].@VALUE ) * STAGE_HEIGHT;
@@ -333,7 +338,7 @@ public class TUIO
 						tuioObj = getObjectById( id );
 						if( tuioObj == null )
 						{
-							tuioObj = new TUIOObject( '2Dcur', id, x, y, X, Y, -1, 0 );
+							tuioObj = new TUIOObject('2Dcur', id, x, y, X, Y, -1, 0 );
 							//tuioObj.area = a;
 							STAGE.addChild( tuioObj.spr );								
 							objectArray.push( tuioObj );
@@ -345,7 +350,7 @@ public class TUIO
 							//tuioObj.area = a;								
 							tuioObj.dX = X;
 							tuioObj.dY = Y;								
-							//tuioObj.setObjOver( dobj );
+							tuioObj.setObjOver( dobj );
 						}	
 					}	
 				}
@@ -368,8 +373,8 @@ public class TUIO
 				} else {
 				//DEBUG DATA
 			    if(DEBUG_MODE)
-						DEBUG_TEXT.appendText((i+1) + ' - ' + objectArray[i].ID + '  X: ' + int(objectArray[i].x) + '  Y: ' + int(objectArray[i].y) + '  \n' );
-						DEBUG_TEXT.y = STAGE_HEIGHT-250;
+						DEBUG_TEXT.appendText('  ' + (i+1) + ' - ' + objectArray[i].ID + '  X: ' + int(objectArray[i].x) + '  Y: ' + int(objectArray[i].y) + '   \n' );
+						DEBUG_TEXT.y = STAGE_HEIGHT-300;
 						DEBUG_TEXT.x = STAGE_WIDTH-250;				
 				}
 			}

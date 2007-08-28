@@ -12,6 +12,7 @@
 
 import flash.display.Sprite;
 import flash.display.DisplayObject;	
+import flash.display.InteractiveObject;	
 import flash.display.MovieClip;	
 import flash.geom.Point;
 import flash.text.TextField;
@@ -27,21 +28,22 @@ import flash.text.TextFormat;
 		public var dY:Number;						
 		public var area:Number;		
 		public var TUIOClass:String;		// cur or Obj.. 
-		public var sID:int;
 		public var ID:int;
+		public var sID:int;	
+		public var xid:int;
 		public var angle:Number;		
 		public var pressure:Number;		
 		private var isNew:Boolean;
 		public var isAlive:Boolean;		
-		public var obj:DisplayObject;
+		public var obj:InteractiveObject;
 		public var spr:Sprite;		
 		private var color:int;
 		private var DEBUG_TEXT:TextField;
 
-		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int = -1, ang:Number = 0, o:DisplayObject = null)
+		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int = -1, ang:Number = 0, o:InteractiveObject = null)
 		{
 			TUIOClass = cls;
-			ID = id;
+			ID = id;	
 			x = px;
 			y = py;
 			dX = dx;
@@ -115,7 +117,7 @@ import flash.text.TextFormat;
 			isNew = true;
 		}
 		
-		public function setObjOver(o:DisplayObject):void
+		public function setObjOver(o:InteractiveObject):void
 		{
 			try {
 				
@@ -129,7 +131,7 @@ import flash.text.TextFormat;
 					}
 				} else if(obj != o) 
 				{					
-					//var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));								
+					var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));								
 					obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OUT, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));
 					if(o)
 					{
