@@ -17,6 +17,7 @@ import flash.system.Capabilities;
 //import app.*;
 
 [SWF(width='1680', height='1050', backgroundColor='0x000000', frameRate='33')]
+
 public class Main extends Sprite
 {
 	public function Main()
