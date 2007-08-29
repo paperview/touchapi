@@ -12,13 +12,12 @@
 
 import flash.display.Sprite;
 import flash.display.DisplayObject;	
-import flash.display.InteractiveObject;	
+import flash.display.InteractiveObject;	 
 import flash.display.MovieClip;	
 import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
-//import flash.filters.DropShadowFilter;
 
 	public class TUIOObject 
 	{
@@ -35,7 +34,7 @@ import flash.text.TextFormat;
 		public var pressure:Number;		
 		private var isNew:Boolean;
 		public var isAlive:Boolean;		
-		public var obj:InteractiveObject;
+		public var obj:InteractiveObject; //changed to interactive object
 		public var spr:Sprite;		
 		private var color:int;
 		private var DEBUG_TEXT:TextField;
@@ -61,9 +60,6 @@ import flash.text.TextFormat;
 			spr.graphics.drawCircle(0,0,11);		
 			spr.graphics.lineStyle(1, 0xFFFFFF, 1);			
 			spr.graphics.drawCircle(0,0,12);		
-			//spr.blendMode="invert";		
-			//var dropshadow:DropShadowFilter=new DropShadowFilter(0,90, 0xFFFFFF, 0.5, 20, 20);
-			//spr.filters=new Array(dropshadow);
 			spr.x = x;
 			spr.y = y;  			
 			
@@ -78,25 +74,19 @@ import flash.text.TextFormat;
 			DEBUG_TEXT.backgroundColor = 0x000000;	
 			DEBUG_TEXT.border = true;	
 			DEBUG_TEXT.text = '';
-			//DEBUG_TEXT.appendText('  '+(sID+1)+'  ');
 			DEBUG_TEXT.appendText('  '+ID+'  ');
-			//DEBUG_TEXT.appendText( 'var' + ID +"var"+ sID + " (x:" + int(x) + ", y:" + int(y) + ")");
 			
 			DEBUG_TEXT.x = 15;
 			DEBUG_TEXT.y = -8;  
 			spr.addChild(DEBUG_TEXT);
-			//DEBUG_TEXT.text = '';
 
 			try {
  	 			obj = o;
 			} catch (e:Error)
 			{
 				obj = null;
-			}
-			
-			//trace("------------------------------------------------------");			
-			//trace("Start " + ID + ", " + sID + " (" + int(px) + "," + int(py) + ")");
-			
+			}			
+	
 			if(obj)
 			{
 				try
@@ -105,13 +95,10 @@ import flash.text.TextFormat;
 				spr.graphics.drawCircle(0,0,7);
 				spr.graphics.endFill();
 				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
-					//trace("Down : " + localPoint.x + "," + localPoint.y);
 					obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OVER, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));													
 					obj.dispatchEvent(new TUIOEvent(TUIOEvent.DOWN, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));									
 				} catch (e:Error)
 				{
-						//trace("Failed : " + e);
-//					trace(obj.name);
 					obj = null;
 				}
 			}
@@ -150,7 +137,6 @@ import flash.text.TextFormat;
 		
 		public function disposeObject():void
 		{
-			//trace("End: " + ID);		
 			if(obj && obj.parent)
 			{				
 				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
