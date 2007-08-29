@@ -26,8 +26,6 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
-
-
 public class TUIO
 {	
 	private static var INSTANCE:TUIO;	
@@ -380,7 +378,6 @@ public class TUIO
 			}
 		}
 	}
-
 
 	/**********************************************************
 	 * STOP_RECORDING
