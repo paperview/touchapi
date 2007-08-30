@@ -120,7 +120,7 @@ import flash.text.TextFormat;
 					}
 				} else if(obj != o) 
 				{					
-					var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));								
+					//var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));								
 					obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OUT, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));
 					if(o)
 					{

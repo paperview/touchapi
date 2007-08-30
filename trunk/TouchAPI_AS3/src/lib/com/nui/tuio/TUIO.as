@@ -325,7 +325,7 @@ public class TUIO
 					type = node.ARGUMENT[ 0 ].@VALUE;				
 					if( type == 'set' )
 					{	
-						var dobj:InteractiveObject = null;
+						//var dobj:InteractiveObject = null;
 						id = node.ARGUMENT[ 1 ].@VALUE;
 						x = Number( node.ARGUMENT[ 2 ].@VALUE ) * STAGE_WIDTH;
 						y = Number( node.ARGUMENT[ 3 ].@VALUE ) * STAGE_HEIGHT;
