@@ -5,7 +5,7 @@ import flash.display.Sprite;
 import flash.system.Capabilities;
 
 
-[SWF(width='1000', height='570', backgroundColor='0x000000', frameRate='33')]
+[SWF(width='1024', height='768', backgroundColor='0x000000', frameRate='33')]
 
 public class MainJens extends Sprite
 {
