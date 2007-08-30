@@ -10,10 +10,9 @@
  * 
  */ 
 
+import flash.display.InteractiveObject;
+import flash.display.MovieClip;
 import flash.display.Sprite;
-import flash.display.DisplayObject;	
-import flash.display.InteractiveObject;	 
-import flash.display.MovieClip;	
 import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -65,9 +64,9 @@ import flash.text.TextFormat;
 			
 			var format:TextFormat = new TextFormat();
 			DEBUG_TEXT = new TextField();
-        	format.font = "Verdana";
+        		format.font = "Verdana";
      		format.color = 0xFFFFFF;
-        	format.size = 10;
+       	 	format.size = 10;
 			DEBUG_TEXT.defaultTextFormat = format;
 			DEBUG_TEXT.autoSize = TextFieldAutoSize.LEFT;
 			DEBUG_TEXT.background = true;	

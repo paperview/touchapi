@@ -9,8 +9,8 @@
  * $URL: https://touchapi.googlecode.com/svn/trunk/TouchAPI_Flex/src/lib/com/nui/tuio/TUIOEvent.as $
  * 
  */
+import flash.display.InteractiveObject;
 import flash.events.Event;	
-import flash.display.InteractiveObject;	
 
 
 public class TUIOEvent extends Event
@@ -33,18 +33,18 @@ public class TUIOEvent extends Event
 	public var buttonDown:Boolean;
 	public var relatedObject:InteractiveObject;		
 	
-	public function TUIOEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false, stageX:Number = 0, stageY:Number = 0, localX:Number = 0, localY:Number = 0, relatedObject:InteractiveObject = null, ctrlKey:Boolean = false, altKey:Boolean = false, shiftKey:Boolean = false, buttonDown:Boolean = false, delta:int = 0, TUIOClass:String = "2Dcur", ID:int = -1, sID:int = -1, angle:Number = 0.0)
+	public function TUIOEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false, p_stageX:Number = 0, p_stageY:Number = 0, p_localX:Number = 0, p_localY:Number = 0, p_relatedObject:InteractiveObject = null, p_ctrlKey:Boolean = false, p_altKey:Boolean = false, p_shiftKey:Boolean = false, p_buttonDown:Boolean = false, p_delta:int = 0, p_TUIOClass:String = '2Dcur', p_ID:int = -1, p_sID:int = -1, p_angle:Number = 0.0)
 	{
-		this.TUIOClass = TUIOClass;
-		this.sID = sID;
-		this.ID = ID;
-		this.angle = angle;
-		this.stageX = stageX;
-		this.stageY = stageY;
-		this.localX = localX;
-		this.localY = localY;
-		this.buttonDown = buttonDown;
-		this.relatedObject = relatedObject;
+		TUIOClass = p_TUIOClass;
+		sID = sID;
+		ID = p_ID;
+		angle = p_angle;
+		stageX = p_stageX;
+		stageY = p_stageY;
+		localX = p_localX;
+		localY = p_localY;
+		buttonDown = p_buttonDown;
+		relatedObject = relatedObject;
 		super(type, bubbles, cancelable);	
         //super(type, bubbles, cancelable, localX, localY, relatedObject, ctrlKey, altKey, shiftKey, buttonDown, delta);	
 	}	
