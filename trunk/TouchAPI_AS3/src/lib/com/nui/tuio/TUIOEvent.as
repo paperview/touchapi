@@ -48,28 +48,5 @@ public class TUIOEvent extends Event
 		super(type, bubbles, cancelable);	
         //super(type, bubbles, cancelable, localX, localY, relatedObject, ctrlKey, altKey, shiftKey, buttonDown, delta);	
 	}	
-	
-	/*
-	
-	
-	 Jens.. I am trying to figure out best way to hook into the MouseEvent system so we could use default Adobe components with single touch input.
-	 I think this will be achievable if we clone the event.. but I could be way off..
-	 
-	 
-		private var _finger:uint; 
-
-		public function get finger():uint {
-			  return _finger;
-		} 
-		
-		public function TUIOEvent(type:String, finger:uint, localX:Number, localY:Number, bubbles:Boolean = true, cancelable:Boolean = false, relatedObject:InteractiveObject = null, ctrlKey:Boolean = false, altKey:Boolean = false, shiftKey:Boolean = false, buttonDown:Boolean = false, delta:int = 0) {
-			super(type, bubbles, cancelable, localX, localY); 
-			_finger = finger;
-		}
-		
-		public override function clone():Event {
-			return new TouchEvent(type, _finger, this.localX, this.localY);
-		}
-	*/
 }
 }

@@ -388,8 +388,8 @@ public class TUIO
 	{		
 		RECORD_MODE = false;
 		DEBUG_MODE = false;
-		
-		System.setClipboard( RECORDED_XML.toString() );
+		trace("Dump the XML");
+		//System.setClipboard( RECORDED_XML.toString() );
 	}
 
 	/**********************************************************
