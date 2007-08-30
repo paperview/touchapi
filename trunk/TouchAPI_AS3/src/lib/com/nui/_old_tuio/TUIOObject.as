@@ -1,4 +1,4 @@
-﻿package com.nui.tuio {
+﻿package com.nui._old_tuio {
 import flash.display.Sprite;
 import flash.display.DisplayObject;	
 import flash.display.InteractiveObject;	

@@ -1,4 +1,4 @@
-﻿package com.nui.tuio {
+﻿package com.nui._old_tuio {
 	
 import flash.events.Event;	
 import flash.display.DisplayObject;	
