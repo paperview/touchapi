@@ -1,6 +1,6 @@
 ﻿package com.nui._old_tuio {
 import flash.display.Sprite;
-import flash.display.DisplayObject;	
+//import flash.display.DisplayObject;	
 import flash.display.InteractiveObject;	
 import flash.display.MovieClip;	
 import flash.geom.Point;
@@ -8,6 +8,7 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import flash.utils.Timer;
+import flash.events.MouseEvent;
 
 	public class TUIOObject 
 	{
@@ -24,12 +25,12 @@ import flash.utils.Timer;
 		public var pressure:Number;		
 		private var isNew:Boolean;
 		public var isAlive:Boolean;		
-		public var obj;
+		public var obj:InteractiveObject;
 		public var spr:Sprite;		
 		private var color:int;	
 		private var DEBUG_TEXT:TextField;
 
-		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int, ang:Number = 0, o = null)
+		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int, ang:Number = 0, o:InteractiveObject = null)
 		{
 			TUIOClass = cls;
 			ID = id;	
@@ -92,8 +93,11 @@ import flash.utils.Timer;
 				spr.graphics.endFill();
 				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
 					//trace("Down : " + localPoint.x + "," + localPoint.y);
+					obj.dispatchEvent(new MouseEvent(MouseEvent.CLICK,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));	
+					obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));	
 					obj.dispatchEvent(new TUIOEvent(TUIOEvent.RollOverEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));													
-					obj.dispatchEvent(new TUIOEvent(TUIOEvent.DownEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));									
+					obj.dispatchEvent(new TUIOEvent(TUIOEvent.DownEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, false, 0, TUIOClass, ID, sID, angle));	
+													
 				} catch (e)
 				{
 						trace("Failed : " + e);
@@ -105,7 +109,7 @@ import flash.utils.Timer;
 			isNew = true;
 		}
 		
-		public function setObjOver(o:DisplayObject)
+		public function setObjOver(o:InteractiveObject)
 		{
 			try {
 				
@@ -114,17 +118,21 @@ import flash.utils.Timer;
 					obj = o;				
 					if(obj) 
 					{
-						var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
+						var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));	
+						obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));				
 						obj.dispatchEvent(new TUIOEvent(TUIOEvent.RollOverEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));					
+										
 					}
 				} else if(obj != o) 
 				{
 					
-					var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));								
+					var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));		
+					obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));							
 					obj.dispatchEvent(new TUIOEvent(TUIOEvent.RollOutEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));
 					if(o)
 					{
 						localPoint = obj.parent.globalToLocal(new Point(x, y));
+						obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));	
 						o.dispatchEvent(new TUIOEvent(TUIOEvent.RollOverEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));
 					}
 					obj = o;								
@@ -140,7 +148,9 @@ import flash.utils.Timer;
 			//trace("End: " + ID);		
 			if(obj && obj.parent)
 			{				
-				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
+				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));	
+				obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));	
+				obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_UP,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));				
 				obj.dispatchEvent(new TUIOEvent(TUIOEvent.RollOutEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));				
 				obj.dispatchEvent(new TUIOEvent(TUIOEvent.UpEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));									
 			}			
