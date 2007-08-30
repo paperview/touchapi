@@ -1,4 +1,4 @@
-﻿package com.nui {
+﻿package com.nui.tuio {
 	
 /**
  * LastChanged:
