@@ -150,7 +150,7 @@ import flash.events.MouseEvent;
 			{				
 				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));	
 				obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));	
-				obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_UP,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));				
+				obj.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));				
 				obj.dispatchEvent(new TUIOEvent(TUIOEvent.RollOutEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));				
 				obj.dispatchEvent(new TUIOEvent(TUIOEvent.UpEvent, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));									
 			}			
