@@ -50,7 +50,7 @@ import flash.text.TextFormat;
 			angle = ang;
 			isAlive = true;		
 
-			spr = new MovieClip();
+			spr = new Sprite();
 			spr.graphics.beginFill(0xFFFFFF , 0.5);					
 			spr.graphics.drawCircle(0,0,5);
 			spr.graphics.endFill();
@@ -64,7 +64,7 @@ import flash.text.TextFormat;
 			
 			var format:TextFormat = new TextFormat();
 			DEBUG_TEXT = new TextField();
-        		format.font = "Verdana";
+        		format.font = 'Verdana';
      		format.color = 0xFFFFFF;
        	 	format.size = 10;
 			DEBUG_TEXT.defaultTextFormat = format;
@@ -94,8 +94,8 @@ import flash.text.TextFormat;
 				spr.graphics.drawCircle(0,0,7);
 				spr.graphics.endFill();
 				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
-					obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OVER, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));													
-					obj.dispatchEvent(new TUIOEvent(TUIOEvent.DOWN, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));									
+				obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OVER, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));													
+				obj.dispatchEvent(new TUIOEvent(TUIOEvent.DOWN, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));									
 				} catch (e:Error)
 				{
 					obj = null;

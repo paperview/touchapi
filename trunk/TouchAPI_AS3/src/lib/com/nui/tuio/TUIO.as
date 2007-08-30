@@ -125,7 +125,7 @@ public class TUIO
 	{
 		var format:TextFormat = new TextFormat();
 		DEBUG_TEXT = new TextField();
-        format.font = "Verdana";
+        format.font = 'Verdana';
      	format.color = 0xFFFFFF;
         format.size = 10;
         
