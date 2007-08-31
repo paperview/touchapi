@@ -9,7 +9,7 @@
  * $URL: https://touchapi.googlecode.com/svn/trunk/TouchAPI_Flex/src/lib/com/nui/tuio/TUIOEvent.as $
  * 
  */
-import flash.display.InteractiveObject;
+import flash.display.DisplayObject;
 import flash.events.Event;	
 
 
@@ -31,9 +31,9 @@ public class TUIOEvent extends Event
 	public var localX:Number;
 	public var localY:Number;
 	public var buttonDown:Boolean;
-	public var relatedObject:InteractiveObject;		
+	public var relatedObject:DisplayObject;		
 	
-	public function TUIOEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false, p_stageX:Number = 0, p_stageY:Number = 0, p_localX:Number = 0, p_localY:Number = 0, p_relatedObject:InteractiveObject = null, p_ctrlKey:Boolean = false, p_altKey:Boolean = false, p_shiftKey:Boolean = false, p_buttonDown:Boolean = false, p_delta:int = 0, p_TUIOClass:String = '2Dcur', p_ID:int = -1, p_sID:int = -1, p_angle:Number = 0.0)
+	public function TUIOEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false, p_stageX:Number = 0, p_stageY:Number = 0, p_localX:Number = 0, p_localY:Number = 0, p_relatedObject:DisplayObject = null, p_ctrlKey:Boolean = false, p_altKey:Boolean = false, p_shiftKey:Boolean = false, p_buttonDown:Boolean = false, p_delta:int = 0, p_TUIOClass:String = '2Dcur', p_ID:int = -1, p_sID:int = -1, p_angle:Number = 0.0)
 	{
 		TUIOClass = p_TUIOClass;
 		sID = sID;

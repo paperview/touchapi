@@ -9,8 +9,7 @@
  * $URL: https://touchapi.googlecode.com/svn/trunk/TouchAPI_Flex/src/lib/com/nui/tuio/TUIOObject.as $
  * 
  */ 
-
-import flash.display.InteractiveObject;
+import flash.display.DisplayObject;
 //import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.geom.Point;
@@ -33,12 +32,12 @@ import flash.text.TextFormat;
 		public var pressure:Number;		
 		private var isNew:Boolean;
 		public var isAlive:Boolean;		
-		public var obj:InteractiveObject; //changed to interactive object
+		public var obj:DisplayObject; //changed to interactive object?
 		public var spr:Sprite;		
 		private var color:int;
 		private var DEBUG_TEXT:TextField;
 
-		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int, ang:Number = 0, o:InteractiveObject = null)
+		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int, ang:Number = 0, o:DisplayObject = null)
 		{
 			TUIOClass = cls;
 			ID = id;	
@@ -64,7 +63,7 @@ import flash.text.TextFormat;
 			
 			var format:TextFormat = new TextFormat();
 			DEBUG_TEXT = new TextField();
-        		format.font = 'Verdana';
+        	format.font = 'Verdana';
      		format.color = 0xFFFFFF;
        	 	format.size = 10;
 			DEBUG_TEXT.defaultTextFormat = format;
@@ -105,7 +104,7 @@ import flash.text.TextFormat;
 			isNew = true;
 		}
 		
-		public function setObjOver(o:InteractiveObject):void
+		public function setObjOver(o:DisplayObject):void
 		{
 			try {
 				
