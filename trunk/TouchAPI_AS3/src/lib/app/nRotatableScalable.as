@@ -96,8 +96,7 @@
 						state = "none";
 					if(blobs.length == 1) 
 					{
-						state = "dragging";	
-						trace(state);				
+						state = "dragging";					
 	
 						curScale = this.scaleX;
 						curAngle = this.rotation;			
@@ -130,12 +129,12 @@
 						blob1 = blobs[0];								
 						blob2 = blobs[1];		
 						
-						var tuioobj1:TUIOObject = TUIO.getObjectById(blob1.id);
+					//	var tuioobj1:TUIOObject = TUIO.getObjectById(blob1.id);
 						
 						// if not found, then it must have died..
 						if(tuioobj1)
 						{
-							var curPt1:Point = parent.globalToLocal(new Point(tuioobj1.x, tuioobj1.y));									
+							//var curPt1:Point = parent.globalToLocal(new Point(tuioobj1.x, tuioobj1.y));									
 							blob1.origX = curPt1.x;
 							blob1.origY = curPt1.y;
 						}									
@@ -325,7 +324,7 @@
 //				x = curPt1.x - ((curLine.x / len2) * len3 * newscale);
 //				y = curPt1.y - ((curLine.y / len2) * len3 * newscale);
 
-				var oldX:Number, oldY:Number;
+				//var oldX:Number, oldY:Number;
 				oldX = x;
 				oldY = y;
 				x = curPosition.x + (curCenter.x - centerOrig.x);

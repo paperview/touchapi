@@ -16,6 +16,7 @@ import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
+import flash.events.MouseEvent;
 
 	public class TUIOObject 
 	{
@@ -93,6 +94,8 @@ import flash.text.TextFormat;
 				spr.graphics.drawCircle(0,0,7);
 				spr.graphics.endFill();
 				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
+				//obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));	
+				//obj.dispatchEvent(new MouseEvent(MouseEvent.CLICK,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));	
 				obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OVER, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));													
 				obj.dispatchEvent(new TUIOEvent(TUIOEvent.DOWN, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));									
 				} catch (e:Error)
@@ -113,16 +116,19 @@ import flash.text.TextFormat;
 					obj = o;				
 					if(obj) 
 					{
-						var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
+						var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));
+						//obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));					
 						obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OVER, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));					
 					}
 				} else if(obj != o) 
 				{					
-					//var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));								
+					//var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));	
+					//obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));								
 					obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OUT, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));
 					if(o)
 					{
 						localPoint = obj.parent.globalToLocal(new Point(x, y));
+						//obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));	
 						o.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OVER, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));
 					}
 					obj = o;								
@@ -137,7 +143,9 @@ import flash.text.TextFormat;
 		{
 			if(obj && obj.parent)
 			{				
-				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
+				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));
+				//obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));					
+				//obj.dispatchEvent(new MouseEvent(MouseEvent.UP,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));	
 				obj.dispatchEvent(new TUIOEvent(TUIOEvent.ROLL_OUT, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));				
 				obj.dispatchEvent(new TUIOEvent(TUIOEvent.UP, true, false, x, y, localPoint.x, localPoint.y, obj, false,false,false, true, 0, TUIOClass, ID, sID, angle));									
 			}			
