@@ -1,7 +1,7 @@
 ﻿package app {
-	import com.nui.TUIO;
-	import com.nui.TUIOEvent;
-	import com.nui.TUIOObject;
+	import com.nui.tuio.TUIO;
+	import com.nui.tuio.TUIOEvent;
+	import com.nui.tuio.TUIOObject;
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.geom.Point;
@@ -96,7 +96,8 @@
 						state = "none";
 					if(blobs.length == 1) 
 					{
-						state = "dragging";					
+						state = "dragging";	
+						trace(state);				
 	
 						curScale = this.scaleX;
 						curAngle = this.rotation;			
