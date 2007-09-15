@@ -34,7 +34,7 @@ import flash.events.MouseEvent;
 		private var isNew:Boolean;
 		public var isAlive:Boolean;		
 		public var obj:DisplayObject; //changed to interactive object?
-		public var spr:Sprite;		
+		public var spr:TUIOCursor;		
 		private var color:int;
 		private var DEBUG_TEXT:TextField;
 
@@ -50,17 +50,10 @@ import flash.events.MouseEvent;
 			angle = ang;
 			isAlive = true;		
 
-			spr = new Sprite();
-			spr.graphics.beginFill(0xFFFFFF , 0.5);					
-			spr.graphics.drawCircle(0,0,5);
-			spr.graphics.endFill();
-			spr.graphics.lineStyle(1, 0x000000, 1);	
-			spr.graphics.drawCircle(0,0,10);		
-			spr.graphics.drawCircle(0,0,11);		
-			spr.graphics.lineStyle(1, 0xFFFFFF, 1);			
-			spr.graphics.drawCircle(0,0,12);		
+			spr = new TUIOCursor(ID.toString());		
 			spr.x = x;
 			spr.y = y;  			
+						
 			
 			var format:TextFormat = new TextFormat();
 			DEBUG_TEXT = new TextField();
