@@ -26,6 +26,10 @@ import flash.system.System;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
+import mx.validators.EmailValidator;
+import flash.events.MouseEvent;
+import flash.display.DisplayObject;
+import mx.skins.halo.ApplicationBackground;
 
 public class TUIO
 {	
@@ -52,6 +56,7 @@ public class TUIO
 	private static var objectArray:Array;
 	private static var DEBUG_TEXT:TextField;
 	
+	private static var EMULATE_FLEX_MOUSE:Boolean;
 
 	/**********************************************************
 	 * INIT
@@ -62,7 +67,7 @@ public class TUIO
 		if( INSTANCE == null ) 
 		{
 			INSTANCE = new TUIO( init );
-			
+
 			STAGE = s;
 						
 			STAGE_WIDTH = stageWidth;
@@ -87,6 +92,8 @@ public class TUIO
 		
 	private function start ():void
 	{
+		EMULATE_FLEX_MOUSE = true;
+		
 		objectArray = new Array();
 		
 		if( DEBUG_MODE )
@@ -200,6 +207,49 @@ public class TUIO
 		return null;
 	}
 
+
+	/**********************************************************
+	 * EMULATE_MOUSE_EVENT
+	***********************************************************/
+	public static function emulateMouseEvent(target:InteractiveObject, type:String, x:Number, y:Number):void
+	{
+		trace("Emulating mouse event: " + type + " on " + target);
+		if (target == null) 
+			return;
+			
+		var p:Point = new Point(x, y);
+		p = target.globalToLocal(p);
+		
+		var me:MouseEvent = new MouseEvent(MouseEvent.CLICK, false , false, p.x, p.y);
+		target.dispatchEvent(me);
+	}	
+
+	private static function findTopObject(obj:DisplayObject):InteractiveObject
+	{
+		if (obj == null)
+		{
+			return null;
+		}
+		else if(obj is TUIOCursor)
+		{
+			return null;
+		}
+		else if (obj is InteractiveObject)
+		{
+			return InteractiveObject(obj);	
+		}
+		else if (obj.parent != null)
+		{
+			return findTopObject(obj.parent);
+		}
+		else
+		{
+			return null;
+		}
+		
+	}
+
+
 	/**********************************************************
 	 * PROCESS_XML
 	***********************************************************/
@@ -214,7 +264,10 @@ public class TUIO
 		
 		// list of TUIO-Objects
 		var tuioObjList:Array;
-
+		
+		// the object at the bottom of the display chain (which the finger is currently over)
+		var bottomObject:InteractiveObject;
+		
 		// TUIO-Object
 		var tuioObj:Object;
 		
@@ -284,6 +337,66 @@ public class TUIO
 				stagePoint = new Point( x,y );
 				tuioObjList = STAGE.stage.getObjectsUnderPoint( stagePoint );
 				
+				
+				if (EMULATE_FLEX_MOUSE)
+				{
+					// List of object on stage, under the given finger
+					// Take the bottom one and have it dispatch an event
+					for (var j:String in tuioObjList)
+					{
+						var obj2:Object = tuioObjList[j];
+						
+						// For now we don't care about the cursor, but later on we might want to do something
+						// with it when you hover over a button for instance... or do we?
+						// Maybe make the other cursors transparent when dragging? 
+						//(to indicate that you can only use one finger when dragging and using this method of mouse eventing the standard components)
+						if (obj2 is TUIOCursor)// || obj2 is ApplicationBackground)
+						{
+							//continue;
+						}
+						trace("Found object under point. Object" + j + "is: " + obj2 + " at " + obj2.x + ", " +obj2.y);
+					}
+					trace("****************************");
+					
+					
+					bottomObject = findTopObject( tuioObjList[tuioObjList.length-1] );
+					
+					trace("Obj is: " + bottomObject);
+					/*
+					
+					var bottomIndex:Number = -1;
+					for (var k:Number = tuioObjList.length-1; k >= 0; k--)
+					{
+						trace("Looking for bottom object...");
+						if ( tuioObjList[k] is InteractiveObject )
+						{
+							if (tuioObjList[k] is TUIOCursor)
+							{
+								// Don't do anything.
+							}
+							else
+							{								
+								trace("Bottom object has index: " + k.toString());
+								bottomIndex = k;
+								continue;
+							}
+						}
+					}
+					if (bottomIndex != -1)
+					{
+						trace("Found bottomObject!");
+						
+						bottomObject = InteractiveObject(tuioObjList[bottomIndex]);	
+						trace("Dispatched event from: " + bottomObject);
+					}
+					else
+					{
+						//trace("Warning: No bottomObject found");
+						bottomObject = null;
+					}
+					*/
+				}
+				
 				if( node.@NAME == '/tuio/2Dobj' )
 				{		
 					
@@ -339,7 +452,12 @@ public class TUIO
 						{
 							tuioObj = new TUIOObject('2Dcur', id, x, y, X, Y, objectArray.length, 0 );
 							//tuioObj.area = a;
-							STAGE.addChild( tuioObj.spr );								
+							STAGE.addChild( tuioObj.spr );
+							
+							if (EMULATE_FLEX_MOUSE && bottomObject != null)
+								emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);
+							
+														
 							objectArray.push( tuioObj );
 						} else {
 							tuioObj.spr.x = x;
@@ -350,6 +468,18 @@ public class TUIO
 							tuioObj.dX = X;
 							tuioObj.dY = Y;								
 							tuioObj.setObjOver( dobj );
+							
+							// TODO:
+							/*
+									To get roll over and roll out to work we need to tell the *last* object that the finger has rolled out
+									This is done by comparing the bottomObject I presume. 
+									the 'relatedObject' property of MouseEvent should get the new bottomObject on roll out.
+									
+									
+							*/
+							
+							if (EMULATE_FLEX_MOUSE && bottomObject != null)
+								emulateMouseEvent(bottomObject, MouseEvent.MOUSE_MOVE, x, y);
 						}	
 					}	
 				}
