@@ -26,10 +26,10 @@ import flash.system.System;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
-import mx.validators.EmailValidator;
+//import mx.validators.EmailValidator;
 import flash.events.MouseEvent;
 import flash.display.DisplayObject;
-import mx.skins.halo.ApplicationBackground;
+//import mx.skins.halo.ApplicationBackground;
 
 public class TUIO
 {	
@@ -420,7 +420,9 @@ public class TUIO
 						if( tuioObj == null )
 						{
 							tuioObj = new TUIOObject('2Dobj', id, x, y, X, Y, objectArray.length, a );
-							STAGE.addChild( tuioObj.spr );							
+							STAGE.addChild( tuioObj.spr );		
+							if (EMULATE_FLEX_MOUSE && bottomObject != null)
+								emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);						
 							objectArray.push( tuioObj );
 						} else {
 							tuioObj.spr.x = x;
