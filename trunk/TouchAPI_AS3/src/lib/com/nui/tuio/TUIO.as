@@ -31,7 +31,6 @@ import flash.events.MouseEvent;
 import flash.display.DisplayObject;
 import mx.core.UIComponent;
 
-
 public class TUIO extends UIComponent
 {	
 	private static var INSTANCE:TUIO;	
@@ -422,8 +421,8 @@ public class TUIO extends UIComponent
 						{
 							tuioObj = new TUIOObject('2Dobj', id, x, y, X, Y, objectArray.length, a );
 							STAGE.addChild( tuioObj.spr );		
-							//if (EMULATE_FLEX_MOUSE && bottomObject != null)
-						   // emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);						
+							if (EMULATE_FLEX_MOUSE && bottomObject != null)
+						    emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);						
 							objectArray.push( tuioObj );
 						} else {
 							tuioObj.spr.x = x;
@@ -458,7 +457,7 @@ public class TUIO extends UIComponent
 							STAGE.addChild( tuioObj.spr );
 							
 							if (EMULATE_FLEX_MOUSE && bottomObject != null)
-								emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);
+							emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);
 							
 														
 							objectArray.push( tuioObj );

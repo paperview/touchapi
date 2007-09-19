@@ -13,10 +13,8 @@ import flash.display.DisplayObject;
 //import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.geom.Point;
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
-import flash.text.TextFormat;
-import flash.events.MouseEvent;
+//import flash.events.MouseEvent;
+
 
 	public class TUIOObject 
 	{
@@ -66,7 +64,7 @@ import flash.events.MouseEvent;
 				try
 				{	
 				spr.graphics.beginFill( 0xFFFFFF , 1);					
-				spr.graphics.drawCircle(0,0,7);
+				spr.graphics.drawCircle(0,0,20);
 				spr.graphics.endFill();
 				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
 				//obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));	
