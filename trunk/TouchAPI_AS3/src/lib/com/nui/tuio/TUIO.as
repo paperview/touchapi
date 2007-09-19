@@ -447,16 +447,18 @@ public class TUIO
 						X = Number( node.ARGUMENT[ 4 ].@VALUE );
 						Y = Number( node.ARGUMENT[ 5 ].@VALUE );
 						m = node.ARGUMENT[ 6 ].@VALUE;
-						//a = node.ARGUMENT[ 7 ].@VALUE;							
+						//a = node.ARGUMENT[ 7 ].@VALUE;		
+						
+						if (bottomObject != null)
+							emulateMouseEvent(bottomObject, MouseEvent.CLICK, x, y);		
+						trace('~');						
 
 						tuioObj = getObjectById( id );
 						if( tuioObj == null )
-						{
+						{								
 							tuioObj = new TUIOObject('2Dcur', id, x, y, X, Y, objectArray.length, 0 );
-							//tuioObj.area = a;
-							STAGE.addChild( tuioObj.spr );							
-							//if (EMULATE_FLEX_MOUSE && bottomObject != null)
-							//emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);											
+							//tuioObj.area = a;		
+							STAGE.addChild( tuioObj.spr );															
 							objectArray.push( tuioObj );
 						} else {
 							tuioObj.spr.x = x;
@@ -477,8 +479,8 @@ public class TUIO
 									
 							*/
 							
-							if (EMULATE_FLEX_MOUSE && bottomObject != null)
-							emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);
+							//if (EMULATE_FLEX_MOUSE && bottomObject != null)
+							//emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);
 						}	
 					}	
 				}
