@@ -41,7 +41,7 @@ package com.nui.tuio
 		
 		private var wrappedComponent:Sprite;
 
-		public function TouchlibWrapper(cmp:Sprite)
+		public function TUIOWrapper(cmp:Sprite)
 		{
 			wrappedComponent = cmp;
 			addChild(cmp);
