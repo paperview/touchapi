@@ -26,12 +26,13 @@ import flash.system.System;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
-//import mx.validators.EmailValidator;
+
 import flash.events.MouseEvent;
 import flash.display.DisplayObject;
-//import mx.skins.halo.ApplicationBackground;
+import mx.core.UIComponent;
 
-public class TUIO
+
+public class TUIO extends UIComponent
 {	
 	private static var INSTANCE:TUIO;	
 
@@ -354,14 +355,14 @@ public class TUIO
 						{
 							//continue;
 						}
-						trace("Found object under point. Object" + j + "is: " + obj2 + " at " + obj2.x + ", " +obj2.y);
+						//trace("Found object under point. Object" + j + "is: " + obj2 + " at " + obj2.x + ", " +obj2.y);
 					}
-					trace("****************************");
+					//trace("****************************");
 					
 					
 					bottomObject = findTopObject( tuioObjList[tuioObjList.length-1] );
 					
-					trace("Obj is: " + bottomObject);
+					//trace("Obj is: " + bottomObject);
 					/*
 					
 					var bottomIndex:Number = -1;
@@ -421,8 +422,8 @@ public class TUIO
 						{
 							tuioObj = new TUIOObject('2Dobj', id, x, y, X, Y, objectArray.length, a );
 							STAGE.addChild( tuioObj.spr );		
-							if (EMULATE_FLEX_MOUSE && bottomObject != null)
-								emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);						
+							//if (EMULATE_FLEX_MOUSE && bottomObject != null)
+						   // emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);						
 							objectArray.push( tuioObj );
 						} else {
 							tuioObj.spr.x = x;
@@ -480,8 +481,8 @@ public class TUIO
 									
 							*/
 							
-							if (EMULATE_FLEX_MOUSE && bottomObject != null)
-								emulateMouseEvent(bottomObject, MouseEvent.MOUSE_MOVE, x, y);
+							//if (EMULATE_FLEX_MOUSE && bottomObject != null)
+							//emulateMouseEvent(bottomObject, MouseEvent.MOUSE_MOVE, x, y);
 						}	
 					}	
 				}
@@ -490,7 +491,8 @@ public class TUIO
 		if(DEBUG_MODE)
 		{
 			DEBUG_TEXT.text = '';
-			
+			DEBUG_TEXT.x = 2000;
+			DEBUG_TEXT.y = 2000;
 			for ( var i:int=0; i<objectArray.length; i++ )
 			{
 				if( objectArray[i].isAlive == false )

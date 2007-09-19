@@ -54,24 +54,6 @@ import flash.events.MouseEvent;
 			spr.x = x;
 			spr.y = y;  			
 						
-			
-			var format:TextFormat = new TextFormat();
-			DEBUG_TEXT = new TextField();
-        	format.font = 'Verdana';
-     		format.color = 0xFFFFFF;
-       	 	format.size = 10;
-			DEBUG_TEXT.defaultTextFormat = format;
-			DEBUG_TEXT.autoSize = TextFieldAutoSize.LEFT;
-			DEBUG_TEXT.background = true;	
-			DEBUG_TEXT.backgroundColor = 0x000000;	
-			DEBUG_TEXT.border = true;	
-			DEBUG_TEXT.text = '';
-			DEBUG_TEXT.appendText('  '+ID+'  ');
-			
-			DEBUG_TEXT.x = 15;
-			DEBUG_TEXT.y = -8;  
-			spr.addChild(DEBUG_TEXT);
-
 			try {
  	 			obj = o;
 			} catch (e:Error)
