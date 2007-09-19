@@ -29,9 +29,8 @@ import flash.text.TextFormat;
 
 import flash.events.MouseEvent;
 import flash.display.DisplayObject;
-import mx.core.UIComponent;
 
-public class TUIO extends UIComponent
+public class TUIO 
 {	
 	private static var INSTANCE:TUIO;	
 
@@ -142,7 +141,6 @@ public class TUIO extends UIComponent
 		DEBUG_TEXT.backgroundColor = 0x000000;	
 		DEBUG_TEXT.border = true;	
 		DEBUG_TEXT.borderColor = 0x333333;	
-	
 		
 		STAGE.addChild( DEBUG_TEXT );
 	}
@@ -155,6 +153,7 @@ public class TUIO extends UIComponent
 	{
 		RECORDED_XML = <OSCPackets></OSCPackets>;
 			
+		/*
 		var record_btn:Sprite = new Sprite();
 	
 		record_btn.graphics.lineStyle( 2, 0x202020 );
@@ -163,6 +162,7 @@ public class TUIO extends UIComponent
 		record_btn.addEventListener( TUIOEvent.DOWN, stopRecording );
 		
 		STAGE.addChild( record_btn );
+		*/
 	}
 
 	/**********************************************************
@@ -455,8 +455,8 @@ public class TUIO extends UIComponent
 							tuioObj = new TUIOObject('2Dcur', id, x, y, X, Y, objectArray.length, 0 );
 							//tuioObj.area = a;
 							STAGE.addChild( tuioObj.spr );							
-							if (EMULATE_FLEX_MOUSE && bottomObject != null)
-							emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);											
+							//if (EMULATE_FLEX_MOUSE && bottomObject != null)
+							//emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);											
 							objectArray.push( tuioObj );
 						} else {
 							tuioObj.spr.x = x;
@@ -478,7 +478,7 @@ public class TUIO extends UIComponent
 							*/
 							
 							if (EMULATE_FLEX_MOUSE && bottomObject != null)
-							emulateMouseEvent(bottomObject, MouseEvent.MOUSE_MOVE, x, y);
+							emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);
 						}	
 					}	
 				}

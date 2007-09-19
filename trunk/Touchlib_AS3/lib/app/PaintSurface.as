@@ -44,15 +44,15 @@
 		private var colorButton_8:Sprite;	
 		private var colorButton_9:Sprite;		
 		
-		public function PaintSurface():void
+		public function PaintSurface(sizeX:int, sizeY:int):void
 		{
 
 			blobs = new Array();
-			paintBmpData = new BitmapData(800, 600, true, 0x00000000);
+			paintBmpData = new BitmapData(sizeX, sizeY, true, 0x00000000);
 			
-			brush = new BrushObj();
+			brush = new BrushObject();
 			
-			trace(brush);
+			//trace(brush);
 			this.addEventListener(TUIOEvent.MoveEvent, this.moveHandler);			
 			this.addEventListener(TUIOEvent.DownEvent, this.downEvent);						
 			this.addEventListener(TUIOEvent.UpEvent, this.upEvent);									
@@ -146,7 +146,7 @@
 						       1, 1, 1,
 							   1, 1, 1 ] ;
 			filter = new ConvolutionFilter(3, 3, cmat, 5, 0);
-			filter2 = new BlurFilter(17,17);
+			filter2 = new BlurFilter(15,17);
 			
 //			filter = new BlurFilter(5, 5);
 			addChild(paintBmp);					

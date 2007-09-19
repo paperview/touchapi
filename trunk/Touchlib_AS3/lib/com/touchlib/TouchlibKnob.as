@@ -99,7 +99,7 @@ package com.touchlib
 		function updateGraphics()
 		{
 			gfxIndicator.rotation = (knobValue+0.5) * 360;
-			indicatorText.text = knobValue;
+			//indicatorText.text = knobValue;
 		}
 
 		function knobStartDrag()

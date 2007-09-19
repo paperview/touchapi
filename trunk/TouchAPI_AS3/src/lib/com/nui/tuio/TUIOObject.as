@@ -34,7 +34,6 @@ import flash.geom.Point;
 		public var obj:DisplayObject; 
 		public var spr:TUIOCursor;		
 		private var color:int;
-		private var DEBUG_TEXT:TextField;
 
 		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int, ang:Number = 0, o:DisplayObject = null)
 		{
