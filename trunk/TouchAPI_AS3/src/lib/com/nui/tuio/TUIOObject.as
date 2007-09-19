@@ -23,7 +23,7 @@ import flash.geom.Point;
 		public var dX:Number;
 		public var dY:Number;						
 		public var area:Number;		
-		public var TUIOClass:String;		// cur or Obj.. 
+		public var TUIOClass:String;
 		public var ID:int;
 		public var sID:int;	
 		public var xid:int;
@@ -31,7 +31,7 @@ import flash.geom.Point;
 		public var pressure:Number;		
 		private var isNew:Boolean;
 		public var isAlive:Boolean;		
-		public var obj:DisplayObject; //changed to interactive object?
+		public var obj:DisplayObject; 
 		public var spr:TUIOCursor;		
 		private var color:int;
 		private var DEBUG_TEXT:TextField;

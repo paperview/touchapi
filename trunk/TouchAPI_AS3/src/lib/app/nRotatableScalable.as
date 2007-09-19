@@ -1,7 +1,5 @@
 ﻿package app {
-	import com.nui.tuio.TUIO;
-	import com.nui.tuio.TUIOEvent;
-	import com.nui.tuio.TUIOObject;
+	import com.nui.tuio.*;
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.geom.Point;
