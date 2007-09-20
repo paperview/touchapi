@@ -9,7 +9,7 @@ package app.documentClass {
 	import flash.display.Sprite;
 	import flash.system.Capabilities;
 	import whitenoise.*;
-	import app.createMultiKey.*;
+	import AddPiano;
 	
 	public class MultiKey extends Sprite {
 		
@@ -22,10 +22,13 @@ package app.documentClass {
 		public function MultiKey() {
 
 			TUIO.init( this, 'localhost', 3000, Capabilities.screenResolutionX, Capabilities.screenResolutionY, '', true );
-			
+						
+			var mainClip:Sprite = new Sprite();	
+			this.addChild(mainClip);
+						
 			//first keyboard							
 			var fullPiano = new AddPiano(octaves1);
-			addChild(fullPiano);			
+			//addChild(fullPiano);			
 			fullPiano.x = fullPiano.width/3.6;
 			fullPiano.y = fullPiano.height/2;			
 			fullPiano.scaleX = .32;
@@ -34,7 +37,7 @@ package app.documentClass {
 			
 			//second keyboard	
 			var fullPiano2 = new AddPiano(octaves2);
-			addChild(fullPiano2);			
+			//addChild(fullPiano2);			
 			
 			if (octaves2 == 1) {
 				fullPiano2.scaleX = .8;
@@ -49,6 +52,9 @@ package app.documentClass {
 				fullPiano2.scaleY = .42;
 			}
 
+			mainClip.addChild(fullPiano);
+			mainClip.addChild(fullPiano2);
+			
 /*          //Keyboard surface. Needs to be fixed. Keyboards shouldn't move clicking on them (unless highlighted).
 			var pianoSurface = new PianoSurface();
 			this.addChild(pianoSurface);
