@@ -8,8 +8,8 @@ package app.documentClass {
 
 	import flash.display.Sprite;
 	import flash.system.Capabilities;
-	import whitenoise.*;
-	import AddPiano;
+	import com.touchlib.*;
+	import app.createMultiKey.*;
 	
 	public class MultiKey extends Sprite {
 		
