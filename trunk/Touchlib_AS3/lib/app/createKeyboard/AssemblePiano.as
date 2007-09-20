@@ -5,8 +5,8 @@ package app.createMultiKey {
 	import flash.media.Sound;
 	import flash.media.SoundTransform;
 	import flash.net.URLRequest;
-	import whitenoise.*;
-	import RotatableScalable;
+	import com.touchlib.*;
+	import app.createKeyboard.*;
 	import mp3.*;
 	
 

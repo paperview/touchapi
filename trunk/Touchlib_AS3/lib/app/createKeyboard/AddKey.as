@@ -15,9 +15,8 @@ package app.createMultiKey {
     import flash.filters.BitmapFilter;
     import flash.filters.BitmapFilterQuality;
     import flash.filters.DropShadowFilter; 
-    import DrawNaturalKey;	
-	import DrawSharpKey;
-	import RotatableScalable;
+	import com.touchlib.*;
+	import app.createKeyboard.*;
 	
 
 	public class AddKey extends RotatableScalable {

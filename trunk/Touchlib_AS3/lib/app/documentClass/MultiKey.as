@@ -9,7 +9,7 @@ package app.documentClass {
 	import flash.display.Sprite;
 	import flash.system.Capabilities;
 	import whitenoise.*;
-	import AddPiano;
+	import app.createKeyboard.*;
 	
 	public class MultiKey extends Sprite {
 		

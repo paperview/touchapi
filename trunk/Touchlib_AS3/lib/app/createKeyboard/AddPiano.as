@@ -19,9 +19,8 @@ package app.createMultiKey {
 	import flash.media.SoundMixer;
 	import flash.media.SoundTransform;
 
-    import AssemblePiano;
-	import RotatableScalable;
-	import whitenoise.*;
+	import com.touchlib.*;
+	import app.createKeyboard.*;
 	import flash.display.Sprite;
 	
 	

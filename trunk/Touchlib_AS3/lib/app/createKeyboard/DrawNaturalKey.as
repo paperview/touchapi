@@ -7,7 +7,8 @@
 	import flash.display.GradientType;
 	import flash.display.SpreadMethod;
 	import flash.geom.Matrix;
-	import whitenoise.*;
+	import com.touchlib.*;
+	import app.createKeyboard.*;
 
 
 	public class DrawNaturalKey extends Sprite {

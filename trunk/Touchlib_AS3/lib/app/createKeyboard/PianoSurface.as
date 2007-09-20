@@ -2,7 +2,9 @@
 	
 	import flash.display.Shape;		
 	import flash.events.Event;
-	import flash.geom.Point;		
+	import flash.geom.Point;
+	import com.touchlib.*;
+	import app.createKeyboard.*;
 	
 	public class PianoSurface extends RotatableScalable {
 		
