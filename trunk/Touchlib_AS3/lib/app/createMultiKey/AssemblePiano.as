@@ -6,7 +6,7 @@ package app.createMultiKey {
 	import flash.media.SoundTransform;
 	import flash.net.URLRequest;
 	import com.touchlib.*;
-	import app.createKeyboard.*;
+	import app.createMultiKey.*;
 	import mp3.*;
 	
 

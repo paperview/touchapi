@@ -9,7 +9,7 @@ package app.createMultiKey {
 	import flash.display.SpreadMethod;
 	import flash.geom.Matrix;
 	import com.touchlib.*;
-	import app.createKeyboard.*;
+	import app.createMultiKey.*;
 
 
 	public class DrawSharpKey extends Sprite {

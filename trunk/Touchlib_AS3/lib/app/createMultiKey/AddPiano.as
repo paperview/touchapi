@@ -20,7 +20,7 @@ package app.createMultiKey {
 	import flash.media.SoundTransform;
 
 	import com.touchlib.*;
-	import app.createKeyboard.*;
+	import app.createMultiKey.*;
 	import flash.display.Sprite;
 	
 	

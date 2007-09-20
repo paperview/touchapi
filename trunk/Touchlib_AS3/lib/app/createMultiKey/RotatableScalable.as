@@ -4,7 +4,7 @@ package app.createMultiKey {
 	import flash.display.*;
 	import flash.events.*;
 	import com.touchlib.*;
-	import app.createKeyboard.*;
+	import app.createMultiKey.*;
 	import flash.geom.*;
 	
 	public dynamic class RotatableScalable extends MovieClip
