@@ -7,8 +7,6 @@ package app.createMultiKey {
 	import flash.net.URLRequest;
 	import com.touchlib.*;
 	import app.createMultiKey.*;
-	import mp3.*;
-	
 
 	public class AssemblePiano extends Sprite {			
 	

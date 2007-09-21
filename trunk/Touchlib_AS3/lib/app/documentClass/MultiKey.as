@@ -8,7 +8,7 @@ package app.documentClass {
 
 	import flash.display.Sprite;
 	import flash.system.Capabilities;
-	import com.touchlib.*;
+	import com.touchlib.TUIO;
 	import app.createMultiKey.*;
 	
 	public class MultiKey extends Sprite {
