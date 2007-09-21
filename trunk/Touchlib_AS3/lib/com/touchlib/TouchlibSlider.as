@@ -103,6 +103,7 @@ package com.touchlib
 			if(f > 1.0)
 				f = 1.0;
 			sliderValue = f;
+			trace(sliderValue);
 			
 			updateGraphics();
 			

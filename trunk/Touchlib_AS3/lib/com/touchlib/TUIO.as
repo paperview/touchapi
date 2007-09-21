@@ -28,8 +28,8 @@ import flash.text.TextFormat;
 		
 
 		public static var debugMode:Boolean;		
+		public static var DEBUG_TEXT:TextField;
 		
-		static var DEBUG_TEXT:TextField;
 		static var recordedXML:XML;
 		static var bRecording:Boolean = true;
 		static var xmlPlaybackURL:String;  
@@ -48,7 +48,6 @@ import flash.text.TextFormat;
 			if(bInitialized)
 				return;
 			debugMode = dbug;
-			
 			bInitialized = true;
 			stagewidth = wd;
 			stageheight = ht;
@@ -72,11 +71,11 @@ import flash.text.TextFormat;
 			} catch (e:Event)
 			{
 			}
-			
+			DEBUG_TEXT = new TextField();
 			if(debugMode)
 			{
 				var format:TextFormat = new TextFormat();
-				DEBUG_TEXT = new TextField();
+			
        			format.font = "Verdana";
      			format.color = 0xFFFFFF;
         		format.size = 10;
@@ -95,7 +94,7 @@ import flash.text.TextFormat;
 				buttonSprite.graphics.beginFill(0xF80101,0.5);
 				buttonSprite.graphics.drawRoundRect(10, 10, 200, 200,6);				 
 				buttonSprite.addEventListener(TUIOEvent.DownEvent, stopRecording);				 
-				//thestage.addChild(buttonSprite);
+				thestage.addChild(buttonSprite);
 				 
 				 if(xmlPlaybackURL != "")
 				 {
@@ -239,8 +238,7 @@ import flash.text.TextFormat;
 							if(tuioobj == null)
 							{
 								tuioobj = new TUIOObject("2Dobj", id, x, y, X, Y, sID, a, dobj);
-								thestage.addChild(tuioobj.spr);
-								
+								thestage.addChild(tuioobj.spr);								
 								objectArray.push(tuioobj);
 								tuioobj.notifyCreated();								
 							} else {
@@ -291,7 +289,7 @@ import flash.text.TextFormat;
 								dobj = displayObjArray[displayObjArray.length-1];							
 														
 								
-							var sztmp:String="";
+							//var sztmp:String="";
 //							for(var i=0; i<displayObjArray.length; i++)
 //								sztmp += (displayObjArray[i] is InteractiveObject) + ",";
 //							trace(sztmp);
@@ -340,7 +338,7 @@ import flash.text.TextFormat;
 				DEBUG_TEXT.text = "";
 				DEBUG_TEXT.y = -2000;
 				DEBUG_TEXT.x = -2000;		
-			for (var i=0; i<objectArray.length; i++ )
+			for (var i:int=0; i<objectArray.length; i++ )
 			{
 				if(objectArray[i].isAlive == false)
 				{
@@ -353,8 +351,7 @@ import flash.text.TextFormat;
 					if(debugMode)
 						DEBUG_TEXT.appendText("  " + (i + 1) +" - " +objectArray[i].ID + "  X:" + int(objectArray[i].x) + "  Y:" + int(objectArray[i].y) + "  \n");
 						DEBUG_TEXT.x = stagewidth-160;
-						DEBUG_TEXT.y = 8;		
-						//trace(stagewidth);		
+						DEBUG_TEXT.y = 8;	
 				}
 			}
 		}

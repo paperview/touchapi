@@ -48,9 +48,8 @@ import flash.events.Event;
 			dY = dy;
 			sID = sid;
 			angle = ang;
-			isAlive = true;			
-
-			spr = new TUIOCursor(ID.toString());		
+			isAlive = true;		
+			spr = new TUIOCursor(ID.toString());			
 			spr.x = x;
 			spr.y = y;  			
 			
