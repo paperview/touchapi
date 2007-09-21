@@ -47,12 +47,10 @@
 		public function PaintSurface(sizeX:int, sizeY:int):void
 		{
 
-			blobs = new Array();
 			paintBmpData = new BitmapData(sizeX, sizeY, true, 0x00000000);
-			
 			brush = new BrushObject();
-			
-			//trace(brush);
+			blobs = new Array();
+						
 			this.addEventListener(TUIOEvent.MoveEvent, this.moveHandler);			
 			this.addEventListener(TUIOEvent.DownEvent, this.downEvent);						
 			this.addEventListener(TUIOEvent.UpEvent, this.upEvent);									

@@ -19,7 +19,7 @@ package app.documentClass
 		public function Paint() {
 		trace("Paint Initialized");
 		TUIO.init( this, 'localhost', 3000, 800, 600, '', true );
-		var naturalPaint = new PaintSurface();
+		var naturalPaint = new PaintSurface(800, 600);
 		this.addChild(naturalPaint);
 		}
 	}
