@@ -8,9 +8,6 @@ import flash.display.DisplayObject;
 import flash.display.InteractiveObject;	
 import flash.display.MovieClip;	
 import flash.geom.Point;
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
-import flash.text.TextFormat;
 import flash.utils.Timer;
 import flash.events.MouseEvent;
 import flash.events.Event;
@@ -39,7 +36,6 @@ import flash.events.Event;
 		private var color:int;
 		
 		var aListeners:Array;
-		private var DEBUG_TEXT:TextField;
 
 		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int = -1, ang:Number = 0, o:Object = null)
 		{
@@ -54,42 +50,10 @@ import flash.events.Event;
 			angle = ang;
 			isAlive = true;			
 
-			spr = new MovieClip();
-			spr.graphics.beginFill(0xFFFFFF , 0.5);					
-			spr.graphics.drawCircle(0,0,5);
-			spr.graphics.drawCircle(0,0,10);
-			spr.graphics.endFill();
-			spr.graphics.lineStyle(1, 0x000000, 1);	
-			spr.graphics.drawCircle(0,0,10);		
-			spr.graphics.drawCircle(0,0,11);		
-			spr.graphics.lineStyle(1, 0x000000, 1);			
-			spr.graphics.drawCircle(0,0,12);		
-			//spr.blendMode="invert";		
-			//var dropshadow:DropShadowFilter=new DropShadowFilter(0,90, 0xFFFFFF, 0.5, 20, 20);
-			//spr.filters=new Array(dropshadow);
+			spr = new TUIOCursor(ID.toString());		
 			spr.x = x;
 			spr.y = y;  			
 			
-			var format:TextFormat = new TextFormat();
-			DEBUG_TEXT = new TextField();
-        	format.font = "Verdana";
-     		format.color = 0xf0f0f0;
-        	format.size = 10;
-			DEBUG_TEXT.defaultTextFormat = format;
-			DEBUG_TEXT.autoSize = TextFieldAutoSize.LEFT;
-			DEBUG_TEXT.background = true;	
-			DEBUG_TEXT.backgroundColor = 0x000000;
-
-				
-			DEBUG_TEXT.border = true;	
-			DEBUG_TEXT.text = '';
-			DEBUG_TEXT.appendText('  '+(ID+1)+'  ');
-			//DEBUG_TEXT.appendText( 'var' + ID +"var"+ sID + " (x:" + int(x) + ", y:" + int(y) + ")");
-			
-			DEBUG_TEXT.x = 15;
-			DEBUG_TEXT.y = -8;  
-			spr.addChild(DEBUG_TEXT);
-			//DEBUG_TEXT.text = '';
 			
 			try {
  	 			obj = o;
