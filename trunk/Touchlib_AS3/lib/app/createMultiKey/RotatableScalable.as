@@ -246,10 +246,10 @@ package app.createMultiKey {
 		
 		private function update(e:Event)
 		{			
+			if(!noMove){
+		
 			if(state == "dragging")
-			{
-				if(!noMove){
-					
+			{									
 				var tuioobj:TUIOObject = TUIO.getObjectById(blob1.id);
 				
 				// if not found, then it must have died..
@@ -281,8 +281,8 @@ package app.createMultiKey {
 				dX += x - oldX;
 				dY += y - oldY;		
 				
-				}
 			}
+			
 			
 			
 			else if(state == "rotatescale")
@@ -388,7 +388,8 @@ package app.createMultiKey {
 				}
 			}
 			
-			}		
+			}
+	}
 	}
 }
 
