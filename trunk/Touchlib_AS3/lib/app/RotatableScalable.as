@@ -33,11 +33,19 @@
 			state = "none";
 
 			blobs = new Array();
-			this.addEventListener(TUIOEvent.MoveEvent, this.moveHandler);			
+			/*
+			this.addEventListener(MouseEvent.MOUSE_DOWN, this.downEvent);						
+			this.addEventListener(MouseEvent.MOUSE_UP, this.upEvent);									
+			this.addEventListener(MouseEvent.ROLL_OVER, this.rollOverHandler);									
+			this.addEventListener(MouseEvent.ROLL_OUT, this.rollOutHandler);							
+			this.addEventListener(MouseEvent.MOUSE_MOVE, this.moveHandler);			
+			*/
 			this.addEventListener(TUIOEvent.DownEvent, this.downEvent);						
 			this.addEventListener(TUIOEvent.UpEvent, this.upEvent);									
 			this.addEventListener(TUIOEvent.RollOverEvent, this.rollOverHandler);									
-			this.addEventListener(TUIOEvent.RollOutEvent, this.rollOutHandler);												
+			this.addEventListener(TUIOEvent.RollOutEvent, this.rollOutHandler);						
+			this.addEventListener(TUIOEvent.MoveEvent, this.moveHandler);	
+			
 			this.addEventListener(Event.ENTER_FRAME, this.update);
 			
 			dX = 0;

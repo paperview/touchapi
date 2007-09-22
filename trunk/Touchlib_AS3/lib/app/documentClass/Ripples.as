@@ -14,7 +14,6 @@
 		TUIO.init( this, 'localhost', 3000, 800, 600, '', true );
 		var subobj = new RippleSurface();
 		this.addChild(subobj);
-
 		}
 	}
 }

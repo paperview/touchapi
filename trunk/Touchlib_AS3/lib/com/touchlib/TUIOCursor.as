@@ -24,7 +24,7 @@
 			graphics.lineStyle(1, 0x000000, 1);			
 			graphics.drawCircle(0,0,12);	
 		}else{
-			graphics.beginFill(0xFFFFFF , 0.10);					
+			graphics.beginFill(0xFFFFFF , 0.35);					
 			graphics.drawCircle(0,0,12);
 			}	
 			if(TUIO.debugMode){

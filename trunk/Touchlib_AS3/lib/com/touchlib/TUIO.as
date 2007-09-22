@@ -89,12 +89,18 @@ import flash.text.TextFormat;
 				thestage.addChild( DEBUG_TEXT );		
 		
 				recordedXML = <OSCPackets></OSCPackets>;				
-				var buttonSprite:Sprite = new Sprite();
-				buttonSprite.graphics.lineStyle(2, 0x202020);
-				buttonSprite.graphics.beginFill(0xF80101,0.5);
-				buttonSprite.graphics.drawRoundRect(10, 10, 200, 200,6);				 
-				buttonSprite.addEventListener(TUIOEvent.DownEvent, stopRecording);				 
-				thestage.addChild(buttonSprite);
+				
+				var debug_btn:Sprite = new Sprite();
+				debug_btn.graphics.beginFill(0xF80101,0.5);
+				debug_btn.graphics.drawRoundRect(10, 10, 100, 100,10);				 
+				debug_btn.addEventListener(TUIOEvent.DownEvent, stopRecording);				 
+				thestage.addChild(debug_btn);
+				
+				var cursor_btn:Sprite = new Sprite();
+				cursor_btn.graphics.beginFill(0xFFFFFF,0.5);
+				cursor_btn.graphics.drawRoundRect(10, 115, 100, 100,10);				 
+				cursor_btn.addEventListener(TUIOEvent.DownEvent, DebugToggle);				 
+				thestage.addChild(cursor_btn);
 				 
 				 if(xmlPlaybackURL != "")
 				 {
@@ -343,6 +349,7 @@ import flash.text.TextFormat;
 				if(objectArray[i].isAlive == false)
 				{
 					objectArray[i].removeObject();
+					
 					thestage.removeChild(objectArray[i].spr);
 					objectArray.splice(i, 1);
 					i--;
@@ -358,21 +365,31 @@ import flash.text.TextFormat;
 		
 
 		
-		private static function stopRecording(e:Event):void
+		private static function stopRecording(e:TUIOEvent):void
 		{
 			// show XML
-			bRecording = false;
-			debugMode = false;
+			//bRecording = false;
+			//debugMode = false;
 			//trace(recordedXML.toString());
+			
 		}
-		
+		private static function DebugToggle(e:TUIOEvent):void
+			{
+				if (debugMode) {
+				debugMode = false; 
+				trace("debug mode off");
+				}
+				else {debugMode = true;
+				}				
+			}
+			
         private static function closeHandler(event:Event):void {
             //trace("closeHandler: " + event);
         }
 
         private static function connectHandler(event:Event):void {
 
-            trace("TUIO Connected : " + event);
+            trace("TUIO Socket Enabled: " + event);
         }
 
         private static function dataHandler(event:DataEvent):void {
@@ -393,10 +410,11 @@ import flash.text.TextFormat;
         private static function progressHandler(event:ProgressEvent):void {
             //trace("progressHandler loaded:" + event.bytesLoaded + " total: " + event.bytesTotal);
         }
-
         private static function securityErrorHandler(event:SecurityErrorEvent):void {
             trace("securityErrorHandler: " + event);
 //			thestage.tfDebug.appendText("securityError: " + event + "\n");			
-        }
+        }	
+		
+		
 	}
 }

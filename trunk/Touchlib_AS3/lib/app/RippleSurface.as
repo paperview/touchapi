@@ -83,7 +83,7 @@
 			output = new Bitmap(outputBmpData);
 //			output.blendMode = BlendMode.ADD;					
 			//paintBmp.blendMode = BlendMode.ADD;
-			
+			//output.alpha = 0.5;
 			addChild(output);			
 			addChild(paintBmp);
 
