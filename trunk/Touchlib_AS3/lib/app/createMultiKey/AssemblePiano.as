@@ -8,7 +8,10 @@ package app.createMultiKey {
 	import com.touchlib.*;
 	import app.createMultiKey.*;
 
-	public class AssemblePiano extends Sprite {			
+	public class AssemblePiano extends Sprite {
+		
+		public var noSound:Boolean;
+
 	
 		var C1key = new Sound(new URLRequest("www/mp3/C1.mp3"));
 		var D1key = new Sound(new URLRequest("www/mp3/D1.mp3"));
@@ -108,12 +111,16 @@ package app.createMultiKey {
 		
 		
 		
-		private function onStartAudio(event:TUIOEvent):void {
+		public function onStartAudio(event:TUIOEvent):void {
+			
+			
 			
 	        var keyvolume:Number = (event.localY/event.target.height);	//Volume = Key pressed location/ height of key	
             if (keyvolume >= .75) {keyvolume = .75};
 			
-			trace("this issssssssssssssssssss" + " " + event.currentTarget.name);
+			//trace("this is" + " " + event.currentTarget.name);
+			
+			if(!noSound){
 
 			switch (event.currentTarget.name) {								
 				
@@ -220,7 +227,8 @@ package app.createMultiKey {
 				case "sharp_9" :
 		            sndTransform.volume = keyvolume;
                     As2key.play(0, 0, sndTransform);
-					break;					
+					break;
+			}
 			}
 		}		
 	}

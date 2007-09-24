@@ -1,10 +1,4 @@
-﻿//////////////////////////////////////////////////////////////////////
-//                                                                  //
-//    Main Document Class. Sets TUIO and adds main parts to stage   //
-////
-//////////////////////////////////////////////////////////////////////
-
-package app.createMultiKey {
+﻿package app.createMultiKey {
 
 	import flash.display.Shape;		
 	import flash.display.Loader;		
@@ -43,9 +37,11 @@ package app.createMultiKey {
 			wholePiano = new AssemblePiano(octaves);			
 			
 			bringToFront = true;
-			noScale = true;          //make it not scale
-			noRotate = true;         //make it not rotate
-			noMove = true;           //make it not move
+			noScale = true;               //make it not scale
+			noRotate = true;              //make it not rotate
+			noMove = true;                //make it not move
+			wholePiano.noSound = false;   //sound is on
+			
 	
 			moveScalePoints(octaves);
 			
@@ -157,47 +153,58 @@ package app.createMultiKey {
 			
 			addChild(scalePoints);
 
-			scalePoints.addEventListener(TUIOEvent.DownEvent, makeRotatableScalable);
-			scalePoints.addEventListener(TUIOEvent.UpEvent, removeRotatableScalable);		
+			scalePoints.addEventListener(TUIOEvent.DownEvent, toggleRotateScale);
+			//scalePoints.addEventListener(TUIOEvent.UpEvent, removeRotatableScalable);		
 		}	
 		
 			
-		private function makeRotatableScalable(event:TUIOEvent):void {
+		public function toggleRotateScale(event:TUIOEvent):void {
 			
-			//trace("Scaling/Rotating On");
-		
-			noScale = false;
-			noRotate = false;
-			noMove = false;			
+				//Move Mode
+				if (noMove) {
+					noMove = false; 
+					var colorTransform:ColorTransform = transform.colorTransform;
+					colorTransform.color = 0xFFFF99;
+					event.target.transform.colorTransform = colorTransform;
+					trace("move mode off");
+				}
+				else {
+					noMove = true;
+					var colorTransform:ColorTransform = transform.colorTransform;
+					colorTransform.color = 0xFFFFFF;
+					event.target.transform.colorTransform = colorTransform;
+					trace("move mode on");
+				}			
 			
-			// highlight key when pressed	
-			var colorTransform:ColorTransform = transform.colorTransform;
-			colorTransform.color = 0xFFFF99;
-			event.target.transform.colorTransform = colorTransform;	
-			
-			// turn sound off when scaling/rotating	
-			var globalSound: SoundTransform = SoundMixer.soundTransform; 
-			globalSound.volume = 0; 
-			SoundMixer.soundTransform = globalSound; 			
-		}		
-		
-		public function removeRotatableScalable(event:TUIOEvent):void {
-			
-			//trace("Scaling/Rotating Off");		
-			
-			noScale = true;
-			noRotate = true;
-			noMove = true;	
-			
-			// highlight key when pressed				
-			var colorTransform:ColorTransform = transform.colorTransform;
-			colorTransform.color = 0xFFFFFF;
-			event.target.transform.colorTransform = colorTransform;
-			
-			// turn sound back on	
-			var globalSound: SoundTransform = SoundMixer.soundTransform; 
-			globalSound.volume = 1; 
-			SoundMixer.soundTransform = globalSound; 
-		}			
+			    //Scale mode			
+				if (noScale) {
+					noScale = false;
+					trace("scale mode off");			
+				}
+				else {
+					noScale = true;	
+					trace("scale mode on");
+				}					
+				
+				//Rotate Mode
+				if (noRotate) {
+					noRotate= false; 
+					trace("rotate mode off");
+				}
+				else {
+					noRotate = true;
+					trace("rotate mode on");
+				}	
+				
+				//Sound Mode			
+				if (wholePiano.noSound) {
+					wholePiano.noSound = false; 
+					trace("sound is on");
+				}
+				else {
+					wholePiano.noSound = true;
+					trace("sound is off");
+				}	
+		}
 	}
 }

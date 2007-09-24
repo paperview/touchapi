@@ -21,7 +21,7 @@ package app.documentClass {
 
 		public function MultiKey() {
 
-			TUIO.init( this, 'localhost', 3000, 920, 680, '', true );
+			TUIO.init( this, 'localhost', 3000, 800, 600, '', true );
 						
 			var mainClip:Sprite = new Sprite();	
 			this.addChild(mainClip);
@@ -29,8 +29,8 @@ package app.documentClass {
 			//first keyboard							
 			var fullPiano = new AddPiano(octaves1);
 			//addChild(fullPiano);			
-			fullPiano.x = fullPiano.width/3.6;
-			fullPiano.y = fullPiano.height/2;			
+			fullPiano.x = fullPiano.width/2.3;
+			fullPiano.y = fullPiano.height/3;			
 			fullPiano.scaleX = .32;
 			fullPiano.scaleY = .32;
 			fullPiano.rotation = 60;				
@@ -46,7 +46,7 @@ package app.documentClass {
 				fullPiano2.y = fullPiano2.height/1.6;			
 			}			
 			if (octaves2 == 2){
-				fullPiano2.x = fullPiano2.width/3.6;
+				fullPiano2.x = fullPiano2.width/4;
 				fullPiano2.y = fullPiano2.height/2;			
 				fullPiano2.scaleX = .42;
 				fullPiano2.scaleY = .42;
@@ -55,13 +55,14 @@ package app.documentClass {
 			mainClip.addChild(fullPiano);
 			mainClip.addChild(fullPiano2);
 			
-/*          //Keyboard surface. Needs to be fixed. Keyboards shouldn't move clicking on them (unless highlighted).
-			var pianoSurface = new PianoSurface();
-			this.addChild(pianoSurface);
-			pianoSurface.addChild(fullPiano);		
-			pianoSurface.addChild(fullPiano2);
-			setChildIndex(pianoSurface, 2) 			
-*/
+          //Keyboard surface. Needs to be fixed. Keyboards shouldn't move clicking on them (unless highlighted).
+			//var pianoSurface = new PianoSurface();
+			//pianoSurface.addChild(fullPiano);		
+			//pianoSurface.addChild(fullPiano2);
+			//addChild(pianoSurface);
+			//setChildIndex(pianoSurface, 2) 
+
+
 			
 		}
 	}
