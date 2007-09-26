@@ -45,7 +45,6 @@ public class TUIOEvent extends Event
 		localY = p_localY;
 		buttonDown = p_buttonDown;
 		relatedObject = relatedObject;
-		
 		super(type, bubbles, cancelable);	
         //super(type, bubbles, cancelable, localX, localY, relatedObject, ctrlKey, altKey, shiftKey, buttonDown, delta);	
 	}	

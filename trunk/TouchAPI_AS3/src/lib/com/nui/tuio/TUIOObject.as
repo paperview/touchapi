@@ -13,8 +13,11 @@ import flash.display.DisplayObject;
 //import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.geom.Point;
-//import flash.events.MouseEvent;
-
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
+import flash.events.MouseEvent;
+import flash.display.InteractiveObject;
 
 	public class TUIOObject 
 	{
@@ -23,7 +26,7 @@ import flash.geom.Point;
 		public var dX:Number;
 		public var dY:Number;						
 		public var area:Number;		
-		public var TUIOClass:String;
+		public var TUIOClass:String;		// cur or Obj.. 
 		public var ID:int;
 		public var sID:int;	
 		public var xid:int;
@@ -31,9 +34,12 @@ import flash.geom.Point;
 		public var pressure:Number;		
 		private var isNew:Boolean;
 		public var isAlive:Boolean;		
-		public var obj:DisplayObject; 
+		public var obj:DisplayObject; //changed to interactive object? (Noes, TUIOEvent wants to use displayobject I think)
 		public var spr:TUIOCursor;		
 		private var color:int;
+		private var DEBUG_TEXT:TextField;
+		// Used for mouse emulating
+		private var _currentTarget:InteractiveObject;
 
 		public function TUIOObject (cls:String, id:int, px:Number, py:Number, dx:Number, dy:Number, sid:int, ang:Number = 0, o:DisplayObject = null)
 		{
@@ -51,6 +57,25 @@ import flash.geom.Point;
 			spr.x = x;
 			spr.y = y;  			
 						
+			/*
+			var format:TextFormat = new TextFormat();
+			DEBUG_TEXT = new TextField();
+        	format.font = 'Verdana';
+     		format.color = 0xFFFFFF;
+       	 	format.size = 10;
+			DEBUG_TEXT.defaultTextFormat = format;
+			DEBUG_TEXT.autoSize = TextFieldAutoSize.LEFT;
+			DEBUG_TEXT.background = true;	
+			DEBUG_TEXT.backgroundColor = 0x000000;	
+			DEBUG_TEXT.border = true;	
+			DEBUG_TEXT.text = '';
+			DEBUG_TEXT.appendText('  '+ID+'  ');
+			
+			DEBUG_TEXT.x = 15;
+			DEBUG_TEXT.y = -8;  
+			spr.addChild(DEBUG_TEXT);
+*/
+
 			try {
  	 			obj = o;
 			} catch (e:Error)
@@ -63,7 +88,7 @@ import flash.geom.Point;
 				try
 				{	
 				spr.graphics.beginFill( 0xFFFFFF , 1);					
-				spr.graphics.drawCircle(0,0,20);
+				spr.graphics.drawCircle(0,0,7);
 				spr.graphics.endFill();
 				var localPoint:Point = obj.parent.globalToLocal(new Point(x, y));				
 				//obj.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER,false, false, localPoint.x, localPoint.y, obj, false, false, false, true, 0));	
@@ -77,6 +102,17 @@ import flash.geom.Point;
 			}
 			
 			isNew = true;
+		}
+
+
+		public function set currentTarget(value:InteractiveObject):void
+		{
+			_currentTarget = value;
+		}
+		
+		public function get currentTarget():InteractiveObject
+		{
+			return _currentTarget;	
 		}
 		
 		public function setObjOver(o:DisplayObject):void

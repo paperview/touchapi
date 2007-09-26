@@ -26,11 +26,12 @@ import flash.system.System;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
-
+import mx.validators.EmailValidator;
 import flash.events.MouseEvent;
 import flash.display.DisplayObject;
+import mx.skins.halo.ApplicationBackground;
 
-public class TUIO 
+public class TUIO
 {	
 	private static var INSTANCE:TUIO;	
 
@@ -39,8 +40,9 @@ public class TUIO
 
 	private static var STAGE_WIDTH:int;
 	private static var STAGE_HEIGHT:int;	
-			
-    private static var DEBUG_MODE:Boolean = true;
+	
+	// TODO: If this is set to false, TUIOCursors will NOT be removed!
+    private static var DEBUG_MODE:Boolean = true; // NOTE: When you set values like this they will be in the PROTOTYPE chain and shared with all instances of this class.
 	private static var RECORD_MODE:Boolean;
 		
 	private static var SOCKET:XMLSocket;
@@ -85,11 +87,26 @@ public class TUIO
 		return INSTANCE;	
 	}
 
+
+	/**********************************************************
+	 * GET_INSTANCE
+	***********************************************************/
+	public static function getInstance():TUIO
+	{
+		if (INSTANCE == null)
+		{
+			throw new Error("TUIO Instance not created, please use TUIO.init() before calling this function.");
+		}
+		
+		return INSTANCE;
+	}
+
+
 	/**********************************************************
 	 * START
 	***********************************************************/
 		
-	private function start ():void
+	private function start():void
 	{
 		EMULATE_FLEX_MOUSE = true;
 		
@@ -141,6 +158,7 @@ public class TUIO
 		DEBUG_TEXT.backgroundColor = 0x000000;	
 		DEBUG_TEXT.border = true;	
 		DEBUG_TEXT.borderColor = 0x333333;	
+	
 		
 		STAGE.addChild( DEBUG_TEXT );
 	}
@@ -153,7 +171,6 @@ public class TUIO
 	{
 		RECORDED_XML = <OSCPackets></OSCPackets>;
 			
-		/*
 		var record_btn:Sprite = new Sprite();
 	
 		record_btn.graphics.lineStyle( 2, 0x202020 );
@@ -162,14 +179,13 @@ public class TUIO
 		record_btn.addEventListener( TUIOEvent.DOWN, stopRecording );
 		
 		STAGE.addChild( record_btn );
-		*/
 	}
 
 	/**********************************************************
 	 * TESTING_XML_ON_LOADED
 	***********************************************************/
 	
-	private static function testingXmlOnLoaded( e:Event ):void 
+	private function testingXmlOnLoaded( e:Event ):void 
 	{
 		TESTING_XML = new XML( e.target.data );
 		
@@ -180,7 +196,7 @@ public class TUIO
 	 * UPDATE_FRAME
 	***********************************************************/
 	
-	private static function updateFrame( e:Event ):void
+	private function updateFrame( e:Event ):void
 	{
 		if( TESTING_XML && TESTING_XML.OSCPACKET && TESTING_XML.OSCPACKET[ 0 ] )
 		{			
@@ -193,7 +209,7 @@ public class TUIO
 	 * GET_OBJECT_BY_ID
 	***********************************************************/
 
-	public static function getObjectById( id:int ):TUIOObject
+	public function getObjectById( id:int ):TUIOObject
 	{
 		var listAmount:int = objectArray.length;
 		
@@ -211,21 +227,77 @@ public class TUIO
 	/**********************************************************
 	 * EMULATE_MOUSE_EVENT
 	***********************************************************/
-	public static function emulateMouseEvent(target:InteractiveObject, type:String, x:Number, y:Number):void
+	private function emulateMouseEvent(target:InteractiveObject, type:String, x:Number, y:Number, relatedObject:InteractiveObject):void
 	{
-		trace("Emulating Mouse Event: " + type + " on " + target);
+		trace(" @@@@@@@@@@ Emulating mouse event: " + type + " on " + target);
+		
 		if (target == null) 
 			return;
 			
 		var p:Point = new Point(x, y);
 		p = target.globalToLocal(p);
+		p.x = 5;
+		p.y = 5;
 		
-		var me:MouseEvent = new MouseEvent(MouseEvent.CLICK, false , false, p.x, p.y);
+		// TODO: What should the x,y point be for a RollOut event?
+		// Are we still in the new InteractiveObjects local space or the old one? (in the latter case giving it x,y outside its area)
+		
+		
+		var me:MouseEvent; 
+		if (relatedObject != null)
+		{
+			me = new MouseEvent(type, true , true, p.x, p.y, relatedObject);		
+		} 
+		else
+		{
+			me = new MouseEvent(type, true , true, p.x, p.y);
+		}
 		target.dispatchEvent(me);
 	}	
 
-	private static function findTopObject(obj:DisplayObject):InteractiveObject
+
+
+	private function getObjectsUnderFinger(x:Number, y:Number):InteractiveObject
 	{
+		var stagePoint:Point = new Point( x,y );
+		var tuioObjList:Array = STAGE.stage.getObjectsUnderPoint( stagePoint );
+			
+		var bottomObject:InteractiveObject;	
+				
+		if (EMULATE_FLEX_MOUSE && tuioObjList.length > 0)
+		{
+			// bottomObject is the highest InteractiveObject under the given finger x, y.
+			// It's the one that gets the mouse input events.
+	
+			if ( tuioObjList[ tuioObjList.length-1 ] is TUIOCursor )
+			{
+				trace("HOLY FUCK!");
+				bottomObject = findTopObject( tuioObjList[ tuioObjList.length-2 ] );	
+			}
+			else
+			{
+				trace("AND ALL IS WELL WITH THE WORLD!");
+				bottomObject = findTopObject( tuioObjList[ tuioObjList.length-1 ] );	
+			}
+					
+			if (bottomObject != null)
+				trace("Obj is: " + bottomObject);
+						
+		}
+			
+		return bottomObject;
+	}
+
+
+	/**********************************************************
+	 * FIND_TOP_OBJECT
+	 * Finds the first InteractiveObject for a given DisplayObject by .parent
+	***********************************************************/
+	private function findTopObject(obj:DisplayObject):InteractiveObject
+	{
+		
+		trace("findTop got: " + obj);
+		
 		if (obj == null)
 		{
 			return null;
@@ -236,10 +308,16 @@ public class TUIO
 		}
 		else if (obj is InteractiveObject)
 		{
+			trace("Foo is InteractiveObject: " + obj);
+			if (obj.parent.mouseChildren == false)
+			{
+				obj = findTopObject(obj.parent);
+			}
 			return InteractiveObject(obj);	
 		}
 		else if (obj.parent != null)
 		{
+			trace("Going for the parent");
 			return findTopObject(obj.parent);
 		}
 		else
@@ -248,13 +326,31 @@ public class TUIO
 		}
 		
 	}
+	
+	private function findTopperObject(obj:InteractiveObject):InteractiveObject
+	{
+		if (obj == null)
+		{
+			return null;
+		}
+		else if (obj.parent.mouseChildren)
+		{
+			findTopperObject(obj.parent);
+		}
+		else
+		{
+			return obj.parent;
+		}
+		
+		return obj;
+	}
 
 
 	/**********************************************************
 	 * PROCESS_XML
 	***********************************************************/
 
-	public static function processXML( xml:XML ):void
+	private function processXML( xml:XML ):void
 	{
 		// XML-Node
 		var node:XML;
@@ -319,6 +415,7 @@ public class TUIO
 				for each ( var obj:TUIOObject in objectArray )
 				{
 					obj.isAlive = false;
+					//TODO: Trigger MouseEvent.MOUSE_UP here?
 				}
 													
 				for each( var aliveItem:XML in node.ARGUMENT.( @VALUE != 'alive' ) )
@@ -326,7 +423,7 @@ public class TUIO
 					if( getObjectById( aliveItem.@VALUE ) )
 					{
 						getObjectById( aliveItem.@VALUE ).isAlive = true;
-					}	
+					}
 				}   					
 			}
 			
@@ -334,69 +431,8 @@ public class TUIO
 			
 			if( node.ARGUMENT[ 0 ] )
 			{
-				stagePoint = new Point( x,y );
-				tuioObjList = STAGE.stage.getObjectsUnderPoint( stagePoint );
 				
-				
-				if (EMULATE_FLEX_MOUSE)
-				{
-					// List of object on stage, under the given finger
-					// Take the bottom one and have it dispatch an event
-					for (var j:String in tuioObjList)
-					{
-						var obj2:Object = tuioObjList[j];
-						
-						// For now we don't care about the cursor, but later on we might want to do something
-						// with it when you hover over a button for instance... or do we?
-						// Maybe make the other cursors transparent when dragging? 
-						//(to indicate that you can only use one finger when dragging and using this method of mouse eventing the standard components)
-						if (obj2 is TUIOCursor)// || obj2 is ApplicationBackground)
-						{
-							continue;
-						}
-						trace("Found object under point - Object_" + j + " : " + obj2 + " @ " + obj2.x + ", " +obj2.y);
-					}	
-				/*
-					var bottomIndex:Number = -1;
-					for (var k:Number = tuioObjList.length-1; k >= 0; k--)
-					{
-						trace("Looking for bottom object...");
-						if ( tuioObjList[k] is InteractiveObject )
-						{
-							if (tuioObjList[k] is TUIOCursor)
-							{
-								// Don't do anything.
-							}
-							else
-							{								
-								trace("Bottom object has index: " + k.toString());
-								bottomIndex = k;
-								continue;
-							}
-						}
-					}
-					if (bottomIndex != -1)
-					{
-						trace("Found bottomObject!");
-						
-						bottomObject = InteractiveObject(tuioObjList[bottomIndex]);	
-						trace("Dispatched event from: " + bottomObject);
-					}
-					else
-					{
-						//trace("Warning: No bottomObject found");
-						bottomObject = null;
-					}
-			
-			*/
-					bottomObject = findTopObject( tuioObjList[tuioObjList.length-1] );
-					
-					if (bottomObject != null)	{
-					trace("Bottom Object: " + bottomObject);
-					trace("********************************************************************************************");		
-					}				
-				}
-				//THIS IS AN OBJECT AKA FIDICUAL
+				// Static objects that gets put on the table, NOT fingers!
 				if( node.@NAME == '/tuio/2Dobj' )
 				{		
 					
@@ -404,7 +440,7 @@ public class TUIO
 					
 					if( type == 'set' )
 					{   
-						//var dobj:InteractiveObject = null;
+						var dobj:InteractiveObject = null;
 						sID = node.ARGUMENT[ 1 ].@VALUE;
 						id = node.ARGUMENT[ 2 ].@VALUE;
 						x = Number( node.ARGUMENT[ 3 ].@VALUE ) * STAGE_WIDTH;
@@ -420,7 +456,7 @@ public class TUIO
 						if( tuioObj == null )
 						{
 							tuioObj = new TUIOObject('2Dobj', id, x, y, X, Y, objectArray.length, a );
-							STAGE.addChild( tuioObj.spr );						
+							STAGE.addChild( tuioObj.spr );							
 							objectArray.push( tuioObj );
 						} else {
 							tuioObj.spr.x = x;
@@ -432,59 +468,80 @@ public class TUIO
 							tuioObj.setObjOver( dobj );
 						}
 					}
-					
-				//THIS IS A BLOB AKA FINGER
 				} else if( node.@NAME == '/tuio/2Dcur' )
-				{
+				{ // 2Dcur is a finger that touches the table (cur = cursor)
+			
 					type = node.ARGUMENT[ 0 ].@VALUE;				
+					//trace("type is: " + type);
+					
 					if( type == 'set' )
 					{	
-						var dobj:InteractiveObject = null;
+						//var dobj:InteractiveObject = null;
 						id = node.ARGUMENT[ 1 ].@VALUE;
 						x = Number( node.ARGUMENT[ 2 ].@VALUE ) * STAGE_WIDTH;
 						y = Number( node.ARGUMENT[ 3 ].@VALUE ) * STAGE_HEIGHT;
 						X = Number( node.ARGUMENT[ 4 ].@VALUE );
 						Y = Number( node.ARGUMENT[ 5 ].@VALUE );
-						m = node.ARGUMENT[ 6 ].@VALUE;						
-						//a = node.ARGUMENT[ 7 ].@VALUE;		
+						m = node.ARGUMENT[ 6 ].@VALUE;
+						//a = node.ARGUMENT[ 7 ].@VALUE;							
 
 						tuioObj = getObjectById( id );
+						// If we don't have an object on stage, we assume this is a new press
 						if( tuioObj == null )
-						{							
-							tuioObj = new TUIOObject('2Dcur', id, x, y, X, Y, objectArray.length, 0 );
-							STAGE.addChild( tuioObj.spr );															
-							objectArray.push( tuioObj );	
-						
-						if (EMULATE_FLEX_MOUSE && bottomObject != null)
-						emulateMouseEvent(bottomObject, MouseEvent.CLICK, x, y);		
-						trace('Event Dispatched On:' + bottomObject);	
-				
-						} else {
+						{
+							trace(" @@@@ CREATING NEW THINGIE!");
 							
+							tuioObj = new TUIOObject('2Dcur', id, x, y, X, Y, objectArray.length, 0 );
+							//tuioObj.area = a;
+							STAGE.addChild( tuioObj.spr );
+							
+							bottomObject = getObjectsUnderFinger(x, y);
+							
+							if (EMULATE_FLEX_MOUSE && bottomObject != null)
+							{	emulateMouseEvent(bottomObject, MouseEvent.CLICK, x, y, null);
+								//emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y, null);							
+							}
+														
+							objectArray.push( tuioObj );
+						} else {
 							tuioObj.spr.x = x;
 							tuioObj.spr.y = y;
 							tuioObj.x = x;
 							tuioObj.y = y;
 							//tuioObj.area = a;								
 							tuioObj.dX = X;
-							tuioObj.dY = Y;								
+							tuioObj.dY = Y;
+							
+							// Triggers TUIOEvents
 							tuioObj.setObjOver( dobj );
 							
+							bottomObject = getObjectsUnderFinger(x, y);
+							
+							// Roll out and roll over requires the relatedObject property to be set
+							if (tuioObj.currentTarget != bottomObject)
+							{
+								// We have rolled out from last known component
+								// New target might be null. In case of null and finger up, what should happen? Roll Out?
+								if (EMULATE_FLEX_MOUSE && bottomObject != null)
+								{
+									emulateMouseEvent(tuioObj.currentTarget, MouseEvent.MOUSE_OUT, x, y, bottomObject);
+									emulateMouseEvent(bottomObject, MouseEvent.MOUSE_OVER, x, y, null);
+								}	
+								
+							}
+							
+							tuioObj.currentTarget = bottomObject;
 							
 							
-							// TODO:
+							// TODO: Done! See above! //Erik Pettersson
 							/*
 									To get roll over and roll out to work we need to tell the *last* object that the finger has rolled out
 									This is done by comparing the bottomObject I presume. 
 									the 'relatedObject' property of MouseEvent should get the new bottomObject on roll out.
-									
-									
 							*/
 							
-							//if (EMULATE_FLEX_MOUSE && bottomObject != null)
-							//emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);
-							//trace('Event Dispatched On:' + bottomObject);	
-				
+							if (EMULATE_FLEX_MOUSE && bottomObject != null)
+								emulateMouseEvent(bottomObject, MouseEvent.MOUSE_MOVE, x, y, null);
 						}	
 					}	
 				}
@@ -493,19 +550,24 @@ public class TUIO
 		if(DEBUG_MODE)
 		{
 			DEBUG_TEXT.text = '';
-			DEBUG_TEXT.x = 2000;
-			DEBUG_TEXT.y = 2000;
+			
 			for ( var i:int=0; i<objectArray.length; i++ )
 			{
 				if( objectArray[i].isAlive == false )
 				{
 					// TODO: cast objects
+					var disposeObj:TUIOObject = objectArray[i];	
+					var target:InteractiveObject = getObjectsUnderFinger(disposeObj.x, disposeObj.y);
+					if (EMULATE_FLEX_MOUSE && target != null)
+					{
+						emulateMouseEvent(target, MouseEvent.MOUSE_UP, disposeObj.x, disposeObj.y, null);
+					}
+					
+					
 					objectArray[i].disposeObject();
-					STAGE.removeChild(objectArray[i].spr);
+					STAGE  .removeChild(objectArray[i].spr);
 					objectArray.splice(i, 1);
 					i--;
-					
-					//emulateMouseEvent(bottomObject, MouseEvent.MOUSE_UP, x, y);	
 	
 				} else {
 				//DEBUG DATA
@@ -522,7 +584,7 @@ public class TUIO
 	 * STOP_RECORDING
 	***********************************************************/
 	
-	private static function stopRecording( e:TUIOEvent ):void
+	private function stopRecording( e:TUIOEvent ):void
 	{		
 		RECORD_MODE = false;
 		DEBUG_MODE = false;
@@ -534,7 +596,7 @@ public class TUIO
 	 * SOCKET_SERVER - CLODE_HANDLER
 	***********************************************************/
 	
-	private static function closeHandler( e:Event ):void 
+	private function closeHandler( e:Event ):void 
 	{
 	}
 
@@ -542,7 +604,7 @@ public class TUIO
 	 * SOCKET_SERVER - CONNECT_HANDLER
 	***********************************************************/
 	
-	private static function connectHandler( e:Event ):void 
+	private function connectHandler( e:Event ):void 
 	{
 		trace( 'TUIO Socket Enabled:' + e );
 	}
@@ -551,7 +613,7 @@ public class TUIO
 	 * SOCKET_SERVER - DATA_HANDLER
 	***********************************************************/
 	
-	private static function dataHandler( e:DataEvent ):void 
+	private function dataHandler( e:DataEvent ):void 
 	{
 		if( RECORD_MODE )
 		{
@@ -565,7 +627,7 @@ public class TUIO
 	 * SOCKET_SERVER - IO_ERROR_HANDLER
 	***********************************************************/
 	
-	private static function ioErrorHandler( e:IOErrorEvent ):void 
+	private function ioErrorHandler( e:IOErrorEvent ):void 
 	{
 		trace( 'ioErrorHandler:' + e );
 	}
@@ -574,7 +636,7 @@ public class TUIO
 	 * SOCKET_SERVER - PROGRESS_HANDLER
 	***********************************************************/
 	
-	private static function progressHandler( e:ProgressEvent ):void 
+	private function progressHandler( e:ProgressEvent ):void 
 	{
 	    //trace( 'progressHandler loaded:' + e.bytesLoaded + ' total: ' + e.bytesTotal );
 	}
@@ -583,7 +645,7 @@ public class TUIO
 	 * SOCKET_SERVER - SECURITY_ERROR_HANDLER
 	***********************************************************/
 	
-	private static function securityErrorHandler( e:SecurityErrorEvent ):void 
+	private function securityErrorHandler( e:SecurityErrorEvent ):void 
 	{		
 	}
 	
@@ -591,7 +653,7 @@ public class TUIO
 	 * TUIO
 	***********************************************************/
 	
-	public function TUIO( caller:Function ):void
+	public function TUIO( caller:Function )
 	{
 		if( caller == TUIO.init )
 		{
