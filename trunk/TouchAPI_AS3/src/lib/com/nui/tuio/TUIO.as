@@ -213,7 +213,7 @@ public class TUIO
 	***********************************************************/
 	public static function emulateMouseEvent(target:InteractiveObject, type:String, x:Number, y:Number):void
 	{
-		trace("Emulating mouse event: " + type + " on " + target);
+		trace("Emulating Mouse Event: " + type + " on " + target);
 		if (target == null) 
 			return;
 			
@@ -352,18 +352,11 @@ public class TUIO
 						//(to indicate that you can only use one finger when dragging and using this method of mouse eventing the standard components)
 						if (obj2 is TUIOCursor)// || obj2 is ApplicationBackground)
 						{
-							//continue;
+							continue;
 						}
-						//trace("Found object under point. Object" + j + "is: " + obj2 + " at " + obj2.x + ", " +obj2.y);
-					}
-					//trace("****************************");
-					
-					
-					bottomObject = findTopObject( tuioObjList[tuioObjList.length-1] );
-					
-					//trace("Obj is: " + bottomObject);
-					/*
-					
+						trace("Found object under point - Object_" + j + " : " + obj2 + " @ " + obj2.x + ", " +obj2.y);
+					}	
+				/*
 					var bottomIndex:Number = -1;
 					for (var k:Number = tuioObjList.length-1; k >= 0; k--)
 					{
@@ -394,7 +387,14 @@ public class TUIO
 						//trace("Warning: No bottomObject found");
 						bottomObject = null;
 					}
-					*/
+			
+			*/
+					bottomObject = findTopObject( tuioObjList[tuioObjList.length-1] );
+					
+					if (bottomObject != null)	{
+					trace("Bottom Object: " + bottomObject);
+					trace("********************************************************************************************");		
+					}				
 				}
 				//THIS IS AN OBJECT AKA FIDICUAL
 				if( node.@NAME == '/tuio/2Dobj' )
@@ -404,7 +404,7 @@ public class TUIO
 					
 					if( type == 'set' )
 					{   
-						var dobj:InteractiveObject = null;
+						//var dobj:InteractiveObject = null;
 						sID = node.ARGUMENT[ 1 ].@VALUE;
 						id = node.ARGUMENT[ 2 ].@VALUE;
 						x = Number( node.ARGUMENT[ 3 ].@VALUE ) * STAGE_WIDTH;
@@ -432,6 +432,7 @@ public class TUIO
 							tuioObj.setObjOver( dobj );
 						}
 					}
+					
 				//THIS IS A BLOB AKA FINGER
 				} else if( node.@NAME == '/tuio/2Dcur' )
 				{
@@ -444,24 +445,19 @@ public class TUIO
 						y = Number( node.ARGUMENT[ 3 ].@VALUE ) * STAGE_HEIGHT;
 						X = Number( node.ARGUMENT[ 4 ].@VALUE );
 						Y = Number( node.ARGUMENT[ 5 ].@VALUE );
-						m = node.ARGUMENT[ 6 ].@VALUE;
-						
-						
+						m = node.ARGUMENT[ 6 ].@VALUE;						
 						//a = node.ARGUMENT[ 7 ].@VALUE;		
-					
-									
 
 						tuioObj = getObjectById( id );
 						if( tuioObj == null )
 						{							
 							tuioObj = new TUIOObject('2Dcur', id, x, y, X, Y, objectArray.length, 0 );
-							//tuioObj.area = a;		
 							STAGE.addChild( tuioObj.spr );															
 							objectArray.push( tuioObj );	
 						
-						if (bottomObject != null)
+						if (EMULATE_FLEX_MOUSE && bottomObject != null)
 						emulateMouseEvent(bottomObject, MouseEvent.CLICK, x, y);		
-						trace('~');	
+						trace('Event Dispatched On:' + bottomObject);	
 				
 						} else {
 							
@@ -487,6 +483,8 @@ public class TUIO
 							
 							//if (EMULATE_FLEX_MOUSE && bottomObject != null)
 							//emulateMouseEvent(bottomObject, MouseEvent.MOUSE_DOWN, x, y);
+							//trace('Event Dispatched On:' + bottomObject);	
+				
 						}	
 					}	
 				}
@@ -506,6 +504,8 @@ public class TUIO
 					STAGE.removeChild(objectArray[i].spr);
 					objectArray.splice(i, 1);
 					i--;
+					
+					//emulateMouseEvent(bottomObject, MouseEvent.MOUSE_UP, x, y);	
 	
 				} else {
 				//DEBUG DATA

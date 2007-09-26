@@ -32,7 +32,6 @@ package com.nui.tuio
 
 		private var gfxActiveGlow:Sprite;
 
-		private var knobValue:Number = 0.0;
 		private var isActive:Boolean = false;
 		private var mouseActive:Boolean = false;
 		
