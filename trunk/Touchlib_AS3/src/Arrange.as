@@ -28,10 +28,10 @@ public class Arrange extends Sprite
 		photos = new PhotoCanvas();
 		this.addChildAt(photos, 0);	
 
-		//var sub_object_01:PhotoLocal = new PhotoLocal(photos);
+		var sub_object_01:PhotoLocal = new PhotoLocal(photos);
 		//var flickr_obj:Flickr = new Flickr(photos, 100, -photos.width/2, -photos.height/2);		
 		//var nLoad_obj_0 = new nLoad(photos,1,"mine","", 0, 0, 1,"http://nui.mine.nu/declaration.jpg");
-		var nLoad_obj_0 = new nLoad(photos, 100, "mine", "", 0, 0, 1,"");
+		//var nLoad_obj_0 = new nLoad(photos, 20, "mine", "", 0, 0, 1,"");
 		
 		var spr0:Shape = new Shape();
 		spr0.graphics.beginFill(0xE3E2E2,1.0);
@@ -62,7 +62,7 @@ public class Arrange extends Sprite
 		spr3.graphics.drawRect(-0,-0,300,300);
 		spr3.graphics.endFill();		
 		spr3.x = photos.width/2-300; spr3.y = -photos.height/2;
-		spr3.addEventListener(TUIOEvent.DownEvent, function(){nLoad_obj_0.toggleObjects();});		
+		//spr3.addEventListener(TUIOEvent.DownEvent, function(){nLoad_obj_0.toggleObjects();});		
 		//spr3.addEventListener(TUIOEvent.UpEvent, stackPhotos);
 		photos.addChild(spr3);	
 		

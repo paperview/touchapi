@@ -14,7 +14,7 @@ import ScrollExample;
 import app.documentClass.MultiKey; 
 //import pong.Game;
 
-[SWF(width='1680', height='1050', backgroundColor='0x000000')]
+[SWF(width='1024', height='786', backgroundColor='0x000000')]
 
 public class Touchlib_AS3 extends Sprite
 {		
@@ -22,9 +22,10 @@ public class Touchlib_AS3 extends Sprite
 	public var sortCanvas1:Arrange;
 	public var slider0:TouchlibSlider;
 	public var slider1:TouchlibSlider;	
-	private var scrollCanvas0:ScrollExample;
+	//private var scrollCanvas0:ScrollExample;
 	//private var wong:Game;
 	private var temporary_test:MultiKey;
+	
 	public function Touchlib_AS3()
 		{					
 		Settings.instance.loadSettings('config.xml');
@@ -60,10 +61,8 @@ public class Touchlib_AS3 extends Sprite
 		var sortCanvas0 = new nCanvas(0,"square",0x000000,0.25, "normal", 10000, 10000, -5000, -5000);
 		this.addChildAt(sortCanvas0, 0);	
 		
-		
-		//var wong:Game = new Game();
-		//this.addChild(wong);	
-		
+		var nCanvas_obj_4 = new nCanvas(4, "circle",0xFFFFFF,1, "invert", 250, 250, -150, -150);
+		//sortCanvas0.addChild(nCanvas_obj_4);	
 		
 		var sortCanvas1:Arrange = new Arrange();
 		sortCanvas1.x = -sortCanvas0.width/8, sortCanvas1.y = -sortCanvas0.height/8;
@@ -72,11 +71,10 @@ public class Touchlib_AS3 extends Sprite
 		var scrollCanvas0 = new ScrollExample();
 		//this.addChildAt(scrollCanvas0, 1);	
 		
-		var nCanvas_obj_4 = new nCanvas(4, "circle",0xFFFFFF,1, "invert", 250, 250, -150, -150);
-		//sortCanvas0.addChild(nCanvas_obj_4);	
+	
 		
 		var temporary_test:MultiKey = new MultiKey();
-		sortCanvas0.addChildAt(temporary_test, 1);	
+		//sortCanvas0.addChildAt(temporary_test, 1);	
 		
 		/*
 		var spr4:Shape = new Shape();
@@ -109,10 +107,10 @@ public class Touchlib_AS3 extends Sprite
 		//var knoby:TouchlibKnob = new TouchlibKnob(120);
 
 		//this.addChild(knoby);
-		this.addChild(slider0);	
-		this.addChild(slider1);
-		slider0.x = 110, slider0.y = 35;		
-		slider1.x = 175, slider1.y = 35;		
+		//this.addChild(slider0);	
+		//this.addChild(slider1);
+		//slider0.x = 110, slider0.y = 35;		
+		//slider1.x = 175, slider1.y = 35;		
 		//trace(slider0.getValue());
 		
 		//this.stage.frameRate = slider0.getValue;
