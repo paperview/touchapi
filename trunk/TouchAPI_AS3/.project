@@ -16,9 +16,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>bin</name>
+			<name>[source path] lib</name>
 			<type>2</type>
-			<location>P:/TouchAPI/AS3</location>
+			<location>E:/~/TouchAPI/trunk/TouchAPI_AS3/lib</location>
 		</link>
 	</linkedResources>
 </projectDescription>

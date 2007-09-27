@@ -61,8 +61,8 @@
 			 		
 				colorBar_0.graphics.beginFill(0xFFFFFF,0.65);
 				colorBar_0.graphics.drawRoundRect(0, 0, 80, 565,6);	
-				colorBar_0.y = 265;
-				colorBar_0.x = 15;	
+				//colorBar_0.y = 5;
+				//colorBar_0.x = 5;	
 				
 			 var colorButton_0:Sprite = new Sprite();
 			 var colorButton_1:Sprite = new Sprite();		

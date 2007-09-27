@@ -21,7 +21,7 @@ package app.documentClass {
 
 		public function MultiKey() {
 
-			//TUIO.init( this, 'localhost', 3000, 800, 600, '', true );
+			TUIO.init( this, 'localhost', 3000, 800, 600, '', true );
 						
 			var mainClip:Sprite = new Sprite();	
 			this.addChild(mainClip);
