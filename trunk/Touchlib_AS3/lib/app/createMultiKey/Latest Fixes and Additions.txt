@@ -1,4 +1,0 @@
-9-23-07: 
-
--Created toggle switch for move, scale, rotate, and sound.
--Added noSound variable which makes it possible mute only the moving piano (instead of all pianos).
