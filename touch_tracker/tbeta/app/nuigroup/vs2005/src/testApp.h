@@ -11,7 +11,7 @@
 #define HOST "localhost"
 #define PORT 3333
 
-//#define _USE_LIVE_VIDEO		// uncomment this to use a live camera FIXME!!!
+//#define _USE_LIVE_VIDEO		// uncomment this to use a live camera
 
 class testApp : public ofSimpleApp{
 
@@ -41,6 +41,7 @@ class testApp : public ofSimpleApp{
 		int 				frameseq;	
 
 		int 				threshold;
+		int 				blurhold;
 		int					wobbleThreshold;
 		int 				frameRate;
 		int 				camWidth;
@@ -58,11 +59,6 @@ class testApp : public ofSimpleApp{
 		bool 				bSnapshot;	
 		bool 				bCalibration;	
 //
-		unsigned char * 	videoInverted;
-		ofTexture			videoInvertTexture;
-		ofTexture			videoTexture;
-        ofxCvContourFinder 	contourFinder;
-
 		float 				counter;
 		float				oldX;
 		float				oldY;
@@ -73,21 +69,25 @@ class testApp : public ofSimpleApp{
 		char timeString[255];
 //		
 		ofTrueTypeFont	verdana;			
-		ofImage tdf;
+		ofImage logo;
 
 		//CBoxAligner          m_box;
 		//CTrackingManager	 m_tracker;
 		//bool				bShowTouchScreen;		
 //
 	private:
-		ofImage 				bikeIcon;
+
 		ofxOscSender			sender;       
 		ofxCvColorImage			colorImg;
         ofxCvGrayscaleImage 	grayImage;
 		ofxCvGrayscaleImage 	grayBg;
-		ofxCvGrayscaleImage 	grayDiff;
+		ofxCvGrayscaleImage 	grayDiff;		
+		
+		unsigned char * 	videoInverted;
+		ofTexture			videoInvertTexture;
+		ofTexture			videoTexture;
+        ofxCvContourFinder 	contourFinder;
  
-
 	protected:
 			
 			

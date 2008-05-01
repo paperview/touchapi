@@ -9,15 +9,14 @@ void testApp::setup(){
 	//int screenH = ofGetScreenHeight();
 	//ofSetWindowPosition(screenW/2-300/2, screenH/2-300/2);
 
-	sender.setup( HOST, PORT );
+	sender.setup( HOST, PORT ); // Set in Header
 
-	frameRate = 60;
+	frameRate = 120;
 	camWidth = 320;	
 	camHeight = 240;
 	threshold = 90;
 	wobbleThreshold = 5;
-
-	ofSetFrameRate(frameRate);
+	blurhold = 3;
 	
 	bSnapshot = 0;
 	bFastMode = 0;	
@@ -27,9 +26,9 @@ void testApp::setup(){
 	bLearnBakground = 1;
 	bTUIOMode = 1;
 	bCalibration = 0;
-
-	verdana.loadFont("verdana.ttf",8, false, true);	
-
+	
+	ofSetFrameRate(frameRate);
+	
 	#ifdef _USE_LIVE_VIDEO
         vidGrabber.setVerbose(true);
         vidGrabber.initGrabber(camWidth,camHeight);
@@ -49,16 +48,18 @@ void testApp::setup(){
 	videoInverted 	= new unsigned char[camWidth*camHeight*3];
 	videoInvertTexture.allocate(camWidth,camHeight, GL_RGB);	
 		
-	ofSetWindowTitle("~Touchlib Configuration");
-	printf("Touchlib application is setup!\n");	
- 
-	
-	tdf.loadImage("images/logo.jpg");
+	ofSetWindowTitle("Configuration");
+	printf("Touchlib application is setup!\n");
+
+	verdana.loadFont("verdana.ttf",8, false, true);		
+	logo.loadImage("images/logo.jpg");
+
 }
 //--------------------------------------------------------------
 void testApp::update(){
+	
 	ofBackground(0,0,0);
-      bool bNewFrame = false;
+    bool bNewFrame = false;
 		
 	#ifdef _USE_LIVE_VIDEO
        vidGrabber.grabFrame();
@@ -82,18 +83,28 @@ void testApp::update(){
 		}		
 	    #else
             colorImg.setFromPixels(vidPlayer.getPixels(), 320,240);
-        #endif
+        #endif	
+			
+
+//---------------------------------------------------------------------------------------------------- SET FILTERS HERE
+
+		//colorImg.mirror(true,true);
+			if(blurhold > 3){
+				//colorImg.blur(blurhold);
+			}
+		//colorImg.erode();
+
+
         grayImage = colorImg;
 
 		if (bLearnBakground == true){
 			grayBg = grayImage;	
 			bLearnBakground = false;
 		}
-
+	
 		grayDiff.absDiff(grayBg, grayImage);
 		grayDiff.threshold(threshold);
 		contourFinder.findContours(grayDiff, 20, (340*240)/3, 10, true);	
-	
 	}
 	frameseq ++;
 }
@@ -175,9 +186,7 @@ void testApp::draw(){
 
 		//printf("Blobs: "+ofToString(contourFinder.getBlob(i).area, 2)+"\n");	
 		if(i < 2){
-			
-			if(200 < contourFinder.blobs[i].area){
-				
+			if(200 < contourFinder.blobs[i].area){	
 				ofSetColor(0xffffff);
 				char idStr[1024];		
 				sprintf(idStr, "id: %i\nx: %f\ny: %f\ncx: %f\ncy: %f\nwd: %f\nht: %f\na: %f\n", i,contourFinder.blobs[i].pts[0].x,contourFinder.blobs[i].pts[0].y,contourFinder.blobs[i].centroid.x,contourFinder.blobs[i].centroid.y,contourFinder.blobs[i].boundingRect.width,contourFinder.blobs[i].boundingRect.height,contourFinder.blobs[i].area);
@@ -217,13 +226,10 @@ void testApp::draw(){
 
 	if (bToggleHelp){		
 	ofSetColor(0xffffff);	
-	tdf.draw(ofGetWidth()-335,25);
+	logo.draw(ofGetWidth()-335,25);
 	char reportStr[1024];	
-	sprintf(reportStr, "press 'ESC' to exit (bug)\npress ' ' for mini\npress 'f' for fullscreen\npress 'h' for help\npress 't' for TUIO\npress 'o' for outlines\npress 'm' toggle DI or FTIR mode\n\npress 'c' to calibrate\npress 's' to camera setup\npress 'b' to capture bg\npress 'i' to invert\npress 'x' to set filter bg\n\npress 'a/z' to set threshold: %i\n\npress 'w/e' to set wobbleThreshold: %i\n\nblobs found: %i", threshold, wobbleThreshold, contourFinder.nBlobs);
-
-	
+	sprintf(reportStr, "press '~' for help\npress ' ' for mini\npress 'f' for fullscreen\npress 't' for TUIO\npress 'o' for outlines\npress 'm' toggle DI or FTIR mode\n\npress 'c' to calibrate\npress 's' to camera setup\npress 'b' to capture bg\npress 'i' to invert\npress 'x' to set filter bg\n\npress 'a/z' to set threshold: %i\n\npress 'w/e' to set DisplacementThreshold: %i\npress 'n/m' to set Blur Amount: %i\npress 'h/v' to set Mirror Mode: None\n\nblobs found: %i\n\npress 'ESC' to exit (bug)\n", threshold, wobbleThreshold, blurhold, contourFinder.nBlobs);
 	verdana.drawString(reportStr, 700, 95);
-
     verdana.drawString("Original", 33,60);
     verdana.drawString("Grayscale", 375,60);
     verdana.drawString("Background", 33,320);
@@ -300,7 +306,7 @@ void testApp::draw(){
 
 		//ofSetColor(0xFFFFFF);	
 		//videoInvertTexture.draw(0,0,screenW,screenH);
-
+		ofSetWindowTitle("Calibration");
 		verdana.drawString("Calibration", 33,60);	
 		char reportStr[1024];	
 		sprintf(reportStr, "press '] or [' resize grid\npress '2' to resize bounding box\nuse arrow keys to move bounding box");
@@ -350,7 +356,7 @@ void testApp::keyPressed  (int key){
 				bCalibration = true;	
 			}
 			break;
-		case 'h':
+		case '~':
 			if(bToggleHelp){	
 				bToggleHelp = false;	
 				ofSetWindowShape(700,768);
@@ -364,7 +370,7 @@ void testApp::keyPressed  (int key){
 				bFastMode = false;	
 				bToggleHelp = true;
 				ofSetWindowShape(1024,768);
-				ofSetWindowTitle("~Touchlib Configuration");
+				ofSetWindowTitle("Configuration");
 			}else{	
 				bFastMode = true;
 				bToggleHelp = false;
@@ -378,7 +384,15 @@ void testApp::keyPressed  (int key){
 			}else{	
 				bInvertVideo = true; 
 			}
-			break;
+			break;	
+		case 'n':
+			blurhold = blurhold + 3;
+			if (blurhold > 255) blurhold = 255;
+			break;		
+		case 'm':
+			blurhold = blurhold - 3;
+			if (blurhold < 0) blurhold = 0;
+			break;	
 		case 'a':
 			threshold ++;
 			if (threshold > 255) threshold = 255;
