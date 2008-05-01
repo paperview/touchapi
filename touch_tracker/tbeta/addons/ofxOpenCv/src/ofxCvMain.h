@@ -19,7 +19,7 @@
 
 //---------------------------
 // Effects and Filters
-#include "ofxCvSmoothImage.h"
+//#include "ofxCvSmoothImage.h"
 
 
 #endif

@@ -14,7 +14,7 @@ void testApp::setup(){
 	frameRate = 120;
 	camWidth = 320;	
 	camHeight = 240;
-	threshold = 90;
+	threshold = 10;
 	wobbleThreshold = 5;
 	blurhold = 3;
 	
