@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
+<meta content="AbstractProfile,nui.tuio.profiles.AbstractProfile,_dispatcher,profileName,addDispatcher,dispatchRemove,processAlive,processCommand,processFseq,processSet" name="keywords">
+<title>nui.tuio.profiles.AbstractProfile</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'AbstractProfile - API Documentation';
+				var baseRef = '../../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../index-list.html')" href="../../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../../index.html?it/nui/tuio/profiles/AbstractProfile.html&amp;it/nui/tuio/profiles/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;AbstractProfile</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class AbstractProfile"); titleBar_setSubNav(false,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">nui.tuio.profiles</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class AbstractProfile</td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Implements</td><td><a href="IProfile.html">IProfile</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Subclasses</td><td><a href="../profiles/Tuio2DCurProfile.html">Tuio2DCurProfile</a>, <a href="../profiles/Tuio2DObjProfile.html">Tuio2DObjProfile</a></td>
+</tr>
+</table>
+<p></p>
+  The AbstractProfile class defines the base for all tuio profiles implementation.
+  It defines a base structure to analyse data recieved from a profile and
+  decide to dispatch proper events when tuio added, removed, updated o simply 
+  a refresh. All tuio profiles must extend the AbstractProfile. The main methods 
+  to override are:
+  
+  <p></p>
+<p>
+<span class="classHeaderTableLabel">See also</span>
+</p>
+<div class="seeAlso">
+<a href="http://code.google.com/p/tuio-as3-lib" target="mm_external">http://code.google.com/p/tuio-as3-lib</a>
+<br>
+<a href="http://mtg.upf.es/reactable/?software" target="mm_external">http://mtg.upf.es/reactable/?software</a>
+</div>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Properties</div>
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#profileName">profileName</a> : String<div class="summaryTableDescription">[read-only]
+   Get the profile name
+   </div>
+</td><td class="summaryTableOwnerCol">AbstractProfile</td>
+</tr>
+</table>
+</div>
+<a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_dispatcher">_dispatcher</a> : <a href="../../tuio/TuioClient.html">TuioClient</a>
+<div class="summaryTableDescription">
+  The tuio client that will dispatch the events.</div>
+</td><td class="summaryTableOwnerCol">AbstractProfile</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addDispatcher()">addDispatcher</a>(dispatcher:<a href="../TuioClient.html">TuioClient</a>):void</div>
+<div class="summaryTableDescription">
+   Sets the TuioClient that will dispatch the Tuio events.</div>
+</td><td class="summaryTableOwnerCol">AbstractProfile</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#processCommand()">processCommand</a>(message:<a href="../../osc/OSCMessage.html">OSCMessage</a>):void</div>
+<div class="summaryTableDescription">
+   Processes a Tuio message looking for <code>set</code>,<code>alive</code>
+   and <code>fseq</code> messages so to decide the proper event to dispatch.</div>
+</td><td class="summaryTableOwnerCol">AbstractProfile</td>
+</tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#dispatchRemove()">dispatchRemove</a>(tuio:<a href="../AbstractTuio.html">AbstractTuio</a>):void</div>
+<div class="summaryTableDescription">
+   
+   </div>
+</td><td class="summaryTableOwnerCol">AbstractProfile</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#processAlive()">processAlive</a>(message:<a href="../../osc/OSCMessage.html">OSCMessage</a>):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">AbstractProfile</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#processFseq()">processFseq</a>(message:<a href="../../osc/OSCMessage.html">OSCMessage</a>):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">AbstractProfile</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#processSet()">processSet</a>(message:<a href="../../osc/OSCMessage.html">OSCMessage</a>):void</div>
+<div class="summaryTableDescription">
+   
+   </div>
+</td><td class="summaryTableOwnerCol">AbstractProfile</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="_dispatcher"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_dispatcher</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _dispatcher:<a href="../../tuio/TuioClient.html">TuioClient</a></code><p>
+  The tuio client that will dispatch the events.
+  </p></div>
+<a name="profileName"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">profileName</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>profileName:String</code>&nbsp;&nbsp;[read-only]<p>
+   Get the profile name
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get profileName():String</code>
+<br>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="addDispatcher()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addDispatcher</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public final function addDispatcher(dispatcher:<a href="../TuioClient.html">TuioClient</a>):void</code><p>
+   Sets the TuioClient that will dispatch the Tuio events.
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">dispatcher</span>:<a href="../TuioClient.html">TuioClient</a></code> &mdash; The tuio client
+   
+   </td>
+</tr>
+</table>
+</div>
+<a name="dispatchRemove()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">dispatchRemove</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function dispatchRemove(tuio:<a href="../AbstractTuio.html">AbstractTuio</a>):void</code><p>
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">tuio</span>:<a href="../AbstractTuio.html">AbstractTuio</a></code></td>
+</tr>
+</table>
+</div>
+<a name="processAlive()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">processAlive</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function processAlive(message:<a href="../../osc/OSCMessage.html">OSCMessage</a>):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">message</span>:<a href="../../osc/OSCMessage.html">OSCMessage</a></code></td>
+</tr>
+</table>
+</div>
+<a name="processCommand()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">processCommand</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public final function processCommand(message:<a href="../../osc/OSCMessage.html">OSCMessage</a>):void</code><p>
+   Processes a Tuio message looking for <code>set</code>,<code>alive</code>
+   and <code>fseq</code> messages so to decide the proper event to dispatch.
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">message</span>:<a href="../../osc/OSCMessage.html">OSCMessage</a></code> &mdash; The TUIO/OSC message to parse
+   
+   </td>
+</tr>
+</table>
+</div>
+<a name="processFseq()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">processFseq</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function processFseq(message:<a href="../../osc/OSCMessage.html">OSCMessage</a>):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">message</span>:<a href="../../osc/OSCMessage.html">OSCMessage</a></code></td>
+</tr>
+</table>
+</div>
+<a name="processSet()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">processSet</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function processSet(message:<a href="../../osc/OSCMessage.html">OSCMessage</a>):void</code><p>
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">message</span>:<a href="../../osc/OSCMessage.html">OSCMessage</a></code></td>
+</tr>
+</table>
+</div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright"> 
+</center>
+</div>
+</body>
+</html>
+<!-- -->
