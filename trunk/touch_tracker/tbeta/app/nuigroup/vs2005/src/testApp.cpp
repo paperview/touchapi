@@ -35,7 +35,8 @@ void testApp::setup(){
         vidGrabber.initGrabber(camWidth,camHeight);
 		printf("Webcam Mode\n");
 	#else
-        vidPlayer.loadMovie("hand.mp4");
+	//---------------------------------------- CHOOSE VIDEO
+        vidPlayer.loadMovie("test_videos/hand.mp4");
         vidPlayer.play();	
 		printf("File Mode\n");
 	#endif
