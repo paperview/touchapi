@@ -1,0 +1,313 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../print.css" type="text/css" media="print">
+<meta content="OSCPacket,nui.osc.OSCPacket,address,messages,port,time,addMessage,getXML" name="keywords">
+<title>nui.osc.OSCPacket</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'OSCPacket - API Documentation';
+				var baseRef = '../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../all-classes.html')" href="../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../all-classes.html')" href="../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../index-list.html')" href="../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../index.html?nui/osc/OSCPacket.html&amp;nui/osc/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;OSCPacket</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class OSCPacket"); titleBar_setSubNav(false,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">nui.osc</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class OSCPacket</td>
+</tr>
+</table>
+<p></p>
+  The OSCPacket is the main data structure in an OSCConnection. 
+  The OSC packet structure is mainly defined in the 
+  Open Sound Control protocol specs. This class tryes to encapsulate
+  this packet definition in an AS3 object mantaining as much as possible
+  as the original specification. However due to some limits it may in some
+  ways defer from expecifications. An osc packet structure is mainly defined as
+  a destination address, a destination port, a time and a collection of at least
+  one osc message.
+  
+  <p>&copy; 2007 http://www.h-umus.it<p>
+  
+   <p></p>
+<p>
+<span class="classHeaderTableLabel">See also</span>
+</p>
+<div class="seeAlso">
+<a href="http://code.google.com/p/flosc" target="mm_external">http://code.google.com/p/flosc</a>
+<br>
+<a href="http://opensoundcontrol.org" target="mm_external">http://opensoundcontrol.org</a>
+<br>
+<a href="../osc/OSCConnection.html" target="">nui.osc.OSCConnection</a>
+</div>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Properties</div>
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#address">address</a> : String<div class="summaryTableDescription">
+   Get/Set address value of the OSCPacket.</div>
+</td><td class="summaryTableOwnerCol">OSCPacket</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#messages">messages</a> : Array<div class="summaryTableDescription">[read-only]
+   Array containing the OSCMessages of the packet.</div>
+</td><td class="summaryTableOwnerCol">OSCPacket</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#port">port</a> : uint<div class="summaryTableDescription">
+   Get/Set port value of the OSCPacket.</div>
+</td><td class="summaryTableOwnerCol">OSCPacket</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#time">time</a> : Number<div class="summaryTableDescription">
+   Get/Set time of the OSCPacket.</div>
+</td><td class="summaryTableOwnerCol">OSCPacket</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#OSCPacket()">OSCPacket</a>(... args)</div>
+<div class="summaryTableDescription">
+   An OSCPacket constructor that can called in two different ways.</div>
+</td><td class="summaryTableOwnerCol">OSCPacket</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addMessage()">addMessage</a>(message:<a href="OSCMessage.html">OSCMessage</a>):void</div>
+<div class="summaryTableDescription">
+   Add an OSCMessage to the packet.</div>
+</td><td class="summaryTableOwnerCol">OSCPacket</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getXML()">getXML</a>():XML</div>
+<div class="summaryTableDescription">
+   This method returns an OSC XML-encoded defined in the Flosc DTD, 
+   that can be understood by the Flosc server.</div>
+</td><td class="summaryTableOwnerCol">OSCPacket</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="address"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">address</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>address:String</code>&nbsp;&nbsp;[read-write]<p>
+   Get/Set address value of the OSCPacket.
+   <pre>
+     var packetAddress:String = myOSCPacket.address;
+   
+     myOSCPacket.address = "127.0.0.1";
+   </pre>
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get address():String</code>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function set address(value:String):void</code>
+<br>
+</div>
+<a name="messages"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">messages</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>messages:Array</code>&nbsp;&nbsp;[read-only]<p>
+   Array containing the OSCMessages of the packet.
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get messages():Array</code>
+<br>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../osc/OSCMessage.html" target="">nui.osc.OSCMessage</a>
+</div>
+</div>
+<a name="port"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">port</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>port:uint</code>&nbsp;&nbsp;[read-write]<p>
+   Get/Set port value of the OSCPacket.
+   <pre>
+     var packetPort:uint = myOSCPacket.port;
+    
+     myOSCPacket.port = 3333;
+   </pre>
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get port():uint</code>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function set port(value:uint):void</code>
+<br>
+</div>
+<a name="time"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">time</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>time:Number</code>&nbsp;&nbsp;[read-write]<p>
+   Get/Set time of the OSCPacket.
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get time():Number</code>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function set time(value:Number):void</code>
+<br>
+</div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="OSCPacket()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">OSCPacket</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function OSCPacket(... args)</code><p>
+   An OSCPacket constructor that can called in two different ways.
+   <ul>
+    <li>with no arguments <br/>
+     <pre>
+      var myOSCPacket:OSCPacket = new OSCPacket();
+     </pre>
+    </li>
+    <li>passing <b>time</b>, <b>destination address</b> and <b>destination port</b><br/>
+     <pre>
+      var time:Number = 0;
+      var address:String = "localhost";
+      var port:uint = 3333;
+      var myOSCPacket:OSCPacket = new OSCPacket(time, address, port);
+     </pre>
+    </li>
+   </ul> 
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code>... <span class="label">args</span></code></td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="addMessage()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addMessage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function addMessage(message:<a href="OSCMessage.html">OSCMessage</a>):void</code><p>
+   Add an OSCMessage to the packet.
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">message</span>:<a href="OSCMessage.html">OSCMessage</a></code> &mdash; An OSCMessage to include in the OSCPacket
+   
+   </td>
+</tr>
+</table>
+</div>
+<a name="getXML()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getXML</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getXML():XML</code><p>
+   This method returns an OSC XML-encoded defined in the Flosc DTD, 
+   that can be understood by the Flosc server.
+   
+   </p><p>
+    It would look like :
+    <pre>
+      &lt;OSCPACKET ADDRESS="127.0.0.1" PORT="3333" TIME="0"&gt;
+       &lt;MESSAGE NAME="/osc/address"&gt;
+        &lt;ARGUMENT TYPE="i" VALUE="2"/&gt;
+        &lt;ARGUMENT TYPE="f" VALUE="3.0"/&gt;
+       &lt;/MESSAGE&gt;
+      &lt;/OSCPACKET&gt;
+    </pre>
+   </p>
+   
+   <p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>XML</code> &mdash; An XML that represents the OSCPacket understood by the Flosc server.
+   
+   </td>
+</tr>
+</table>
+</div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright"> 
+</center>
+</div>
+</body>
+</html>
+<!-- -->
