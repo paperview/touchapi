@@ -15,6 +15,7 @@ void testApp::setup(){
 	camWidth = 320;	
 	camHeight = 240;
 	threshold = 90;
+	wobbleThreshold = 5;
 
 	ofSetFrameRate(frameRate);
 	
@@ -120,12 +121,26 @@ void testApp::draw(){
 //--------------------------------------------------------------OSC
 		
 		//Send Set message of ID, x, y, X, Y, m, weight, width
+
+		newX = contourFinder.blobs[i].pts[0].x;
+		newY = contourFinder.blobs[i].pts[0].y;
+		
+		if(abs(oldX - newX) < wobbleThreshold){
+
+			newX = oldX;
+		}
+		if(abs(oldY - newY) < wobbleThreshold){
+
+			newY = oldY;
+		}
+
+		
 		ofxOscMessage m1;
 		m1.setAddress( "/tuio/2Dcur" );
 		m1.addStringArg( "set" );
 		m1.addIntArg( i + 1 ); //id (id can't be == 0)
-		m1.addFloatArg( contourFinder.blobs[i].pts[0].x/camWidth ); //  x/camWidth
-		m1.addFloatArg( contourFinder.blobs[i].pts[0].y/camHeight ); // y/camHeight 
+		m1.addFloatArg( newX/camWidth ); //  x/camWidth
+		m1.addFloatArg( newY/camHeight ); // y/camHeight 
 		m1.addFloatArg( 0 ); //X
 		m1.addFloatArg( 0 ); //Y
 		m1.addFloatArg( contourFinder.blobs[i].area ); //m	
@@ -169,6 +184,9 @@ void testApp::draw(){
 			}
 		}
 	  }
+
+		oldX = newX;
+		oldY = newY;
 	} 
 //-------------------------------------------------------------- continue OSC
 
@@ -200,7 +218,9 @@ void testApp::draw(){
 	ofSetColor(0xffffff);	
 	tdf.draw(ofGetWidth()-335,25);
 	char reportStr[1024];	
-	sprintf(reportStr, "press 'ESC' to exit (bug)\npress ' ' for mini\npress 'f' for fullscreen\npress 'h' for help\npress 't' for TUIO\npress 'o' for outlines\npress 'm' toggle DI or FTIR mode\n\npress 'c' to calibrate\npress 's' to camera setup\npress 'b' to capture bg\npress 'i' to invert\npress 'x' to set filter bg\n\npress 'a/z' to set threshold: %i\n\nblobs found: %i", threshold, contourFinder.nBlobs);
+	sprintf(reportStr, "press 'ESC' to exit (bug)\npress ' ' for mini\npress 'f' for fullscreen\npress 'h' for help\npress 't' for TUIO\npress 'o' for outlines\npress 'm' toggle DI or FTIR mode\n\npress 'c' to calibrate\npress 's' to camera setup\npress 'b' to capture bg\npress 'i' to invert\npress 'x' to set filter bg\n\npress 'a/z' to set threshold: %i\n\npress 'w/e' to set wobbleThreshold: %i\n\nblobs found: %i", threshold, wobbleThreshold, contourFinder.nBlobs);
+
+	
 	verdana.drawString(reportStr, 700, 95);
 
     verdana.drawString("Original", 33,60);
@@ -367,6 +387,14 @@ void testApp::keyPressed  (int key){
 			if (threshold < 10) threshold = 10;
 			//if (threshold < 0) threshold = 0;
 			break;	
+		case 'w':
+			wobbleThreshold ++;
+			if (wobbleThreshold > 255) wobbleThreshold = 255;
+			break;	
+		case 'e':
+			wobbleThreshold --;
+			if (wobbleThreshold < 0) wobbleThreshold = 0;
+			break;	
 		case '[':
 			snapCounter ++;
 			if (snapCounter > 16) snapCounter = 16;
@@ -378,7 +406,6 @@ void testApp::keyPressed  (int key){
 		case 'g':
 			bSnapshot = true;
 			break;
-
 		case 's':
 			//#ifdef _USE_LIVE_VIDEO
 			//vidGrabber.videoSettings();

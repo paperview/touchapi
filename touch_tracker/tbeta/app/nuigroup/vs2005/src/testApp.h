@@ -8,7 +8,7 @@
 
 #include "ofAddons.h"
 					
-#define HOST "nui.mine.nu"
+#define HOST "localhost"
 #define PORT 3333
 
 #define _USE_LIVE_VIDEO		// uncomment this to use a live camera FIXME!!!
@@ -41,6 +41,7 @@ class testApp : public ofSimpleApp{
 		int 				frameseq;	
 
 		int 				threshold;
+		int					wobbleThreshold;
 		int 				frameRate;
 		int 				camWidth;
 		int 				camHeight;		
@@ -63,6 +64,10 @@ class testApp : public ofSimpleApp{
         ofxCvContourFinder 	contourFinder;
 
 		float 				counter;
+		float				oldX;
+		float				oldY;
+		float				newX;
+		float				newY;
 
 		char eventString[255];
 		char timeString[255];
