@@ -16,7 +16,7 @@ void testApp::setup(){
 	camHeight = 240;
 	threshold = 99;
 	wobbleThreshold = 5;
-	blurhold = 3;
+	blurhold = 1;
 	
 	bSnapshot = 0;
 	bFastMode = 0;	
@@ -93,7 +93,7 @@ void testApp::update(){
 		//Set Mirroring Horizontal/Vertical
 		//sourceImg.mirror(true,true);
 			if(blurhold > 3){
-				//sourceImg.blur(blurhold);
+				sourceImg.blur(blurhold);
 			}
 		//sourceImg.erode();
 
@@ -388,12 +388,12 @@ void testApp::keyPressed  (int key){
 			}
 			break;	
 		case 'n':
-			blurhold = blurhold + 3;
+			blurhold = blurhold + 2;
 			if (blurhold > 255) blurhold = 255;
 			break;		
 		case 'm':
-			blurhold = blurhold - 3;
-			if (blurhold < 0) blurhold = 0;
+			blurhold = blurhold - 2;
+			if (blurhold < 1) blurhold = 1;
 			break;	
 		case 'a':
 			threshold ++;
