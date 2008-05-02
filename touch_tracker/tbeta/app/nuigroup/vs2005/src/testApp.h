@@ -11,7 +11,7 @@
 #define HOST "localhost"
 #define PORT 3333
 
-#define _USE_LIVE_VIDEO		// uncomment this to use a live camera
+//#define _USE_LIVE_VIDEO		// uncomment this to use a live camera
 
 class testApp : public ofSimpleApp{
 
@@ -40,12 +40,20 @@ class testApp : public ofSimpleApp{
 
 		int 				frameseq;	
 		int 				threshold;
-		int 				blurhold;
+		int 				blurValue;
+		int 				blurGaussianValue;
 		int					wobbleThreshold;
 		int 				frameRate;
 		int 				camWidth;
 		int 				camHeight;		
 		int 				snapCounter;
+		int					lowRange;
+		int					highRange;
+
+
+
+
+
 //	
 		bool  				bFastMode;
 		bool				bLearnBakground;		
