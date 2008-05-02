@@ -40,7 +40,7 @@ void testApp::setup(){
 		printf("Camera Mode\n");
 	#else
 	//---------------------------------------- CHOOSE VIDEO
-        vidPlayer.loadMovie("test_videos/FrontDI.m4v");
+        vidPlayer.loadMovie("test_videos/RearDI.m4v");
         vidPlayer.play();	
 		printf("File Mode\n");
 	#endif
