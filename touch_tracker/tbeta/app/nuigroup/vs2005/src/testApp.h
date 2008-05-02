@@ -11,7 +11,7 @@
 #define HOST "localhost"
 #define PORT 3333
 
-//#define _USE_LIVE_VIDEO		// uncomment this to use a live camera
+#define _USE_LIVE_VIDEO		// uncomment this to use a live camera
 
 class testApp : public ofSimpleApp{
 
@@ -57,6 +57,8 @@ class testApp : public ofSimpleApp{
 		bool				bSmooth;	
 		bool 				bSnapshot;	
 		bool 				bCalibration;	
+		bool				bVerticalMirror;
+		bool				bHorizontalMirror;
 //
 		float 				counter;
 		float				oldX;

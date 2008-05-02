@@ -26,6 +26,8 @@ void testApp::setup(){
 	bLearnBakground = 1;
 	bTUIOMode = 1;
 	bCalibration = 0;
+	bVerticalMirror = 0;
+	bHorizontalMirror = 0;
 	
 	ofSetFrameRate(frameRate);
 	
@@ -91,8 +93,9 @@ void testApp::update(){
 		}		
 		
 		//Set Mirroring Horizontal/Vertical
-		//sourceImg.mirror(true,true);
-			if(blurhold > 3){
+		sourceImg.mirror(bHorizontalMirror, bVerticalMirror);
+			
+		if(blurhold > 3){
 				sourceImg.blur(blurhold);
 			}
 		//sourceImg.erode();
@@ -426,7 +429,6 @@ void testApp::keyPressed  (int key){
 		case 's':
 			//#ifdef _USE_LIVE_VIDEO
 			//vidGrabber.videoSettings();
-
 			break;	
 		case 'f':
 		bFullscreen = !bFullscreen;
@@ -434,6 +436,19 @@ void testApp::keyPressed  (int key){
 			ofSetFullscreen(false);
 		} else if(bFullscreen == 1){
 			ofSetFullscreen(true);
+		}
+		case '5':
+		if(bVerticalMirror){
+			bVerticalMirror = false;
+		}else{	
+			bVerticalMirror = true;
+		}
+			break;
+		case '6':
+		if(bHorizontalMirror){
+			bHorizontalMirror = false;
+		}else{	
+			bHorizontalMirror = true;
 		}
 		break;
 	}
