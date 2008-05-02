@@ -78,7 +78,8 @@ class testApp : public ofSimpleApp{
 		char timeString[255];
 //		
 		ofTrueTypeFont	verdana;			
-		ofImage logo;
+		ofImage logo;	
+		ofImage menuBG;
 
 		//CBoxAligner          m_box;
 		//CTrackingManager	 m_tracker;
