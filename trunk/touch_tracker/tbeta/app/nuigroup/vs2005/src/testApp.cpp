@@ -16,7 +16,10 @@ void testApp::setup(){
 	camHeight = 240;
 	threshold = 99;
 	wobbleThreshold = 5;
-	blurhold = 1;
+	blurValue = 1;
+	blurGaussianValue = 1;
+	lowRange = 0;
+	highRange = 255;
 	
 	bSnapshot = 0;
 	bFastMode = 0;	
@@ -94,13 +97,27 @@ void testApp::update(){
 		
 		//Set Mirroring Horizontal/Vertical
 		sourceImg.mirror(bHorizontalMirror, bVerticalMirror);
-			
-		if(blurhold > 3){
-				sourceImg.blur(blurhold);
-			}
-		//sourceImg.erode();
 
-        grayImage = sourceImg;
+		grayImage = sourceImg;
+			
+		//Blur Video
+		if(blurValue > 3){
+			grayImage.blur(blurValue);
+		}
+		//Blur Gaussian Video
+		if(blurGaussianValue > 3){
+			grayImage.blurGaussian(blurGaussianValue);
+		}		
+		//Invert Video
+		if(bInvertVideo){
+			grayImage.invert();
+		}
+		//Create Image Level Range 0 - 255		
+		grayImage.convertToRange(lowRange, highRange);
+		
+
+    	//sourceImg.erode();
+        
 
 		if (bLearnBakground == true){
 			grayBg = grayImage;	
@@ -121,11 +138,12 @@ void testApp::draw(){
 	//ofSetupScreen();
 
 	ofSetColor(0xffffff);	
-	if (bInvertVideo){	
+/*	if (bInvertVideo){	
 	videoInvertTexture.draw(20,40,camWidth,camHeight);
 	}else{	
-	sourceImg.draw(20,40);
-	}
+*/	sourceImg.draw(20,40);
+
+//}
 	grayImage.draw(360,40);
 	grayBg.draw(20,300);	
 	grayDiff.draw(360,300);
@@ -233,9 +251,11 @@ void testApp::draw(){
 	ofSetColor(0xffffff);	
 	logo.draw(ofGetWidth()-335,25);
 	char reportStr[1024];	
-	sprintf(reportStr, "press '~' for help\npress ' ' for mini\npress 'f' for fullscreen\npress 't' for TUIO\npress 'o' for outlines\npress 'm' toggle DI or FTIR mode\n\npress 'c' to calibrate\npress 's' to camera setup\npress 'b' to capture bg\npress 'i' to invert\npress 'x' to set filter bg\n\npress 'a/z' to set threshold: %i\n\npress 'w/e' to set DisplacementThreshold: %i\npress 'n/m' to set Blur Amount: %i\npress 'h/v' to set Mirror Mode: None\n\nblobs found: %i\n\npress 'ESC' to exit (bug)\n", threshold, wobbleThreshold, blurhold, contourFinder.nBlobs);
+  // sprintf(reportStr, "press '~' for help\npress ' ' for mini\npress 'f' for fullscreen\npress 't' for TUIO\npress 'o' for outlines\npress 'm' toggle DI or FTIR mode\n\npress 'c' to calibrate\npress 's' to camera setup\npress 'b' to capture bg\npress 'i' to invert\npress 'x' to set filter bg\n\npress 'a/z' to set threshold: %i\n\npress 'w/e' to set DisplacementThreshold: %i\npress 'n/m' to set Blur Amount: %i\n press 'h/v' to set Mirror Mode: None\n\nblobs found: %i\n\npress 'ESC' to exit (bug)\n", threshold, wobbleThreshold, blurhold, contourFinder.nBlobs);
+    sprintf(reportStr, "press '~' for help\npress ' ' for mini\npress 'f' for fullscreen\npress 't' for TUIO\npress 'o' for outlines\npress 'm' toggle DI or FTIR mode\n\npress 'c' to calibrate\npress 's' to camera setup\npress 'b' to capture bg\npress 'i' to invert\npress 'x' to set filter bg\n\npress 'a/z' to set threshold: %i\n\npress 'w/e' to set DisplacementThreshold: %i\npress 'n/m' to set Blur Amount: %i\n \npress 'j/k' to set Gaussian Blur Amount: %i\npress '-/=' to set Low Level: %i\npress '9/0' to set High Level: %i\npress 'h/v' to set Mirror Mode: None\n\nblobs found: %i\n\npress 'ESC' to exit (bug)\n", threshold, wobbleThreshold, blurValue,blurGaussianValue,lowRange,highRange, contourFinder.nBlobs);
 	verdana.drawString(reportStr, 700, 95);
-    verdana.drawString("Original", 33,60);
+
+	verdana.drawString("Original", 33,60);
     verdana.drawString("Grayscale", 375,60);
     verdana.drawString("Background", 33,320);
 	verdana.drawString("Contour", 375,320);	
@@ -391,12 +411,20 @@ void testApp::keyPressed  (int key){
 			}
 			break;	
 		case 'n':
-			blurhold = blurhold + 2;
-			if (blurhold > 255) blurhold = 255;
+			blurValue +=  2;
+			if (blurValue > 255) blurValue = 255;
 			break;		
 		case 'm':
-			blurhold = blurhold - 2;
-			if (blurhold < 1) blurhold = 1;
+			blurValue -= 2;
+			if (blurValue < 1) blurValue = 1;
+			break;
+		case 'j':
+			blurGaussianValue +=  2;
+			if (blurGaussianValue > 255) blurGaussianValue = 255;
+			break;		
+		case 'k':
+			blurGaussianValue -= 2;
+			if (blurGaussianValue < 1) blurGaussianValue = 1;
 			break;	
 		case 'a':
 			threshold ++;
@@ -450,7 +478,23 @@ void testApp::keyPressed  (int key){
 		}else{	
 			bHorizontalMirror = true;
 		}
-		break;
+			break;
+		case '-':
+			lowRange ++;
+			if (lowRange > 255) lowRange = 255;
+			break;	
+		case '=':
+			lowRange --;
+			if (lowRange < 0) lowRange = 0;
+			break;
+		case '9':
+			highRange ++;
+			if (highRange > 255) highRange = 255;
+			break;	
+		case '0':
+			highRange --;
+			if (highRange < 0) highRange = 0;
+			break;	
 	}
 }
 
