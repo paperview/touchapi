@@ -4,47 +4,53 @@
 // you will also need to follow the other steps
 // like adding the library linking paths, etc,etc.
 
-//-------------------------------------------- openCV
+
+//-------------------------------------------- ofxParameterUI
+#ifdef OF_ADDON_USING_OFXPARAMETERUI
+	#include "AParameterUI.h"
+#endif
+
+//-------------------------------------------- ofxOpenCv
 #ifdef OF_ADDON_USING_OFXOPENCV
 	#include "ofxCvMain.h"
 #endif
 
-//-------------------------------------------- obj loader
+//-------------------------------------------- ofxObjLoader
 #ifdef OF_ADDON_USING_OFXOBJLOADER
 	#include "ofxObjLoader.h"
 #endif
 
-//-------------------------------------------- dir list
+//-------------------------------------------- ofxDirList
 #ifdef OF_ADDON_USING_OFXDIRLIST
 	#include "ofxDirList.h"
 #endif
 
-//-------------------------------------------- vector math
+//-------------------------------------------- ofxVectorMath
 #ifdef OF_ADDON_USING_OFXVECTORMATH
 	#include "ofxVectorMath.h"
 #endif
 
-//-------------------------------------------- network
+//-------------------------------------------- ofxNetwork
 #ifdef OF_ADDON_USING_OFXNETWORK
 	#include "ofxNetwork.h"
 #endif
 
-//-------------------------------------------- vector graphics
+//-------------------------------------------- ofxVectorGraphics
 #ifdef OF_ADDON_USING_OFXVECTORGRAPHICS
 	#include "ofxVectorGraphics.h"
 #endif
 
-//-------------------------------------------- OSC
+//-------------------------------------------- ofxOSC
 #ifdef OF_ADDON_USING_OFXOSC
 	#include "ofxOsc.h"
 #endif
 
-//-------------------------------------------- ofthread
+//-------------------------------------------- ofxThread
 #ifdef OF_ADDON_USING_OFXTHREAD
 	#include "ofxThread.h"
 #endif
 
-//-------------------------------------------- ofXML
+//-------------------------------------------- ofxXmlSettings
 #ifdef OF_ADDON_USING_OFXXMLSETTINGS
 	#include "ofxXmlSettings.h"
 #endif
