@@ -40,7 +40,7 @@ void testApp::draw(){
 		
 
 	thebg.draw(0,0);	
-
+	logo.draw(200,35);
 	ofSetColor(0xFFFFFF);
 	if(bSpaced){
 		ofDrawBitmapString("press:", 135, 65);
@@ -55,7 +55,7 @@ void testApp::draw(){
     glLoadIdentity();	
 	
 	parameterUI->render();
-	logo.draw(200,35);
+
 }
 
 

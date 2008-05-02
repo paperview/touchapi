@@ -208,7 +208,7 @@ void testApp::draw(){
         contourFinder.blobs[i].draw(360,40);		
 
 		//printf("Blobs: "+ofToString(contourFinder.getBlob(i).area, 2)+"\n");	
-		if(i < 2){
+		if(i < 1){
 			if(200 < contourFinder.blobs[i].area){	
 				ofSetColor(0xffffff);
 				char idStr[1024];		
