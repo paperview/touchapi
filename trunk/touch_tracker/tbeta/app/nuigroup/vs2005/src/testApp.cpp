@@ -9,12 +9,12 @@ void testApp::setup(){
 	//int screenH = ofGetScreenHeight();
 	//ofSetWindowPosition(screenW/2-300/2, screenH/2-300/2);
 
-	sender.setup( HOST, PORT ); // Set in Header
+	TUIOSocket.setup( HOST, PORT ); // Set in Header
 
 	frameRate = 120;
 	camWidth = 320;	
 	camHeight = 240;
-	threshold = 10;
+	threshold = 99;
 	wobbleThreshold = 5;
 	blurhold = 3;
 	
@@ -32,15 +32,15 @@ void testApp::setup(){
 	#ifdef _USE_LIVE_VIDEO
         vidGrabber.setVerbose(true);
         vidGrabber.initGrabber(camWidth,camHeight);
-		printf("Webcam Mode\n");
+		printf("Camera Mode\n");
 	#else
 	//---------------------------------------- CHOOSE VIDEO
-        vidPlayer.loadMovie("test_videos/RearDI.m4v");
+        vidPlayer.loadMovie("test_videos/FrontDI.m4v");
         vidPlayer.play();	
 		printf("File Mode\n");
 	#endif
     
-	colorImg.allocate(camWidth,camHeight);
+	sourceImg.allocate(camWidth,camHeight);
 	grayImage.allocate(camWidth,camHeight);
 	grayBg.allocate(camWidth,camHeight);
 	grayDiff.allocate(camWidth,camHeight);
@@ -71,31 +71,33 @@ void testApp::update(){
 	
 	if (bNewFrame){
 		#ifdef _USE_LIVE_VIDEO
-		  colorImg.setFromPixels(vidGrabber.getPixels(), camWidth,camHeight);	
+		  sourceImg.setFromPixels(vidGrabber.getPixels(), camWidth,camHeight);	
 		  int totalPixels = camWidth*camHeight*3;
 		  unsigned char * pixels = vidGrabber.getPixels();
 		
 	    #else
-            colorImg.setFromPixels(vidPlayer.getPixels(), camWidth,camHeight);  
+            sourceImg.setFromPixels(vidPlayer.getPixels(), camWidth,camHeight);  
 			int totalPixels = camWidth*camHeight*3;
 		    unsigned char * pixels = vidPlayer.getPixels();
         #endif	
 			
 //---------------------------------------------------------------------------------------------------- SET FILTERS HERE
+		//INVERT TEXTURE
 		if (bInvertVideo){	
 		for (int i = 0; i < totalPixels; i++){
 			videoInverted[i] = 255 - pixels[i];
 		}
 		videoInvertTexture.loadData(videoInverted, camWidth,camHeight, GL_RGB);
 		}		
-
-		//colorImg.mirror(true,true);
+		
+		//Set Mirroring Horizontal/Vertical
+		//sourceImg.mirror(true,true);
 			if(blurhold > 3){
-				//colorImg.blur(blurhold);
+				//sourceImg.blur(blurhold);
 			}
-		//colorImg.erode();
+		//sourceImg.erode();
 
-        grayImage = colorImg;
+        grayImage = sourceImg;
 
 		if (bLearnBakground == true){
 			grayBg = grayImage;	
@@ -119,7 +121,7 @@ void testApp::draw(){
 	if (bInvertVideo){	
 	videoInvertTexture.draw(20,40,camWidth,camHeight);
 	}else{	
-	colorImg.draw(20,40);
+	sourceImg.draw(20,40);
 	}
 	grayImage.draw(360,40);
 	grayBg.draw(20,300);	
@@ -158,7 +160,7 @@ void testApp::draw(){
 		m1.addFloatArg( contourFinder.blobs[i].area ); //m	
 		m1.addFloatArg( contourFinder.blobs[i].boundingRect.width ); //  wd
 		m1.addFloatArg( contourFinder.blobs[i].boundingRect.height );// ht
-		sender.sendMessage( m1 );
+		TUIOSocket.sendMessage( m1 );
 
 		//Send alive message of all alive IDs
 		ofxOscMessage m2;
@@ -169,7 +171,7 @@ void testApp::draw(){
 
 			m2.addIntArg( i + 1 ); //Get list of ALL active IDs		
 		}		
-		sender.sendMessage( m2 );//send them		
+		TUIOSocket.sendMessage( m2 );//send them		
 
 		
 		//Send fseq message
@@ -178,7 +180,7 @@ void testApp::draw(){
 		m3.setAddress( "/tuio/2Dcur" );		
 		m3.addStringArg( "fseq" );
 		m3.addIntArg(frameseq);
-		sender.sendMessage( m3 );
+		TUIOSocket.sendMessage( m3 );
 */
 
 //--------------------------------------------------------------
@@ -207,7 +209,7 @@ void testApp::draw(){
 		ofxOscMessage m1;
 		m1.setAddress( "/tuio/2Dcur" );		
 		m1.addStringArg( "alive" );
-		sender.sendMessage( m1 );
+		TUIOSocket.sendMessage( m1 );
 
 		//Send fseq message
 /*		Commented out Since We're not using fseq right now
@@ -215,7 +217,7 @@ void testApp::draw(){
 		m2.setAddress( "/tuio/2Dcur" );		
 		m2.addStringArg( "fseq" );
 		m2.addIntArg(frameseq);
-		sender.sendMessage( m2 );
+		TUIOSocket.sendMessage( m2 );
 */
 	}	
 

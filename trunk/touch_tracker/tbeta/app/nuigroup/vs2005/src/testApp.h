@@ -39,7 +39,6 @@ class testApp : public ofSimpleApp{
 		#endif
 
 		int 				frameseq;	
-
 		int 				threshold;
 		int 				blurhold;
 		int					wobbleThreshold;
@@ -77,8 +76,9 @@ class testApp : public ofSimpleApp{
 //
 	private:
 
-		ofxOscSender			sender;       
-		ofxCvColorImage			colorImg;
+		ofxOscSender			TUIOSocket; 
+
+		ofxCvColorImage			sourceImg;
         ofxCvGrayscaleImage 	grayImage;
 		ofxCvGrayscaleImage 	grayBg;
 		ofxCvGrayscaleImage 	grayDiff;		
