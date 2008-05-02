@@ -11,7 +11,7 @@
 #define HOST "localhost"
 #define PORT 3333
 
-#define _USE_LIVE_VIDEO		// uncomment this to use a live camera
+//#define _USE_LIVE_VIDEO		// uncomment this to use a live camera
 
 class testApp : public ofSimpleApp{
 
