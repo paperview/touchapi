@@ -42,7 +42,7 @@ class ofxCvBlob {
         //----------------------------------------
         void draw(float x = 0, float y = 0){
             ofNoFill();
-            ofSetColor(0xFFFFFF);
+            ofSetColor(0xFF00FF);
             ofBeginShape();
             for (int i = 0; i < nPts; i++){
                    ofVertex(x + pts[i].x, y + pts[i].y);
@@ -55,7 +55,7 @@ class ofxCvBlob {
 			ofSetColor(0xFF0099);
 			ofCircle(x + boundingRect.x+boundingRect.width/2,y + boundingRect.y+boundingRect.height/2,area/75); 
 		//	ofRect(x + boundingRect.x+boundingRect.width/4, y + boundingRect.y+boundingRect.height/4, boundingRect.width/2, boundingRect.height/2);
-            ofRect(x + boundingRect.x, y + boundingRect.y, boundingRect.width, boundingRect.height);
+        //    ofRect(x + boundingRect.x, y + boundingRect.y, boundingRect.width, boundingRect.height);
 			
 	
         }
