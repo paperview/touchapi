@@ -35,7 +35,7 @@ void testApp::setup(){
 		printf("Webcam Mode\n");
 	#else
 	//---------------------------------------- CHOOSE VIDEO
-        vidPlayer.loadMovie("test_videos/hand.mp4");
+        vidPlayer.loadMovie("test_videos/RearDI.m4v");
         vidPlayer.play();	
 		printf("File Mode\n");
 	#endif
@@ -73,27 +73,27 @@ void testApp::update(){
 		#ifdef _USE_LIVE_VIDEO
 		  colorImg.setFromPixels(vidGrabber.getPixels(), camWidth,camHeight);	
 		  int totalPixels = camWidth*camHeight*3;
-		unsigned char * pixels = vidGrabber.getPixels();
+		  unsigned char * pixels = vidGrabber.getPixels();
 		
+	    #else
+            colorImg.setFromPixels(vidPlayer.getPixels(), camWidth,camHeight);  
+			int totalPixels = camWidth*camHeight*3;
+		    unsigned char * pixels = vidPlayer.getPixels();
+        #endif	
+			
+//---------------------------------------------------------------------------------------------------- SET FILTERS HERE
 		if (bInvertVideo){	
 		for (int i = 0; i < totalPixels; i++){
 			videoInverted[i] = 255 - pixels[i];
 		}
 		videoInvertTexture.loadData(videoInverted, camWidth,camHeight, GL_RGB);
 		}		
-	    #else
-            colorImg.setFromPixels(vidPlayer.getPixels(), 320,240);
-        #endif	
-			
-
-//---------------------------------------------------------------------------------------------------- SET FILTERS HERE
 
 		//colorImg.mirror(true,true);
 			if(blurhold > 3){
 				//colorImg.blur(blurhold);
 			}
 		//colorImg.erode();
-
 
         grayImage = colorImg;
 
@@ -104,7 +104,7 @@ void testApp::update(){
 	
 		grayDiff.absDiff(grayBg, grayImage);
 		grayDiff.threshold(threshold);
-		contourFinder.findContours(grayDiff, 20, (340*240)/3, 10, true);	
+		contourFinder.findContours(grayDiff, 20, (camWidth*camHeight)/3, 10, true);	
 	}
 	frameseq ++;
 }
