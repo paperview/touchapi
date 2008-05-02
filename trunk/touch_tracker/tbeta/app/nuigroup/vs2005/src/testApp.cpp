@@ -437,14 +437,14 @@ void testApp::keyPressed  (int key){
 		} else if(bFullscreen == 1){
 			ofSetFullscreen(true);
 		}
-		case '5':
+		case 'v':
 		if(bVerticalMirror){
 			bVerticalMirror = false;
 		}else{	
 			bVerticalMirror = true;
 		}
 			break;
-		case '6':
+		case 'h':
 		if(bHorizontalMirror){
 			bHorizontalMirror = false;
 		}else{	
