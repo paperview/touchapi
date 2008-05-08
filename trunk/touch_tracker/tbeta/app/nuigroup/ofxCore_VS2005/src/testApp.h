@@ -5,6 +5,7 @@
 
 #define OF_ADDON_USING_OFXOPENCV
 #define OF_ADDON_USING_OFXOSC
+#define OF_ADDON_USING_OFXPARAMETERUI
 
 #include "ofAddons.h"
 					
@@ -49,12 +50,8 @@ class testApp : public ofSimpleApp{
 		int 				snapCounter;
 		int					lowRange;
 		int					highRange;
-
-
-
-
-
-//	
+//		
+		bool				bDrawVideo;
 		bool  				bFastMode;
 		bool				bLearnBakground;		
 		bool				bInvertVideo;		
@@ -67,6 +64,7 @@ class testApp : public ofSimpleApp{
 		bool 				bCalibration;	
 		bool				bVerticalMirror;
 		bool				bHorizontalMirror;
+		bool				bSlimMode;
 //
 		float 				counter;
 		float				oldX;
@@ -84,7 +82,13 @@ class testApp : public ofSimpleApp{
 		//CBoxAligner          m_box;
 		//CTrackingManager	 m_tracker;
 		//bool				bShowTouchScreen;		
-//
+//	
+		void setupUI();
+		AParameterUI* parameterUI;
+		bool 	bSpaced;	
+	
+		//--------------------------ParameterUI  Events
+		//void fireFunction();
 	private:
 
 		ofxOscSender			TUIOSocket; 

@@ -102,7 +102,7 @@ void AParameterUI::render()
 {
 	if( !initialised ) return;
 	
-cout << "Rendering and we have " << uiObjects.size() << " objects." << endl;
+//cout << "Rendering and we have " << uiObjects.size() << " objects." << endl;
 	
 	
 	if( isTransitioning || isActive )
