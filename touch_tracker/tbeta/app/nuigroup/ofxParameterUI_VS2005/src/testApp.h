@@ -23,21 +23,13 @@ class testApp : public ofSimpleApp{
 		void mouseReleased();
 		
 		void setupUI();
-		
-		bool  	bFullscreen;
-		
-		float 	counter;
-		float	spin;
-		float	spinPct;
-		int		prevMX;
-		int		prevMY;
-		bool 	bFirstMouseMove;		
+		AParameterUI* parameterUI;
 		bool 	bSpaced;		
 		
 		ofImage logo;	
 		ofImage thebg;	
 		
-		AParameterUI* parameterUI;
+	
 };
 
 #endif	

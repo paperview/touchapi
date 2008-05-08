@@ -1,13 +1,9 @@
 #include "testApp.h"
+#include "uiDefinition.h"
 //--------------------------------------------------------------
 void testApp::setup(){	 		
-	
 	snapCounter = 6;
 	frameseq = 0;
-	//ofSetCircleResolution(50);
-	//int screenW = ofGetScreenWidth();
-	//int screenH = ofGetScreenHeight();
-	//ofSetWindowPosition(screenW/2-300/2, screenH/2-300/2);
 
 	TUIOSocket.setup( HOST, PORT ); // Set in Header
 
@@ -21,13 +17,15 @@ void testApp::setup(){
 	lowRange = 0;
 	highRange = 255;
 	
+
+	bDrawVideo = 1;
 	bSnapshot = 0;
 	bFastMode = 0;	
 	bFullscreen	= 0;
 	bDrawOutlines = 1;
 	bInvertVideo = 0;
 	bLearnBakground = 1;
-	bTUIOMode = 1;
+	bTUIOMode = 0;
 	bCalibration = 0;
 	bVerticalMirror = 0;
 	bHorizontalMirror = 0;
@@ -42,7 +40,7 @@ void testApp::setup(){
 	//---------------------------------------- CHOOSE VIDEO
         vidPlayer.loadMovie("test_videos/FrontDI.m4v");
         vidPlayer.play();	
-		printf("File Mode\n");
+		printf("VCR Mode\n");
 	#endif
     
 	sourceImg.allocate(camWidth,camHeight);
@@ -52,12 +50,20 @@ void testApp::setup(){
 	
 	videoInverted 	= new unsigned char[camWidth*camHeight*3];
 	videoInvertTexture.allocate(camWidth,camHeight, GL_RGB);	
-		
+
+//-------------------------------------------------------------- Parameter UI	
 	ofSetWindowTitle("Configuration");
 	printf("Touchlib application is setup!\n");
 
 	verdana.loadFont("verdana.ttf",8, false, true);		
 	logo.loadImage("images/logo.jpg");
+
+	setupUI();	
+	parameterUI = AParameterUI::Instance();
+	parameterUI->init( ofGetWidth(), ofGetHeight() );
+	
+	//for smooth animation... should not effect video output?
+	ofSetVerticalSync(true);	
 
 }
 //--------------------------------------------------------------
@@ -128,31 +134,30 @@ void testApp::update(){
 		grayDiff.threshold(threshold);
 		contourFinder.findContours(grayDiff, 20, (camWidth*camHeight)/3, 10, true);	
 	}
-	frameseq ++;
+	frameseq ++;	
+//-------------------------------------------------------------- Parameter UI	
+	parameterUI->update();
 }
 
+//void testApp::fireFunction(){printf('fuck');}
 //--------------------------------------------------------------
 void testApp::draw(){
 	
-	
-	//ofSetupScreen();
+	//bLearnBakground = true; // ADAPTIVE BACKGROUND SUBTRATION?
 
+	ofSetupScreen(); //? NEEDED?
 	ofSetColor(0xffffff);	
-/*	if (bInvertVideo){	
-	videoInvertTexture.draw(20,40,camWidth,camHeight);
-	}else{	
-*/	sourceImg.draw(20,40);
 
-//}
-	grayImage.draw(360,40);
-	grayBg.draw(20,300);	
-	grayDiff.draw(360,300);
-    
+	if (bDrawVideo){	
+	sourceImg.draw(15,35);
+	grayImage.draw(350,35);
+	grayBg.draw(15,290);	
+	grayDiff.draw(350,290);
+	}  
 	if (bDrawOutlines){	
-	contourFinder.draw(20,40);
+	contourFinder.draw(15,35);
     for (int i = 0; i < contourFinder.nBlobs; i++){
-
-
+    contourFinder.blobs[i].draw(350,35);		
 //--------------------------------------------------------------OSC
 		
 		//Send Set message of ID, x, y, X, Y, m, weight, width
@@ -189,7 +194,6 @@ void testApp::draw(){
 		m2.addStringArg( "alive" );
 
 		for (int i = 0; i < contourFinder.nBlobs; i++)	{
-
 			m2.addIntArg( i + 1 ); //Get list of ALL active IDs		
 		}		
 		TUIOSocket.sendMessage( m2 );//send them		
@@ -205,8 +209,7 @@ void testApp::draw(){
 */
 
 //--------------------------------------------------------------
-        contourFinder.blobs[i].draw(360,40);		
-
+  
 		//printf("Blobs: "+ofToString(contourFinder.getBlob(i).area, 2)+"\n");	
 		if(i < 1){
 			if(200 < contourFinder.blobs[i].area){	
@@ -249,11 +252,11 @@ void testApp::draw(){
 
 	if (bToggleHelp){		
 	ofSetColor(0xffffff);	
-	logo.draw(ofGetWidth()-335,25);
+
 	char reportStr[1024];	
   // sprintf(reportStr, "press '~' for help\npress ' ' for mini\npress 'f' for fullscreen\npress 't' for TUIO\npress 'o' for outlines\npress 'm' toggle DI or FTIR mode\n\npress 'c' to calibrate\npress 's' to camera setup\npress 'b' to capture bg\npress 'i' to invert\npress 'x' to set filter bg\n\npress 'a/z' to set threshold: %i\n\npress 'w/e' to set DisplacementThreshold: %i\npress 'n/m' to set Blur Amount: %i\n press 'h/v' to set Mirror Mode: None\n\nblobs found: %i\n\npress 'ESC' to exit (bug)\n", threshold, wobbleThreshold, blurhold, contourFinder.nBlobs);
-    sprintf(reportStr, "press '~' for help\npress ' ' for mini\npress 'f' for fullscreen\npress 't' for TUIO\npress 'o' for outlines\npress 'm' toggle DI or FTIR mode\n\npress 'c' to calibrate\npress 's' to camera setup\npress 'b' to capture bg\npress 'i' to invert\npress 'x' to set filter bg\n\npress 'a/z' to set threshold: %i\n\npress 'w/e' to set DisplacementThreshold: %i\npress 'n/m' to set Blur Amount: %i\n \npress 'j/k' to set Gaussian Blur Amount: %i\npress '-/=' to set Low Level: %i\npress '9/0' to set High Level: %i\npress 'h/v' to set Mirror Mode: None\n\nblobs found: %i\n\npress 'ESC' to exit (bug)\n", threshold, wobbleThreshold, blurValue,blurGaussianValue,lowRange,highRange, contourFinder.nBlobs);
-	verdana.drawString(reportStr, 700, 95);
+    sprintf(reportStr, "press '~' for ui\npress '1' for help\npress '2' for video\npress ' ' for mini\npress 'f' for fullscreen\npress 't' for TUIO\npress 'o' for outlines\n\npress 'c' to calibrate\npress 's' to camera setup\npress 'b' to capture bg\npress 'i' to invert\npress 'x' to set filter bg\n\npress 'a/z' to set threshold: %i\n\npress 'w/e' to set DisplacementThreshold: %i\n\npress 'n/m' to set Blur Amount: %i\npress 'j/k' to set Gaussian Blur Amount: %i\npress '-/=' to set Low Level: %i\npress '9/0' to set High Level: %i\npress 'h/v' to set Mirror Mode: None\n\npress 'm' toggle DI or FTIR mode\n\npress 'ESC' to exit (bug)\n\n\nblobs found: %i", threshold, wobbleThreshold, blurValue,blurGaussianValue,lowRange,highRange, contourFinder.nBlobs);
+	verdana.drawString(reportStr, 690, 45);
 
 	verdana.drawString("Original", 33,60);
     verdana.drawString("Grayscale", 375,60);
@@ -309,19 +312,21 @@ void testApp::draw(){
 	ofSetColor(0xFFFFFF);
 	img.draw(0,0,camWidth,camHeight);
 	*/ 	
+//-----------------------------------------------------------------------------DRAW LEDS
+	if (bDrawVideo){		
+	ofSetColor(255,0,255);
+	ofFill();		
+	ofCircle(20,15,5);
+	ofNoFill();
+	}
 	if (bTUIOMode){		
 	ofSetColor(0,255,0); 
 	ofFill();		
-	ofCircle(10,15,5);
-	ofNoFill();
-	}//END TUIO MODE
-
-	if (bInvertVideo){		
-	ofSetColor(255,0,255);
-	ofFill();		
-	ofCircle(25,15,5);
+	ofCircle(35,15,5);
 	ofNoFill();
 	}
+//-----------------------------------------------------------------------------DRAW LEDS
+
 	if (bCalibration){		
 		int screenW = ofGetWidth();
 		int screenH = ofGetHeight();
@@ -347,14 +352,60 @@ void testApp::draw(){
 			ofLine(0, (iHeight/iCount) * i, iWidth, (iHeight/iCount) * i);
 			ofLine((iWidth/iCount) * i, 0, (iWidth/iCount) * i, iHeight);
 		}
-	}	
+	}		
+
+//-------------------------------------------------------------- Parameter UI	
+	if(!bCalibration){
+		if(ofGetWidth() > 1000){
+		ofSetColor(0xFFFFFF);	
+		logo.draw(ofGetWidth()-155,50);
+		parameterUI->render();
+		}
+	}
+		
 
 }
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){ 
 	sprintf(eventString, "keyPressed = (%i)", key);
 	//printf(int(key));
-	switch (key){
+if(ofGetWidth() > 1000){
+	if ( key == 126 || key == 96) 
+	{
+		if( parameterUI->isActive )
+		{
+			parameterUI->deActivate();	
+			bSpaced = true;
+			bToggleHelp = true;	
+		}
+		else
+		{
+			parameterUI->activate();	
+			bSpaced = false;		
+			bToggleHelp = false;	
+		}
+	}
+}
+
+	switch (key){		
+		case '1':
+			if(bToggleHelp){	
+				parameterUI->deActivate();	
+				bToggleHelp = false;	
+				ofSetWindowShape(685,768);	
+			}else{	
+				parameterUI->deActivate();	
+				bToggleHelp = true;
+				ofSetWindowShape(1024,768);	
+			}
+			break;
+		case '2':
+			if(bDrawVideo){	
+				bDrawVideo = false;	
+			}else{	
+				bDrawVideo = true;
+			}
+			break;
 		case 'b':
 			bLearnBakground = true;
 			break;		
@@ -379,15 +430,6 @@ void testApp::keyPressed  (int key){
 				bCalibration = false;		
 			}else{	
 				bCalibration = true;	
-			}
-			break;
-		case '~':
-			if(bToggleHelp){	
-				bToggleHelp = false;	
-				ofSetWindowShape(700,768);
-			}else{	
-				bToggleHelp = true;
-				ofSetWindowShape(1024,768);
 			}
 			break;
 		case ' ':
@@ -455,8 +497,9 @@ void testApp::keyPressed  (int key){
 			bSnapshot = true;
 			break;
 		case 's':
-			//#ifdef _USE_LIVE_VIDEO
-			//vidGrabber.videoSettings();
+			#ifdef _USE_LIVE_VIDEO
+			vidGrabber.videoSettings();
+			#endif
 			break;	
 		case 'f':
 		bFullscreen = !bFullscreen;
@@ -465,14 +508,14 @@ void testApp::keyPressed  (int key){
 		} else if(bFullscreen == 1){
 			ofSetFullscreen(true);
 		}
-		case 'v':
+		case 'h':
 		if(bVerticalMirror){
 			bVerticalMirror = false;
 		}else{	
 			bVerticalMirror = true;
 		}
 			break;
-		case 'h':
+		case 'v':
 		if(bHorizontalMirror){
 			bHorizontalMirror = false;
 		}else{	
@@ -506,16 +549,21 @@ void testApp::mouseMoved(int x, int y ){
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){	
 	sprintf(eventString, "mouseDragged = (%i,%i - button %i)", x, y, button);
+	parameterUI->mouseMotion( x, y );	
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
 	sprintf(eventString, "mousePressed = (%i,%i - button %i)", x, y, button);
+	//
+	cout << "button " << button << endl;
+	parameterUI->mouseDown( x, y, button );	
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(){	
 	sprintf(eventString, "mouseReleased");
+	parameterUI->mouseUp( 0, 0, 0 );	
 }
 //--------------------------------------------------------------
 void testApp::fingerMoved(int x, int y ){
@@ -531,104 +579,9 @@ void testApp::fingerPressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::fingerReleased(){
-
 }
 //--------------------------------------------------------------
 void testApp::exit(){
-	printf("Touchlib application has exited!\n");	
+	printf("tBeta application has exited!\n");	
 }
 
-
-/* -- FROM MTLIB
-void frame()
-	{
-		if(!transmitSocket)
-			return;
-
-		// send update messages..
-
-		char buffer[OUTPUT_BUFFER_SIZE];
-		osc::OutboundPacketStream p( buffer, OUTPUT_BUFFER_SIZE );
-		
-		PointMap::iterator iter1, iter2, iter_last;	
-		if(m_Points.size() > 0)
-		{	    
-			//p << osc::BeginBundleImmediate;
-
-
-			int scount = 0, acount = 0;
-			iter1=m_Points.begin();
-			
-			bool done=false;
-
-			while(!done)
-			{
-				p.Clear();
-				p << osc::BeginBundle();
-
-				for(; iter1 != m_Points.end(); iter1++)
-				{					
-					Point d = (*iter1).second;
-					float m = sqrtf((d.dx*d.dx) + (d.dy*d.dy));
-					float area = 0;
-					if(!(d.x == 0 && d.y == 0)) {
-						p << osc::BeginMessage( "/tuio/2Dcur" ) << "set" << d.id << d.lx << d.ly << d.dx << d.dy << m << osc::EndMessage;
-
-						scount ++;
-						if(scount >= 10)
-						{
-							scount = 0;
-							break;
-						}
-					}
-				}
-
-				if(iter1 == m_Points.end())
-					done = true;
-
-
-				p << osc::BeginMessage( "/tuio/2Dcur" );
-				p << "alive";
-				for(iter2=m_Points.begin(); iter2 != m_Points.end(); iter2++)
-				{
-					Point d = (*iter2).second;
-					if(!(d.lx == 0 && d.ly == 0)) {
-						p << d.id;
-					}
-				}
-				p << osc::EndMessage;
-
-				p << osc::BeginMessage( "/tuio/2Dcur" ) << "fseq" << frameSeq << osc::EndMessage;
-				p << osc::EndBundle;
-
-				//printf("%d size. %d #fingers\n", p.Size(), fingerList.size());
-				frameSeq ++; 
-				if(p.IsReady())
-					transmitSocket->Send( p.Data(), p.Size() );
-			}
-
-
-		} else {
-			//p << osc::BeginBundleImmediate;
-			p.Clear();
-			p << osc::BeginBundle();
-
-			p << osc::BeginMessage( "/tuio/2Dcur" );
-			p << "alive";
-			p << osc::EndMessage;
-
-			p << osc::BeginMessage( "/tuio/2Dcur" ) << "fseq" << frameSeq << osc::EndMessage;
-
-			p << osc::EndBundle;
-
-			frameSeq ++;
-			//printf("%d size\n", p.Size());
-
-			if(p.IsReady())
-				transmitSocket->Send( p.Data(), p.Size() );
-
-
-		}
-
-	}
-*/

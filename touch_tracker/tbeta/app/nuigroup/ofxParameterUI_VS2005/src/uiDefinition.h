@@ -41,7 +41,7 @@ void testApp::setupUI()
 	AParameterUIObjectSliderFloat* tmpFloatSlider2a = tmpPanel12->addSliderFloat( "Brightness", 300, 1.0f, 300, 1 );	
 	AParameterUIObjectSliderFloat* tmpFloatSlider2 = tmpPanel12->addSliderFloat( "Contrast", 300, 1.0f, 300, 1 );
 	AParameterUIObjectPushButton*	tmpOnePushButton2 = tmpPanel1->addPushButton( "Active" );
-	AParameterUIObjectSliderInteger* tmpIntegerSlider = tmpPanel1->addSliderInteger( "Source", 300, 1, 100, 100 );
+	AParameterUIObjectSliderInteger* tmpIntegerSlider = tmpPanel1->addSliderInteger( "ID", 300, 1, 100, 100 );
 	AParameterUIObjectPushButton*	tmpOnePushButton1b = tmpPanel1->addPushButton( "Camera" );
 	AParameterUIObjectPushButton*	tmpOnePushButton2b = tmpPanel1->addPushButton( "VCR" );
 	//tmpIntegerSlider->changedParameterCallback = &changedSquareAmountToDraw;
