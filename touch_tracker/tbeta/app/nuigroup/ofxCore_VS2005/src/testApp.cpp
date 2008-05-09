@@ -359,7 +359,20 @@ void testApp::draw(){
 		if(ofGetWidth() > 1000){
 		ofSetColor(0xFFFFFF);	
 		logo.draw(ofGetWidth()-155,50);
-		parameterUI->render();
+		//---------------------------
+	// render the UI
+	
+	// Change to the projection matrix and set our viewing volume.
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity();
+
+	gluOrtho2D(0,  ofGetWidth(), ofGetHeight() ,0);
+
+    // We don't want to modify the projection matrix. 
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();	
+	
+	parameterUI->render();
 		}
 	}
 		

@@ -2,11 +2,9 @@
 #define _TEST_APP
 
 #include "ofMain.h"
-
 #define OF_ADDON_USING_OFXOPENCV
 #define OF_ADDON_USING_OFXOSC
 #define OF_ADDON_USING_OFXPARAMETERUI
-
 #include "ofAddons.h"
 					
 #define HOST "localhost"
@@ -21,6 +19,7 @@ class testApp : public ofSimpleApp{
 		void update();
 		void draw();
 		void exit();
+		void setupUI();
 
 		void keyPressed  (int key);
 		void mouseMoved(int x, int y );
@@ -32,6 +31,8 @@ class testApp : public ofSimpleApp{
 		void fingerDragged(int x, int y, int button);
 		void fingerPressed(int x, int y, int button);
 		void fingerReleased();
+
+		void changedVar( float _newVal, int arg1, int arg2, int arg3);
 
         #ifdef _USE_LIVE_VIDEO
 		  ofVideoGrabber 		vidGrabber;
@@ -83,7 +84,7 @@ class testApp : public ofSimpleApp{
 		//CTrackingManager	 m_tracker;
 		//bool				bShowTouchScreen;		
 //	
-		void setupUI();
+
 		AParameterUI* parameterUI;
 		bool 	bSpaced;	
 	
