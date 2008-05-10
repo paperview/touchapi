@@ -12,8 +12,8 @@
 
 //#define _USE_LIVE_VIDEO		// uncomment this to use a live camera
 
-class testApp : public ofSimpleApp{
-
+class testApp : public ofSimpleApp
+{
 	public:
 		void setup();
 		void update();
@@ -21,18 +21,18 @@ class testApp : public ofSimpleApp{
 		void exit();
 		void setupUI();
 
-		void keyPressed  (int key);
-		void mouseMoved(int x, int y );
+		void keyPressed(int key);
+		void mouseMoved(int x, int y);
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased();
 
-		void fingerMoved(int x, int y );
+		void fingerMoved(int x, int y);
 		void fingerDragged(int x, int y, int button);
 		void fingerPressed(int x, int y, int button);
 		void fingerReleased();
 
-		void changedVar( float _newVal, int arg1, int arg2, int arg3);
+		void changedVar(float _newVal, int arg1, int arg2, int arg3);
 
         #ifdef _USE_LIVE_VIDEO
 		  ofVideoGrabber 		vidGrabber;
@@ -47,11 +47,15 @@ class testApp : public ofSimpleApp{
 		int					wobbleThreshold;
 		int 				frameRate;
 		int 				camWidth;
-		int 				camHeight;		
+		int 				camHeight;
+		int					winWidth;
+		int					winHeight;
+		int					minWidth;
+		int					minHeight;
 		int 				snapCounter;
 		int					lowRange;
 		int					highRange;
-//		
+		
 		bool				bDrawVideo;
 		bool  				bFastMode;
 		bool				bLearnBakground;		
@@ -66,47 +70,45 @@ class testApp : public ofSimpleApp{
 		bool				bVerticalMirror;
 		bool				bHorizontalMirror;
 		bool				bSlimMode;
-//
+
 		float 				counter;
 		float				oldX;
 		float				oldY;
 		float				newX;
 		float				newY;
 
-		char eventString[255];
-		char timeString[255];
-//		
-		ofTrueTypeFont	verdana;			
-		ofImage logo;	
-		ofImage menuBG;
+		char				eventString[255];
+		char				timeString[255];
+		
+		ofTrueTypeFont		verdana;
+		ofImage				logo;
+		ofImage				menuBG;
 
-		//CBoxAligner          m_box;
-		//CTrackingManager	 m_tracker;
+		//CBoxAligner		m_box;
+		//CTrackingManager	m_tracker;
 		//bool				bShowTouchScreen;		
 //	
 
-		AParameterUI* parameterUI;
-		bool 	bSpaced;	
+		AParameterUI*		parameterUI;
+		bool				bSpaced;	
 	
 		//--------------------------ParameterUI  Events
 		//void fireFunction();
+
+		//Send contour data to OSC
+		void SendOSC();
 	private:
 
-		ofxOscSender			TUIOSocket; 
+		ofxOscSender		TUIOSocket; 
 
-		ofxCvColorImage			sourceImg;
-        ofxCvGrayscaleImage 	grayImage;
-		ofxCvGrayscaleImage 	grayBg;
-		ofxCvGrayscaleImage 	grayDiff;		
+		ofxCvColorImage		sourceImg;
+        ofxCvGrayscaleImage grayImg;
+		ofxCvGrayscaleImage grayBg;
+		ofxCvGrayscaleImage grayDiff;		
 		
 		unsigned char * 	videoInverted;
 		ofTexture			videoInvertTexture;
 		ofTexture			videoTexture;
-        ofxCvContourFinder 	contourFinder;
- 
-	protected:
-			
-			
+        ofxCvContourFinder	contourFinder;
 };
-
 #endif
