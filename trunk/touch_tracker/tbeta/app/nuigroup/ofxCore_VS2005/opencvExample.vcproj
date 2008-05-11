@@ -626,6 +626,42 @@
 					</Filter>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="ofxXMLSettings"
+				>
+				<Filter
+					Name="libs"
+					>
+					<File
+						RelativePath="..\..\..\addons\ofxXmlSettings\libs\tinyxml.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="src"
+					>
+					<File
+						RelativePath="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
