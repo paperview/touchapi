@@ -517,6 +517,18 @@ void testApp::keyPressed(int key)
 	switch(key)
 	{	
 		case 's':
+/* PUT THIS IN ANOTHER METHOD
+			XML.setValue("CONFIG:BOOLEAN:LABELS",bShowLabels);
+			XML.setValue("CONFIG:BOOLEAN:VIDEO",bDrawVideo);
+			XML.setValue("CONFIG:BOOLEAN:SNAPSHOT",bSnapshot);
+			XML.setValue("CONFIG:BOOLEAN:FAST",bFastMode);
+			XML.setValue("CONFIG:BOOLEAN:OUTLINES",bDrawOutlines);
+			XML.setValue("CONFIG:BOOLEAN:INVERT",bInvertVideo);
+			XML.setValue("CONFIG:BOOLEAN:LEARNBG",bLearnBakground);
+			XML.setValue("CONFIG:BOOLEAN:CALIBRATION",bCalibration);
+			XML.setValue("CONFIG:BOOLEAN:VMIRROR",bVerticalMirror);
+			XML.setValue("CONFIG:BOOLEAN:HMIRROR",bHorizontalMirror);
+*/
 			XML.saveFile("config.xml");
 			message ="Settings Saved!";
 			break;	
