@@ -6,10 +6,9 @@
  *****************************************************************************/
 void testApp::setup()
 {	 		
-ofBackground(255,255,255);	// CLEAR STUFF
 //-------------------------------------------------------------- 
-//	FIRST LETS LOAD THE CONFIG XML
-//-------------------------------------------------------------- 
+//	FIRST LETS LOAD THE CONFIG XML  
+//-------------------------------------------------------------- // TODO: a seperate XML to map keyboard commands to action 
 	message = "Loading config.xml...";
 	if( XML.loadFile("config.xml") ){
 		message = "Settings Loaded!";
@@ -18,53 +17,59 @@ ofBackground(255,255,255);	// CLEAR STUFF
 		message = "No Settings Found...";
 		// GENERATE DEFAULT XML DATA WHICH WILL BE SAVED INTO THE CONFIG
 	}
-	red		= XML.getValue("BACKGROUND:COLOR:RED", 0);
-	green	= XML.getValue("BACKGROUND:COLOR:GREEN", 0);
-	blue	= XML.getValue("BACKGROUND:COLOR:BLUE", 0);
+
+	// XML COLOR TEST (VERIFIES ITS WORKING)
+	red		= XML.getValue("CONFIG:BACKGROUND:COLOR:RED", 0);
+	green	= XML.getValue("CONFIG:BACKGROUND:COLOR:GREEN", 0);
+	blue	= XML.getValue("CONFIG:BACKGROUND:COLOR:BLUE", 0);
 	
 	// MISC VARS FOR SETTINGS (MARKED FOR GC) 
 	lastTagNumber	= 0;
 	pointCount		= 0;
 	lineCount		= 0;
-//-------------------------------------------------------------- 
-//  START XML SETUP
-//-------------------------------------------------------------- 
-	TUIOSocket.setup(HOST, PORT); // Set IN XML
-		
-	snapCounter			= 6;
+	snapCounter			= 6; // MARKED	
 	frameseq			= 0;
 
-	frameRate			= XML.getValue("GENERAL:APPLICATION:FRAMERATE",0);
+//-------------------------------------------------------------- 
+//  START BINDING XML TO VARS
+//-------------------------------------------------------------- 
+	frameRate			= XML.getValue("CONFIG:APPLICATION:FRAMERATE",0);
 	
-	winWidth			= XML.getValue("GENERAL:WINDOW:WIDTH",0);
-	winHeight			= XML.getValue("GENERAL:WINDOW:HEIGHT",0);
-	minWidth			= XML.getValue("GENERAL:WINDOW:MIN",0);
-	minHeight			= XML.getValue("GENERAL:WINDOW:MAX",0);
-	bFullscreen			= XML.getValue("GENERAL:WINDOW:FULLSCREEN",0);
+	winWidth			= XML.getValue("CONFIG:WINDOW:WIDTH",0);
+	winHeight			= XML.getValue("CONFIG:WINDOW:HEIGHT",0);
+	minWidth			= XML.getValue("CONFIG:WINDOW:MIN",0);
+	minHeight			= XML.getValue("CONFIG:WINDOW:MAX",0);
+	bFullscreen			= XML.getValue("CONFIG:WINDOW:FULLSCREEN",0);
 	
-	camWidth			= XML.getValue("GENERAL:CAMERA_0:WIDTH",0);
-	camHeight			= XML.getValue("GENERAL:CAMERA_0:HEIGHT",0);
-	
-	bShowLabels			= XML.getValue("GENERAL:BOOLEAN:LABELS",0);
-	bDrawVideo			= XML.getValue("GENERAL:BOOLEAN:VIDEO",0);
-	bSnapshot			= XML.getValue("GENERAL:BOOLEAN:SNAPSHOT",0);
-	bFastMode			= XML.getValue("GENERAL:BOOLEAN:FAST",0);	
-	bDrawOutlines		= XML.getValue("GENERAL:BOOLEAN:OUTLINES",0);
-	bInvertVideo		= XML.getValue("GENERAL:BOOLEAN:INVERT",0);
-	bLearnBakground		= XML.getValue("GENERAL:BOOLEAN:LEARNBG",0);
-	bTUIOMode			= XML.getValue("GENERAL:BOOLEAN:TUIO",0);
-	bCalibration		= XML.getValue("GENERAL:BOOLEAN:CALIBRATION",0);
-	bVerticalMirror		= XML.getValue("GENERAL:BOOLEAN:VMIRROR",0);
-	bHorizontalMirror	= XML.getValue("GENERAL:BOOLEAN:HMIRROR",0);	
-	
-	threshold			= 99;
-	wobbleThreshold		= 5;
-	blurValue			= 1;
-	blurGaussianValue	= 1;
-	lowRange			= 0;
-	highRange			= 255;
-	
+	camWidth			= XML.getValue("CONFIG:CAMERA_0:WIDTH",0);
+	camHeight			= XML.getValue("CONFIG:CAMERA_0:HEIGHT",0);
+	//camRate			= XML.getValue("CONFIG:CAMERA_0:FRAMERATE",0);
 
+	bShowLabels			= XML.getValue("CONFIG:BOOLEAN:LABELS",0);
+	bDrawVideo			= XML.getValue("CONFIG:BOOLEAN:VIDEO",0);
+	bSnapshot			= XML.getValue("CONFIG:BOOLEAN:SNAPSHOT",0);
+	bFastMode			= XML.getValue("CONFIG:BOOLEAN:FAST",0);	
+	bDrawOutlines		= XML.getValue("CONFIG:BOOLEAN:OUTLINES",0);
+	bInvertVideo		= XML.getValue("CONFIG:BOOLEAN:INVERT",0);
+	bLearnBakground		= XML.getValue("CONFIG:BOOLEAN:LEARNBG",0);
+	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
+	bCalibration		= XML.getValue("CONFIG:BOOLEAN:CALIBRATION",0);
+	bVerticalMirror		= XML.getValue("CONFIG:BOOLEAN:VMIRROR",0);
+	bHorizontalMirror	= XML.getValue("CONFIG:BOOLEAN:HMIRROR",0);	
+	
+	threshold			= XML.getValue("CONFIG:INT:THRESHOLD",0);
+	wobbleThreshold		= XML.getValue("CONFIG:INT:WTHRESHOLD",0);
+	blurValue			= XML.getValue("CONFIG:INT:BLUR",0);
+	blurGaussianValue	= XML.getValue("CONFIG:INT:BLURG",0);
+	lowRange			= XML.getValue("CONFIG:INT:LOWRANGE",0);
+	highRange			= XML.getValue("CONFIG:INT:HIGHRANGE",0);
+	
+	
+	myLocalHost			= XML.getValue("CONFIG:NETWORK:LOCALHOST",0);
+	myRemoteHost		= XML.getValue("CONFIG:NETWORK:HOSTA",0);
+	myTUIOPort			= XML.getValue("CONFIG:NETWORK:TUIO_PORT_OUT",0);
+	
+	TUIOSocket.setup(myLocalHost, myTUIOPort); 
 //-------------------------------------------------------------- 
 //  END XML SETUP
 
@@ -72,7 +77,7 @@ ofBackground(255,255,255);	// CLEAR STUFF
 	ofSetFullscreen(bFullscreen);
 	ofSetFrameRate(frameRate);
 	
-	#ifdef _USE_LIVE_VIDEO
+	#ifdef _USE_LIVE_VIDEO // MAKE BOTH LIVE VIDEO AND VCR MODE WORK AT SAME TIME 
         vidGrabber.setVerbose(true);
         vidGrabber.initGrabber(camWidth,camHeight);
 		printf("Camera Mode\n");
@@ -794,9 +799,9 @@ void testApp::mouseReleased()
 	sprintf(eventString, "mouseReleased");
 
 	//update the colors to the XML structure when the mouse is released
-	XML.setValue("BACKGROUND:COLOR:RED", red);
-	XML.setValue("BACKGROUND:COLOR:GREEN", green);
-	XML.setValue("BACKGROUND:COLOR:BLUE", blue);
+	XML.setValue("CONFIG:BACKGROUND:COLOR:RED", red);
+	XML.setValue("CONFIG:BACKGROUND:COLOR:GREEN", green);
+	XML.setValue("CONFIG:BACKGROUND:COLOR:BLUE", blue);
 
 	//-------------------------------- PARAMETER UI EVENT
 	parameterUI->mouseUp(0, 0, 0);	
@@ -837,7 +842,7 @@ void testApp::exit()
 	printf("tBeta module has exited!\n");	
 	
 	// -------------------------------- SAVE STATE ON EXIT
-	//XML.saveFile("config.xml");
+	XML.saveFile("config.xml");
 	//message ="Exited...";
 }
 
