@@ -13,7 +13,7 @@ void testApp::setup()
 	camWidth			= 320;	
 	camHeight			= 240;
 	winWidth			= 1024; //initial window 
-	winHeight			= 512;
+	winHeight			= 768;
 	minWidth			= 800;
 	minHeight			= 426;
 	bFullscreen			= false;
@@ -25,6 +25,7 @@ void testApp::setup()
 	lowRange			= 0;
 	highRange			= 255;
 	
+	bShowLabels			= true;
 	bDrawVideo			= true;
 	bSnapshot			= false;
 	bFastMode			= false;	
@@ -38,6 +39,7 @@ void testApp::setup()
 	bHorizontalMirror	= false;
 	
 	TUIOSocket.setup(HOST, PORT); // Set in Header
+
 	ofSetWindowShape(winWidth,winHeight);
 	ofSetFullscreen(bFullscreen);
 	ofSetFrameRate(frameRate);
@@ -212,7 +214,7 @@ void testApp::draw()
 	
 	//first send the OSC message of the contour data
 	//why is it checking if outlines are to be drawn?
-	//I think it should be bTuioMode...
+	//I think it should be bTuioMode...~~~~~~~~~ we have TUIO MODE mapped to the 't' key...
 	if(bDrawOutlines)
 		SendOSC();
 
@@ -251,6 +253,7 @@ void testApp::draw()
 			//{
 			if(50<contourFinder.blobs[i].area)
 			{	
+				if(bShowLabels){
 				ofSetColor(0xffffff);
 				char idStr[1024];		
 				sprintf(idStr, "id: %i\nx: %f\ny: %f\ncx: %f\nc\
@@ -265,6 +268,7 @@ void testApp::draw()
 				verdana.drawString(idStr,
 					drawBlob.pts[0].x+drawBlob.boundingRect.width+30,
 					drawBlob.pts[0].y+drawBlob.boundingRect.height);		
+				}
 			}
 			//}
 		}
@@ -280,9 +284,10 @@ void testApp::draw()
 
 		char reportStr[1024];	
 		sprintf(reportStr, "press '~' for ui\npress '1' for help\n\
-						press '2' for video\npress ' ' for mini\n\
+						press '2' for video\n\npress ' ' for mini\n\
 						press 'f' for fullscreen\npress 't' for TUIO\n\
-						press 'o' for outlines\n\npress 'c' to calibrate\n\
+						press 'o' for outlines\npress 'o' for outlines\n\n\
+						press 'c' to calibrate\n\
 						press 's' camera setup\npress 'b' to capture bg\n\
 						press 'i' to invert\npress 'x' to set filter bg\n\
 						\npress 'a/z' to set threshold: %i\n\n\
@@ -440,19 +445,22 @@ void testApp::keyPressed(int key)
 	//printf(int(key));
 	if(ofGetWidth()>1000)
 	{
+
+
+		// THIS IS FOR THE ~ toggle...
 		if(key==126 || key==96) 
 		{
 			if(parameterUI->isActive)
 			{
 				parameterUI->deActivate();	
 				bSpaced = true;
-				bToggleHelp = true;	
+				//bToggleHelp = true;	
 			}
 			else
 			{
 				parameterUI->activate();	
 				bSpaced = false;		
-				bToggleHelp = false;	
+				//bToggleHelp = false;	
 			}
 		}
 	}
@@ -608,7 +616,13 @@ void testApp::keyPressed(int key)
 		case '0':
 			highRange --;
 			if(highRange < 0) highRange = 0;
-			break;	
+			break;		
+		case 'l':
+			if(bShowLabels)
+				bShowLabels = false;
+			else	
+				bShowLabels = true;
+			break;
 	}
 }
 
