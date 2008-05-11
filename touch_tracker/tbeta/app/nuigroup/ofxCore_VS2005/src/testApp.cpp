@@ -10,7 +10,9 @@ void testApp::setup()
 //	FIRST LETS LOAD THE CONFIG XML  
 //-------------------------------------------------------------- // TODO: a seperate XML to map keyboard commands to action 
 	message = "Loading config.xml...";
+		// Can this load via http?
 	if( XML.loadFile("config.xml") ){
+		//WOOT!
 		message = "Settings Loaded!";
 	}else{
 		//FAIL!
@@ -18,17 +20,17 @@ void testApp::setup()
 		// GENERATE DEFAULT XML DATA WHICH WILL BE SAVED INTO THE CONFIG
 	}
 
-	// XML COLOR TEST (VERIFIES ITS WORKING)
-	red		= XML.getValue("CONFIG:BACKGROUND:COLOR:RED", 0);
-	green	= XML.getValue("CONFIG:BACKGROUND:COLOR:GREEN", 0);
-	blue	= XML.getValue("CONFIG:BACKGROUND:COLOR:BLUE", 0);
-	
-	// MISC VARS FOR SETTINGS (MARKED FOR GC) 
+	// ---------------------------------MISC VARS FOR SETTINGS (MARKED FOR GC) 
 	lastTagNumber	= 0;
 	pointCount		= 0;
 	lineCount		= 0;
-	snapCounter			= 6; // MARKED	
-	frameseq			= 0;
+	snapCounter		= 6; 
+	frameseq		= 0;
+	
+	// XML COLOR TEST (VERIFIES ITS WORKING!!)
+	red		= XML.getValue("CONFIG:BACKGROUND:COLOR:RED", 0);
+	green	= XML.getValue("CONFIG:BACKGROUND:COLOR:GREEN", 0);
+	blue	= XML.getValue("CONFIG:BACKGROUND:COLOR:BLUE", 0);
 
 //-------------------------------------------------------------- 
 //  START BINDING XML TO VARS
@@ -52,7 +54,7 @@ void testApp::setup()
 	bDrawOutlines		= XML.getValue("CONFIG:BOOLEAN:OUTLINES",0);
 	bInvertVideo		= XML.getValue("CONFIG:BOOLEAN:INVERT",0);
 	bLearnBakground		= XML.getValue("CONFIG:BOOLEAN:LEARNBG",0);
-	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
+
 	bCalibration		= XML.getValue("CONFIG:BOOLEAN:CALIBRATION",0);
 	bVerticalMirror		= XML.getValue("CONFIG:BOOLEAN:VMIRROR",0);
 	bHorizontalMirror	= XML.getValue("CONFIG:BOOLEAN:HMIRROR",0);	
@@ -64,14 +66,21 @@ void testApp::setup()
 	lowRange			= XML.getValue("CONFIG:INT:LOWRANGE",0);
 	highRange			= XML.getValue("CONFIG:INT:HIGHRANGE",0);
 	
-	
-	myLocalHost			= XML.getValue("CONFIG:NETWORK:LOCALHOST",0);
-	myRemoteHost		= XML.getValue("CONFIG:NETWORK:HOSTA",0);
-	myTUIOPort			= XML.getValue("CONFIG:NETWORK:TUIO_PORT_OUT",0);
-	
-	TUIOSocket.setup(myLocalHost, myTUIOPort); 
+//-------------------------------------------------------------- TODO XML NETWORK SETTINGS	
+	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
+	//myLocalHost			= XML.getValue("CONFIG:NETWORK:LOCALHOST",0);
+	//myRemoteHost		= XML.getValue("CONFIG:NETWORK:HOSTA",0);
+	//myTUIOPort			= XML.getValue("CONFIG:NETWORK:TUIO_PORT_OUT",0);
+	TUIOSocket.setup(HOST, PORT); 
 //-------------------------------------------------------------- 
 //  END XML SETUP
+//-------------------------------------------------------------- 
+// NOW TO SET ALL THE XML VARS :/
+//	XML.setValue("CONFIG:BACKGROUND:COLOR:RED", red);
+//	XML.setValue("CONFIG:BACKGROUND:COLOR:GREEN", green);
+//	XML.setValue("CONFIG:BACKGROUND:COLOR:BLUE", blue);
+//-------------------------------------------------------------- 
+
 
 	ofSetWindowShape(winWidth,winHeight);
 	ofSetFullscreen(bFullscreen);
@@ -119,10 +128,7 @@ void testApp::setup()
  *****************************************************************************/
 void testApp::update()
 {	
-	//we change the background color here based on the values
-	//affected by the mouse position
-	ofBackground((int)red,(int)green,(int)blue);
-	//ofBackground(0,0,0);
+	ofBackground(0,0,0);
     bool bNewFrame = false;
 		
 	#ifdef _USE_LIVE_VIDEO
@@ -765,16 +771,7 @@ void testApp::mouseMoved(int x, int y)
 void testApp::mouseDragged(int x, int y, int button)
 {	
 	sprintf(eventString, "mouseDragged = (%i,%i - button %i)", x, y, button);
-	
-	//-------------------------------- BG COLOR
-	//we change the background color based on 
-	//the two mouse coords coming in
-	float xpct = (float)x / ofGetWidth();
-	float ypct = (float)y / ofGetHeight();
-	red			= xpct * 255.0;
-	green		= ypct * 255.0;
-	blue		= (int)(red - green) % 255;
-	
+		
 	//-------------------------------- PARAMETER UI EVENT
 	parameterUI->mouseMotion(x, y);	
 }
@@ -797,12 +794,6 @@ void testApp::mousePressed(int x, int y, int button)
 void testApp::mouseReleased()
 {	
 	sprintf(eventString, "mouseReleased");
-
-	//update the colors to the XML structure when the mouse is released
-	XML.setValue("CONFIG:BACKGROUND:COLOR:RED", red);
-	XML.setValue("CONFIG:BACKGROUND:COLOR:GREEN", green);
-	XML.setValue("CONFIG:BACKGROUND:COLOR:BLUE", blue);
-
 	//-------------------------------- PARAMETER UI EVENT
 	parameterUI->mouseUp(0, 0, 0);	
 }
