@@ -6,18 +6,57 @@
  *****************************************************************************/
 void testApp::setup()
 {	 		
+ofBackground(255,255,255);	// CLEAR STUFF
+//-------------------------------------------------------------- 
+//	FIRST LETS LOAD THE CONFIG XML
+//-------------------------------------------------------------- 
+	message = "Loading config.xml...";
+	if( XML.loadFile("config.xml") ){
+		message = "Settings Loaded!";
+	}else{
+		//FAIL!
+		message = "No Settings Found...";
+		// GENERATE DEFAULT XML DATA WHICH WILL BE SAVED INTO THE CONFIG
+	}
+	red		= XML.getValue("BACKGROUND:COLOR:RED", 0);
+	green	= XML.getValue("BACKGROUND:COLOR:GREEN", 0);
+	blue	= XML.getValue("BACKGROUND:COLOR:BLUE", 0);
+	
+	// MISC VARS FOR SETTINGS (MARKED FOR GC) 
+	lastTagNumber	= 0;
+	pointCount		= 0;
+	lineCount		= 0;
+//-------------------------------------------------------------- 
+//  START XML SETUP
+//-------------------------------------------------------------- 
+	TUIOSocket.setup(HOST, PORT); // Set IN XML
+		
 	snapCounter			= 6;
 	frameseq			= 0;
 
-	frameRate			= 120;
-	camWidth			= 320;	
-	camHeight			= 240;
-	winWidth			= 1024; //initial window 
-	winHeight			= 768;
-	minWidth			= 800;
-	minHeight			= 426;
-	bFullscreen			= false;
-
+	frameRate			= XML.getValue("GENERAL:APPLICATION:FRAMERATE",0);
+	
+	winWidth			= XML.getValue("GENERAL:WINDOW:WIDTH",0);
+	winHeight			= XML.getValue("GENERAL:WINDOW:HEIGHT",0);
+	minWidth			= XML.getValue("GENERAL:WINDOW:MIN",0);
+	minHeight			= XML.getValue("GENERAL:WINDOW:MAX",0);
+	bFullscreen			= XML.getValue("GENERAL:WINDOW:FULLSCREEN",0);
+	
+	camWidth			= XML.getValue("GENERAL:CAMERA_0:WIDTH",0);
+	camHeight			= XML.getValue("GENERAL:CAMERA_0:HEIGHT",0);
+	
+	bShowLabels			= XML.getValue("GENERAL:BOOLEAN:LABELS",0);
+	bDrawVideo			= XML.getValue("GENERAL:BOOLEAN:VIDEO",0);
+	bSnapshot			= XML.getValue("GENERAL:BOOLEAN:SNAPSHOT",0);
+	bFastMode			= XML.getValue("GENERAL:BOOLEAN:FAST",0);	
+	bDrawOutlines		= XML.getValue("GENERAL:BOOLEAN:OUTLINES",0);
+	bInvertVideo		= XML.getValue("GENERAL:BOOLEAN:INVERT",0);
+	bLearnBakground		= XML.getValue("GENERAL:BOOLEAN:LEARNBG",0);
+	bTUIOMode			= XML.getValue("GENERAL:BOOLEAN:TUIO",0);
+	bCalibration		= XML.getValue("GENERAL:BOOLEAN:CALIBRATION",0);
+	bVerticalMirror		= XML.getValue("GENERAL:BOOLEAN:VMIRROR",0);
+	bHorizontalMirror	= XML.getValue("GENERAL:BOOLEAN:HMIRROR",0);	
+	
 	threshold			= 99;
 	wobbleThreshold		= 5;
 	blurValue			= 1;
@@ -25,20 +64,9 @@ void testApp::setup()
 	lowRange			= 0;
 	highRange			= 255;
 	
-	bShowLabels			= false;
-	bDrawVideo			= true;
-	bSnapshot			= false;
-	bFastMode			= false;	
-	bFullscreen			= false;
-	bDrawOutlines		= true;
-	bInvertVideo		= false;
-	bLearnBakground		= true;
-	bTUIOMode			= false;
-	bCalibration		= false;
-	bVerticalMirror		= false;
-	bHorizontalMirror	= false;
-	
-	TUIOSocket.setup(HOST, PORT); // Set in Header
+
+//-------------------------------------------------------------- 
+//  END XML SETUP
 
 	ofSetWindowShape(winWidth,winHeight);
 	ofSetFullscreen(bFullscreen);
@@ -85,8 +113,11 @@ void testApp::setup()
  * The update function runs continuously. Use it to update states and variables
  *****************************************************************************/
 void testApp::update()
-{
-	ofBackground(0,0,0);
+{	
+	//we change the background color here based on the values
+	//affected by the mouse position
+	ofBackground((int)red,(int)green,(int)blue);
+	//ofBackground(0,0,0);
     bool bNewFrame = false;
 		
 	#ifdef _USE_LIVE_VIDEO
@@ -158,7 +189,7 @@ void testApp::update()
 	}
 
 	frameseq ++;	
-	//Parameter UI	
+	//----------------------------------------------ParameterUI	
 	parameterUI->update();
 }
 
@@ -274,21 +305,26 @@ void testApp::draw()
 		}
 	} 
 
-	//------------------------------------------------------------------CURSORS
+
+	
 
 	//---------------------------------------------------------------------HELP
-
-	if(bToggleHelp)
+	// IF HELP and NO SLIDERS
+	if(bToggleHelp && bSpaced)
 	{		
-		ofSetColor(0xffffff);	
-
+	
+		//------------------------------------------------- DRAW XML SETTINGS OUTPUT	
+		ofSetColor(255,0,0);	
+		verdana.drawString("Status: "+message, 2*w+60, ofGetHeight()-15);
+		//-------------------------------------------------
+		ofSetColor(0xffffff);
 		char reportStr[1024];	
 		sprintf(reportStr, "press '~' for ui\npress '1' for help\n\
 						press '2' for video\n\npress ' ' for mini\n\
 						press 'f' for fullscreen\npress 't' for TUIO\n\
-						press 'o' for outlines\npress 'o' for outlines\n\n\
-						press 'c' to calibrate\n\
-						press 's' camera setup\npress 'b' to capture bg\n\
+						press 'o' for outlines\npress 'l' to show labels\n\n\
+						press 's' to save settings\n\press 'c' to calibrate\n\
+						press 'r' camera setup\npress 'b' to capture bg\n\
 						press 'i' to invert\npress 'x' to set filter bg\n\
 						\npress 'a/z' to set threshold: %i\n\n\
 						press 'w/e' to set DisplacementThreshold: %i\n\n\
@@ -330,11 +366,12 @@ void testApp::draw()
 		//ofDisableAlphaBlending();
 
 		if(bTUIOMode)
-		{			
+		{		
+			//---------------------------------
 			ofSetColor(0xffffff);
 			char buf[256];
 			sprintf(buf, "Sending OSC messages to %s : %d", HOST, PORT);
-			verdana.drawString(buf, 2*w+60, ofGetHeight()-10);
+			verdana.drawString(buf, 2*w+60, ofGetHeight()-63);
 			//	verdana.drawString( "move the mouse to send OSC message\
 			//						[/tuio/2Dcur <x> <y>] ", 20, 585 );
 		}//END TUIO MODE
@@ -364,21 +401,21 @@ void testApp::draw()
 	ofSetColor(0xFFFFFF);
 	img.draw(0,0,camWidth,camHeight);
 	*/ 	
-    //----------------------------------------------------------------DRAW LEDS
+    //----------------------------------------------------------------DRAW LED FOR SHOWING VIDEO
 	if(bDrawVideo)
 	{		
 		ofSetColor(255, 0, 255);
 		ofFill();		
-		ofCircle(20, 15, 5);
+		ofCircle(20, 10, 5);
 		ofNoFill();
-	}
+	}		
 	if(bTUIOMode)
 	{		
-		ofSetColor(0, 2, 55, 0); 
-		ofFill();		
-		ofCircle(35, 15, 5);
-		ofNoFill();
-	}
+			ofSetColor(0,255,0);
+			ofFill();		
+			ofCircle(35, 10, 5);
+			ofNoFill();
+	}		
 	//----------------------------------------------------------------DRAW LEDS
 
 	if(bCalibration)
@@ -465,8 +502,13 @@ void testApp::keyPressed(int key)
 		}
 	}
 
+// --------------------------------- BEGIN MAIN KEYBOARD SWITCH (LONGEST EVER)
 	switch(key)
-	{		
+	{	
+		case 's':
+			XML.saveFile("config.xml");
+			message ="Settings Saved!";
+			break;	
 		case '1':
 			if(bToggleHelp)
 			{	
@@ -527,8 +569,8 @@ void testApp::keyPressed(int key)
 			{	
 				bFastMode = true;
 				bToggleHelp = false;
-				ofSetWindowShape(200,25); //minimized size
-				ofSetWindowTitle("~Mini");
+				ofSetWindowShape(175,18); //minimized size
+				ofSetWindowTitle("Mini");
 			}
 			break;
 		case 'i':
@@ -581,7 +623,7 @@ void testApp::keyPressed(int key)
 		case 'g':
 			bSnapshot = true;
 			break;
-		case 's':
+		case 'r':
 			#ifdef _USE_LIVE_VIDEO
 				vidGrabber.videoSettings();
 			#endif
@@ -624,6 +666,7 @@ void testApp::keyPressed(int key)
 				bShowLabels = true;
 			break;
 	}
+	// --------------------------------- END MAIN KEYBOARD SWITCH
 }
 
 /******************************************************************************
@@ -717,6 +760,17 @@ void testApp::mouseMoved(int x, int y)
 void testApp::mouseDragged(int x, int y, int button)
 {	
 	sprintf(eventString, "mouseDragged = (%i,%i - button %i)", x, y, button);
+	
+	//-------------------------------- BG COLOR
+	//we change the background color based on 
+	//the two mouse coords coming in
+	float xpct = (float)x / ofGetWidth();
+	float ypct = (float)y / ofGetHeight();
+	red			= xpct * 255.0;
+	green		= ypct * 255.0;
+	blue		= (int)(red - green) % 255;
+	
+	//-------------------------------- PARAMETER UI EVENT
 	parameterUI->mouseMotion(x, y);	
 }
 
@@ -727,6 +781,8 @@ void testApp::mousePressed(int x, int y, int button)
 {
 	sprintf(eventString, "mousePressed = (%i,%i - button %i)", x, y, button);
 	printf("button\n", button);
+
+	//-------------------------------- PARAMETER UI EVENT
 	parameterUI->mouseDown(x, y, button);	
 }
 
@@ -736,6 +792,13 @@ void testApp::mousePressed(int x, int y, int button)
 void testApp::mouseReleased()
 {	
 	sprintf(eventString, "mouseReleased");
+
+	//update the colors to the XML structure when the mouse is released
+	XML.setValue("BACKGROUND:COLOR:RED", red);
+	XML.setValue("BACKGROUND:COLOR:GREEN", green);
+	XML.setValue("BACKGROUND:COLOR:BLUE", blue);
+
+	//-------------------------------- PARAMETER UI EVENT
 	parameterUI->mouseUp(0, 0, 0);	
 }
 /******************************************************************************
@@ -770,7 +833,11 @@ void testApp::fingerReleased()
  *****************************************************************************/
 void testApp::exit()
 {
-	//TODO: SEND ESC KEY TO KEEP FROM CRASHING
-	printf("tBeta application has exited!\n");	
+	//TODO: SEND ESC KEY TO KEEP FROM CRASHING -  can we emulate a keyboard event to trick the app into closing properly?
+	printf("tBeta module has exited!\n");	
+	
+	// -------------------------------- SAVE STATE ON EXIT
+	//XML.saveFile("config.xml");
+	//message ="Exited...";
 }
 

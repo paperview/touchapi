@@ -2,9 +2,10 @@
 #define _TEST_APP
 
 #include "ofMain.h"
-#define OF_ADDON_USING_OFXOPENCV
-#define OF_ADDON_USING_OFXOSC
-#define OF_ADDON_USING_OFXPARAMETERUI
+#define OF_ADDON_USING_OFXXMLSETTINGS  // LOAD CONFIG.XML
+#define OF_ADDON_USING_OFXPARAMETERUI  // RENDER GUI (SLIDERS/BUTTONS).
+#define OF_ADDON_USING_OFXOPENCV	   // COMPUTER VISION STUFF
+#define OF_ADDON_USING_OFXOSC		   // OSC COMMUNICATION		
 #include "ofAddons.h"
 					
 #define HOST "localhost"
@@ -93,7 +94,7 @@ class testApp : public ofSimpleApp
 		AParameterUI*		parameterUI;
 		bool				bSpaced;	
 	
-		//--------------------------ParameterUI  Events
+		//--------------------------ParameterUI  Vars
 		//void fireFunction();
 
 		//Send contour data to OSC
@@ -111,5 +112,18 @@ class testApp : public ofSimpleApp
 		ofTexture			videoInvertTexture;
 		ofTexture			videoTexture;
         ofxCvContourFinder	contourFinder;
+
+	//--------------------------XML Settings Vars (BLOATED)
+		ofxXmlSettings XML;
+		string xmlStructure;
+		string message;		
+		
+		int pointCount;
+		int lineCount;
+		int lastTagNumber;		
+		
+		float red;
+		float green;
+		float blue;
 };
 #endif
