@@ -122,8 +122,17 @@ class testApp : public ofSimpleApp
 		int lineCount;
 		int lastTagNumber;		
 		
+
+		// FOR TEST MARKED FOR GC
 		float red;
 		float green;
 		float blue;
+
+
+// FOR NETWORK --------------------------------
+	char				myLocalHost[255];
+	char				myRemoteHost[255];
+	int		myTUIOPort;
+
 };
 #endif
