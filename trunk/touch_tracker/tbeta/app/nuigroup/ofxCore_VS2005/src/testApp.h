@@ -70,6 +70,7 @@ class testApp : public ofSimpleApp
 		bool				bVerticalMirror;
 		bool				bHorizontalMirror;
 		bool				bSlimMode;
+		bool				bShowLabels;
 
 		float 				counter;
 		float				oldX;
