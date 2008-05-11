@@ -129,6 +129,8 @@ void testApp::setup()
 void testApp::update()
 {	
 	ofBackground(0,0,0);
+	//	FOR XML TEST
+	ofBackground((int)red,(int)green,(int)blue);
     bool bNewFrame = false;
 		
 	#ifdef _USE_LIVE_VIDEO
