@@ -25,7 +25,7 @@ void testApp::setup()
 	lowRange			= 0;
 	highRange			= 255;
 	
-	bShowLabels			= true;
+	bShowLabels			= false;
 	bDrawVideo			= true;
 	bSnapshot			= false;
 	bFastMode			= false;	
