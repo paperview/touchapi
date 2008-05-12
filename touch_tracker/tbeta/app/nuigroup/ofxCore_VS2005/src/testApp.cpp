@@ -8,7 +8,8 @@ void testApp::setup()
 {	 		
 //-------------------------------------------------------------- 
 //	FIRST LETS LOAD THE CONFIG XML  
-//-------------------------------------------------------------- // TODO: a seperate XML to map keyboard commands to action 
+//-------------------------------------------------------------- 
+	// TODO: a seperate XML to map keyboard commands to action 
 	message = "Loading config.xml...";
 		// Can this load via http?
 	if( XML.loadFile("config.xml") ){
@@ -32,9 +33,9 @@ void testApp::setup()
 	green	= XML.getValue("CONFIG:BACKGROUND:COLOR:GREEN", 0);
 	blue	= XML.getValue("CONFIG:BACKGROUND:COLOR:BLUE", 0);
 
-//-------------------------------------------------------------- 
-//  START BINDING XML TO VARS
-//-------------------------------------------------------------- 
+	//-------------------------------------------------------------- 
+	//  START BINDING XML TO VARS
+	//-------------------------------------------------------------- 
 	frameRate			= XML.getValue("CONFIG:APPLICATION:FRAMERATE",0);
 	
 	winWidth			= XML.getValue("CONFIG:WINDOW:WIDTH",0);
@@ -66,7 +67,7 @@ void testApp::setup()
 	lowRange			= XML.getValue("CONFIG:INT:LOWRANGE",0);
 	highRange			= XML.getValue("CONFIG:INT:HIGHRANGE",0);
 	
-//-------------------------------------------------------------- TODO XML NETWORK SETTINGS	
+//--------------------------------------------------- TODO XML NETWORK SETTINGS	
 	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
 	//myLocalHost			= XML.getValue("CONFIG:NETWORK:LOCALHOST",0);
 	//myRemoteHost		= XML.getValue("CONFIG:NETWORK:HOSTA",0);
@@ -258,7 +259,8 @@ void testApp::draw()
 	
 	//first send the OSC message of the contour data
 	//why is it checking if outlines are to be drawn?
-	//I think it should be bTuioMode...~~~~~~~~~ we have TUIO MODE mapped to the 't' key...
+	//I think it should be bTuioMode...~~~~
+	//~~ we have TUIO MODE mapped to the 't' key...
 	if(bDrawOutlines)
 		SendOSC();
 
@@ -326,7 +328,7 @@ void testApp::draw()
 	if(bToggleHelp && bSpaced)
 	{		
 	
-		//------------------------------------------------- DRAW XML SETTINGS OUTPUT	
+		//-------------------------------------------- DRAW XML SETTINGS OUTPUT
 		ofSetColor(255,0,0);	
 		verdana.drawString("Status: "+message, 2*w+60, ofGetHeight()-15);
 		//-------------------------------------------------
@@ -414,7 +416,7 @@ void testApp::draw()
 	ofSetColor(0xFFFFFF);
 	img.draw(0,0,camWidth,camHeight);
 	*/ 	
-    //----------------------------------------------------------------DRAW LED FOR SHOWING VIDEO
+    //-----------------------------------------------DRAW LED FOR SHOWING VIDEO
 	if(bDrawVideo)
 	{		
 		ofSetColor(255, 0, 255);
@@ -486,7 +488,7 @@ void testApp::draw()
 	}
 }
 
-/******************************************************************************
+/*****************************************************************************
  * TODO:
  *****************************************************************************/
 void testApp::keyPressed(int key)
@@ -495,8 +497,6 @@ void testApp::keyPressed(int key)
 	//printf(int(key));
 	if(ofGetWidth()>1000)
 	{
-
-
 		// THIS IS FOR THE ~ toggle...
 		if(key==126 || key==96) 
 		{
@@ -515,7 +515,7 @@ void testApp::keyPressed(int key)
 		}
 	}
 
-// --------------------------------- BEGIN MAIN KEYBOARD SWITCH (LONGEST EVER)
+	//------------------------------- BEGIN MAIN KEYBOARD SWITCH (LONGEST EVER)
 	switch(key)
 	{	
 		case 's':
@@ -539,13 +539,13 @@ void testApp::keyPressed(int key)
 			{	
 				parameterUI->deActivate();	
 				bToggleHelp = false;	
-				ofSetWindowShape( (2.0/3.0)*(ofGetWidth()-80)+60, ofGetHeight());
+				ofSetWindowShape((2.0/3.0)*(ofGetWidth()-80)+60,ofGetHeight());
 			}
 			else
 			{	
 				parameterUI->deActivate();	
 				bToggleHelp = true;
-				ofSetWindowShape(max((3.0/2.0)*(ofGetWidth()-60)+80, minWidth), 
+				ofSetWindowShape(max((3.0/2.0)*(ofGetWidth()-60)+80, minWidth),
 					             max(ofGetHeight(), minHeight));
 			}
 			break;
@@ -694,9 +694,9 @@ void testApp::keyPressed(int key)
 	// --------------------------------- END MAIN KEYBOARD SWITCH
 }
 
-/******************************************************************************
-* Send Set message of ID, x, y, X, Y, m, weight, width to OSC
-*****************************************************************************/
+/*****************************************************************************
+ * Send Set message of ID, x, y, X, Y, m, weight, width to OSC
+ *****************************************************************************/
 void testApp::SendOSC()
 {
 	//If there are no blobs, send alive message and fseq
@@ -767,11 +767,11 @@ void testApp::SendOSC()
 	}
 }
 
-/******************************************************************************
+/*****************************************************************************
  * TODO:
  *****************************************************************************/
 //void testApp::fireFunction(){printf('-');}
-/******************************************************************************
+/*****************************************************************************
  * TODO:
  *****************************************************************************/
 void testApp::mouseMoved(int x, int y)
@@ -779,7 +779,7 @@ void testApp::mouseMoved(int x, int y)
 	sprintf(eventString, "mouseMoved = (%i,%i)", x, y);
 }	
 
-/******************************************************************************
+/*****************************************************************************
  * TODO:
  *****************************************************************************/
 void testApp::mouseDragged(int x, int y, int button)
@@ -790,7 +790,7 @@ void testApp::mouseDragged(int x, int y, int button)
 	parameterUI->mouseMotion(x, y);	
 }
 
-/******************************************************************************
+/*****************************************************************************
  * TODO:
  *****************************************************************************/
 void testApp::mousePressed(int x, int y, int button)
@@ -802,7 +802,7 @@ void testApp::mousePressed(int x, int y, int button)
 	parameterUI->mouseDown(x, y, button);	
 }
 
-/******************************************************************************
+/*****************************************************************************
  * TODO:
  *****************************************************************************/
 void testApp::mouseReleased()
@@ -811,39 +811,40 @@ void testApp::mouseReleased()
 	//-------------------------------- PARAMETER UI EVENT
 	parameterUI->mouseUp(0, 0, 0);	
 }
-/******************************************************************************
+/*****************************************************************************
  * TODO:
  *****************************************************************************/
 void testApp::fingerMoved(int x, int y)
 {
 }	
 
-/******************************************************************************
+/*****************************************************************************
  * TODO:
  *****************************************************************************/
 void testApp::fingerDragged(int x, int y, int button)
 {
 }
 
-/******************************************************************************
+/*****************************************************************************
  * TODO:
  *****************************************************************************/
 void testApp::fingerPressed(int x, int y, int button)
 {
 }
 
-/******************************************************************************
+/*****************************************************************************
  * TODO:
  *****************************************************************************/
 void testApp::fingerReleased()
 {
 }
-/******************************************************************************
+/*****************************************************************************
  * TODO:
  *****************************************************************************/
 void testApp::exit()
 {
-	//TODO: SEND ESC KEY TO KEEP FROM CRASHING -  can we emulate a keyboard event to trick the app into closing properly?
+	//TODO: SEND ESC KEY TO KEEP FROM CRASHING -  can we emulate a keyboard
+	//event to trick the app into closing properly?
 	printf("tBeta module has exited!\n");	
 	
 	// -------------------------------- SAVE STATE ON EXIT

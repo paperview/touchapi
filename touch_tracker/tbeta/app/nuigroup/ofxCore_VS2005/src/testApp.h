@@ -107,32 +107,29 @@ class testApp : public ofSimpleApp
         ofxCvGrayscaleImage grayImg;
 		ofxCvGrayscaleImage grayBg;
 		ofxCvGrayscaleImage grayDiff;		
-		
+
 		unsigned char * 	videoInverted;
 		ofTexture			videoInvertTexture;
 		ofTexture			videoTexture;
-        ofxCvContourFinder	contourFinder;
+		ofxCvContourFinder	contourFinder;
 
-	//--------------------------XML Settings Vars (BLOATED)
-		ofxXmlSettings XML;
-		string xmlStructure;
-		string message;		
-		
-		int pointCount;
-		int lineCount;
-		int lastTagNumber;		
-		
+		//--------------------------XML Settings Vars (BLOATED)
+		ofxXmlSettings		XML;
+		string				xmlStructure;
+		string				message;
+
+		int					pointCount;
+		int					lineCount;
+		int					lastTagNumber;		
 
 		// FOR TEST MARKED FOR GC
-		float red;
-		float green;
-		float blue;
+		float				red;
+		float				green;
+		float				blue;
 
-
-// FOR NETWORK --------------------------------
-	char				myLocalHost[255];
-	char				myRemoteHost[255];
-	int		myTUIOPort;
-
+		// FOR NETWORK 
+		char				myLocalHost[255];
+		char				myRemoteHost[255];
+		int					myTUIOPort;
 };
 #endif
