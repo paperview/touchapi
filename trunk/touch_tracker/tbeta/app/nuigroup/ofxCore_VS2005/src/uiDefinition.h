@@ -111,12 +111,12 @@ void testApp::setupUI()
 		tmpPanel_3->addPushButton("Mirror Horizontal");
 	tmpOnePushButton7->changedParameterCallback = &setMirrorHorizontal;
 	tmpOnePushButton7->funcPointerSet = true;
-/*
-	AParameterUIObjectCheckbox*	tmpCheckBox = 
-	tmpPanel_1->addCheckbox( "Lighting", exit );
-	tmpCheckBox->changedParameterCallback = &testApp::exit;
-	tmpCheckBox->funcPointerSet = true;
 
+	//AParameterUIObjectCheckbox*	tmpCheckBox = 
+	//tmpPanel_1->addCheckbox( "Lighting", &setInvert );
+	//tmpCheckBox->changedParameterCallback = &setInvert;
+	//tmpCheckBox->funcPointerSet = true;
+/*
 	AParameterUIObjectPushButton*	tmpPushButton = 
 	tmpPanel_1->addPushButton( "PushButton" );
 	tmpPushButton->changedParameterCallback = &buttonPressed;
