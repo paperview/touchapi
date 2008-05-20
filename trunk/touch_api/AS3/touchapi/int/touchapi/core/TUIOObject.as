@@ -1,8 +1,8 @@
 ﻿package touchapi.core
 {
-	import flash.display.DisplayObject;	
-	import flash.geom.Point;
-	import flash.events.TouchEvent;	
+	import flash.display.DisplayObject;
+	import flash.events.TouchEvent;
+	import flash.geom.Point;	
 	/**
 	* Renders input from TUIOSocket - creates and instance of this class to keep track of input's attributes.
 	*/
@@ -104,7 +104,8 @@
 			} else {
 				localPoint = new Point(x, y);
 			}
-			return new TouchEvent(event, true, false, x, y, localPoint.x, localPoint.y, 0, 0, target, false,false,false, true, 0, type, ID, sID, angle);
+			var t:TouchEvent=new TouchEvent(event.toString(), true, false, x, y, localPoint.x, localPoint.y, 0, 0, target, false,false,false, true, 0, type, ID, sID, angle);
+			return t;
 		}	
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // INTERNAL METHODS
