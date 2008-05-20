@@ -1,9 +1,11 @@
 ﻿package flash.events {
 	
-	import flash.events.Event;	
+	import flash.events.Event;
+	import touchapi.extend.Surface;	
 	
 	public class ConsoleEvent extends Event
 	{
+		public var profile:String;
 		public var string:String;			
 		public var stringAlt:String;		
 		public var stringBlt:String;	
@@ -26,6 +28,7 @@
 //---------------------------------------------------------------------------------------------------------------------------------------------	
 		public override function clone():Event
 		{	
+			return null
 			//return new ConsoleEvent(profile, true, false, stageX, stageY, localX, localY,oldX, oldY, targetObject, false,false,false, true, 0, profile, ID, sID, angle);
 		}
 //---------------------------------------------------------------------------------------------------------------------------------------------	

@@ -10,15 +10,17 @@
 
 package touchapi
 {
+	import flash.display.DisplayObjectContainer;
 	import flash.events.Event;
-	import touchapi.core.TUIOSocket;
+	
 	import touchapi.core.TUIOObject;
+	import touchapi.core.TUIOSocket;
 	public class TouchAPI
 	{
 //---------------------------------------------------------------------------------------------------------------------------------------------
 // PUBLIC METHODS
 //---------------------------------------------------------------------------------------------------------------------------------------------
-		public static function init ($stage:Object, $host:String = "localhost", $debug:Boolean = true, $port:Number = 3000, $url:String = ''):void
+		public static function init ($stage:DisplayObjectContainer, $host:String = "127.0.0.1", $debug:Boolean = true, $port:Number = 3000, $url:String = ''):void
 		{
 			TUIOSocket.init($stage, $debug, $host, $port, $url);
 		}
