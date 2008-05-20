@@ -82,7 +82,6 @@ void testApp::setup()
 //	XML.setValue("CONFIG:BACKGROUND:COLOR:BLUE", blue);
 //-------------------------------------------------------------- 
 
-
 	ofSetWindowShape(winWidth,winHeight);
 	ofSetFullscreen(bFullscreen);
 	ofSetFrameRate(frameRate);
@@ -91,8 +90,8 @@ void testApp::setup()
         vidGrabber.setVerbose(true);
         vidGrabber.initGrabber(camWidth,camHeight);
 		printf("Camera Mode\n");
-		int grabW = myGrabber.width;
-		int grabH = myGrabber.height;
+		int grabW = vidGrabber.width;
+		int grabH = vidGrabber.height;
 		printf("Asked for %i by %i - actual size is %i by %i \n", 
 				camWidth, camHeight, grabW, grabH);
 	#else
@@ -198,13 +197,17 @@ void testApp::update()
 		grayDiff.threshold(threshold);
 		grayDiff.dilate_3x3();
 
-		contourFinder.findContours(grayDiff, 20,
+		contourFinder.findContours(grayDiff, 10,
 			                      (camWidth*camHeight)/3, 10, true);
+		
+		// track contours
+		tracker.track(&contourFinder);
 	}
 
 	frameseq ++;	
 	//----------------------------------------------ParameterUI	
 	parameterUI->update();
+
 }
 
 
@@ -270,7 +273,6 @@ void testApp::draw()
 		double wScale = double(w)/double(camWidth);
 		double hScale = double(h)/double(camHeight);
 
-		//contourFinder.draw(15,35);
 		for(int i=0; i<contourFinder.nBlobs; i++)
 		{
 			//temp blob to rescale and draw on screen
@@ -297,25 +299,27 @@ void testApp::draw()
 
 			//if(i < 3)
 			//{
-			if(50<contourFinder.blobs[i].area)
-			{	
-				if(bShowLabels){
-				ofSetColor(0xffffff);
-				char idStr[1024];		
-				sprintf(idStr, "id: %i\nx: %f\ny: %f\ncx: %f\nc\
-							   y: %f\nwd: %f\nht: %f\na: %f\n",i,
-							   contourFinder.blobs[i].pts[0].x,
-							   contourFinder.blobs[i].pts[0].y,
-							   contourFinder.blobs[i].centroid.x,
-							   contourFinder.blobs[i].centroid.y,
-							   contourFinder.blobs[i].boundingRect.width,
-							   contourFinder.blobs[i].boundingRect.height,
-							   contourFinder.blobs[i].area);
-				verdana.drawString(idStr,
-					drawBlob.pts[0].x+drawBlob.boundingRect.width+30,
-					drawBlob.pts[0].y+drawBlob.boundingRect.height);		
+			//if(50<contourFinder.blobs[i].area)
+			//{	
+				if(bShowLabels)
+				{
+					ofSetColor(0xffffff);
+					char idStr[1024];		
+					//sprintf(idStr, "id: %i\nx: %f\ny: %f\ncx: %f\nc\
+					//			   y: %f\nwd: %f\nht: %f\na: %f\n",i,
+					//			   contourFinder.blobs[i].pts[0].x,
+					//			   contourFinder.blobs[i].pts[0].y,
+					//			   contourFinder.blobs[i].centroid.x,
+					//			   contourFinder.blobs[i].centroid.y,
+					//			   contourFinder.blobs[i].boundingRect.width,
+					//			   contourFinder.blobs[i].boundingRect.height,
+					//			   contourFinder.blobs[i].area);
+					sprintf(idStr, "id: %i",contourFinder.blobs[i].id);
+					verdana.drawString(idStr,
+						drawBlob.pts[0].x+drawBlob.boundingRect.width+30,
+						drawBlob.pts[0].y+drawBlob.boundingRect.height);		
 				}
-			}
+			//}
 			//}
 		}
 	} 
@@ -329,7 +333,11 @@ void testApp::draw()
 	{		
 	
 		//-------------------------------------------- DRAW XML SETTINGS OUTPUT
-		ofSetColor(255,0,0);	
+		//red for error, green for good
+		if(message=="No Settings Found...")
+			ofSetColor(255, 0, 0);	
+		else
+			ofSetColor(0, 255, 0);
 		verdana.drawString("Status: "+message, 2*w+60, ofGetHeight()-15);
 		//-------------------------------------------------
 		ofSetColor(0xffffff);
@@ -340,8 +348,8 @@ void testApp::draw()
 						press 'o' for outlines\npress 'l' to show labels\n\n\
 						press 's' to save settings\n\press 'c' to calibrate\n\
 						press 'r' camera setup\npress 'b' to capture bg\n\
-						press 'i' to invert\npress 'x' to set filter bg\n\
-						\npress 'a/z' to set threshold: %i\n\n\
+						press 'i' to invert\npress 'x' to set filter bg\n\n\
+						press 'a/z' to set threshold: %i\n\n\
 						press 'w/e' to set DisplacementThreshold: %i\n\n\
 						press 'n/m' to set Blur Amount: %i\n\
 						press 'j/k' to set Gaussian Blur Amount: %i\n\

@@ -7,11 +7,12 @@
 #define OF_ADDON_USING_OFXOPENCV	   // COMPUTER VISION STUFF
 #define OF_ADDON_USING_OFXOSC		   // OSC COMMUNICATION		
 #include "ofAddons.h"
-					
+#include "tracking.h"
+
 #define HOST "localhost"
 #define PORT 3333
 
-//#define _USE_LIVE_VIDEO		// uncomment this to use a live camera
+#define _USE_LIVE_VIDEO		// uncomment this to use a live camera
 
 class testApp : public ofSimpleApp
 {
@@ -99,6 +100,10 @@ class testApp : public ofSimpleApp
 
 		//Send contour data to OSC
 		void SendOSC();
+
+		//Tracking		
+		BlobTracker			tracker;
+
 	private:
 
 		ofxOscSender		TUIOSocket; 

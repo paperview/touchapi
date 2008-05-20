@@ -61,29 +61,29 @@ void testApp::setupUI()
 		tmpPanel_1->addSliderInteger("ID", 300, 1, 100, 100);
 
 	AParameterUIObjectSliderInteger* tmpIntegerSlider2 = 
-		tmpPanel_2->addSliderInteger("Threshold", 300, 0, 255, 99);
+		tmpPanel_2->addSliderInteger("Threshold", 300, 0, 255, threshold);
 	tmpIntegerSlider2->changedParameterCallback = &setThreshold;
 	tmpIntegerSlider2->funcPointerSet = true;
 
 	AParameterUIObjectSliderInteger* tmpIntegerSlider3 = 
-		tmpPanel_2->addSliderInteger("Low Level", 300, 0, 255, 0);	
+		tmpPanel_2->addSliderInteger("Low Level", 300, 0, 255, lowRange);	
 	tmpIntegerSlider3->changedParameterCallback = &setLowLevel;
 	tmpIntegerSlider3->funcPointerSet = true;
 
 	AParameterUIObjectSliderInteger* tmpIntegerSlider4 = 
-		tmpPanel_2->addSliderInteger("High Level", 300, 0, 255, 255);
+		tmpPanel_2->addSliderInteger("High Level", 300, 0, 255, highRange);
 	tmpIntegerSlider4->changedParameterCallback = &setHighLevel;
 	tmpIntegerSlider4->funcPointerSet = true;
 
 	AParameterUIObjectSliderInteger* tmpIntegerSlider5 = 
 		tmpPanel_3->addSliderInteger("Blur", 300, 0, 
-									 min(camWidth, camHeight), 1);
+									 min(camWidth, camHeight), blurValue);
 	tmpIntegerSlider5->changedParameterCallback = &setBlur;
 	tmpIntegerSlider5->funcPointerSet = true;
 
 	AParameterUIObjectSliderInteger* tmpIntegerSlider6 = 
 		tmpPanel_3->addSliderInteger("Gaussian Blur", 300, 0,
-								     min(camWidth, camHeight), 1);
+								min(camWidth, camHeight), blurGaussianValue);
 	tmpIntegerSlider6->changedParameterCallback = &setGaussianBlur;
 	tmpIntegerSlider6->funcPointerSet = true;
 
