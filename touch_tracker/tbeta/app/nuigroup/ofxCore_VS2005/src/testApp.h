@@ -8,7 +8,7 @@
 #define OF_ADDON_USING_OFXOSC		   // OSC COMMUNICATION		
 #include "ofAddons.h"
 #include "tracking.h"
-
+					
 #define HOST "localhost"
 #define PORT 3333
 
@@ -90,7 +90,6 @@ class testApp : public ofSimpleApp
 		//CBoxAligner		m_box;
 		//CTrackingManager	m_tracker;
 		//bool				bShowTouchScreen;		
-//	
 
 		AParameterUI*		parameterUI;
 		bool				bSpaced;	
@@ -101,7 +100,6 @@ class testApp : public ofSimpleApp
 		//Send contour data to OSC
 		void SendOSC();
 
-		//Tracking		
 		BlobTracker			tracker;
 
 	private:
