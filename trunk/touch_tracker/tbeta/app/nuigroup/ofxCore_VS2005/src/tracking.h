@@ -23,7 +23,14 @@ public:
 		//go through all tracked blobs to compute nearest new point
 		for(int i=0; i<trackedBlobs.size(); i++)
 		{
-			int winner = trackKnn(newBlobs, &(trackedBlobs[i]), 5, 0);
+			/******************************************************************
+			 * *****************TRACKING FUNCTION TO BE USED*****************
+			 * Replace 'trackKnn(...)' with any function that will take the
+			 * current track and find the corresponding track in the newBlobs
+			 * 'winner' should contain the index of the found blob or '-1' if
+			 * there was no corresponding blob
+			 *****************************************************************/
+			int winner = trackKnn(newBlobs, &(trackedBlobs[i]), 3, 0);
 
 			if(winner==-1) //track has died, mark it for deletion
 				trackedBlobs[i].id = -1; //delete

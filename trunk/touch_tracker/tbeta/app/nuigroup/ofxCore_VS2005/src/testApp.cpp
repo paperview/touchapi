@@ -40,8 +40,8 @@ void testApp::setup()
 	
 	winWidth			= XML.getValue("CONFIG:WINDOW:WIDTH",0);
 	winHeight			= XML.getValue("CONFIG:WINDOW:HEIGHT",0);
-	minWidth			= XML.getValue("CONFIG:WINDOW:MIN",0);
-	minHeight			= XML.getValue("CONFIG:WINDOW:MAX",0);
+	minWidth			= XML.getValue("CONFIG:WINDOW:MINX",0);
+	minHeight			= XML.getValue("CONFIG:WINDOW:MINY",0);
 	bFullscreen			= XML.getValue("CONFIG:WINDOW:FULLSCREEN",0);
 	
 	camWidth			= XML.getValue("CONFIG:CAMERA_0:WIDTH",0);
@@ -120,7 +120,7 @@ void testApp::setup()
 	parameterUI->init(ofGetWidth(), ofGetHeight());
 	
 	//for smooth animation... should not effect video output?
-	ofSetVerticalSync(true);	
+	ofSetVerticalSync(true);
 
 }
 /******************************************************************************
@@ -196,10 +196,12 @@ void testApp::update()
 		grayDiff.absDiff(grayBg, grayImg);
 		grayDiff.threshold(threshold);
 		grayDiff.dilate_3x3();
+		grayDiff.dilate_3x3();
+		grayDiff.dilate_3x3();
 
 		contourFinder.findContours(grayDiff, 10,
 			                      (camWidth*camHeight)/3, 10, true);
-		
+
 		// track contours
 		tracker.track(&contourFinder);
 	}
@@ -207,6 +209,9 @@ void testApp::update()
 	frameseq ++;	
 	//----------------------------------------------ParameterUI	
 	parameterUI->update();
+	
+	//printf(eventString);
+	//printf("\n");
 
 }
 
@@ -306,7 +311,8 @@ void testApp::draw()
 					ofSetColor(0xffffff);
 					char idStr[1024];		
 					//sprintf(idStr, "id: %i\nx: %f\ny: %f\ncx: %f\nc\
-					//			   y: %f\nwd: %f\nht: %f\na: %f\n",i,
+					//			   y: %f\nwd: %f\nht: %f\na: %f\n",
+					//			   contourFinder.blobs[i].id,
 					//			   contourFinder.blobs[i].pts[0].x,
 					//			   contourFinder.blobs[i].pts[0].y,
 					//			   contourFinder.blobs[i].centroid.x,
@@ -317,7 +323,7 @@ void testApp::draw()
 					sprintf(idStr, "id: %i",contourFinder.blobs[i].id);
 					verdana.drawString(idStr,
 						drawBlob.pts[0].x+drawBlob.boundingRect.width+30,
-						drawBlob.pts[0].y+drawBlob.boundingRect.height);		
+						drawBlob.pts[0].y+drawBlob.boundingRect.height);
 				}
 			//}
 			//}
