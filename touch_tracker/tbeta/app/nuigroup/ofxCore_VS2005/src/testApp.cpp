@@ -746,7 +746,7 @@ void testApp::SendOSC()
 			ofxOscMessage m1;
 			m1.setAddress("/tuio/2Dcur");
 			m1.addStringArg("set");
-			m1.addIntArg(i + 1); //id (id can't be == 0)
+			m1.addIntArg(contourFinder.blobs[i].id); //id
 			m1.addFloatArg(newX/camWidth);  // x/camWidth
 			m1.addFloatArg(newY/camHeight); // y/camHeight 
 			m1.addFloatArg(0); //X
@@ -762,7 +762,7 @@ void testApp::SendOSC()
 			m2.addStringArg("alive");
 
 			for(int i=0; i<contourFinder.nBlobs; i++)
-				m2.addIntArg(i + 1); //Get list of ALL active IDs		
+				m2.addIntArg(contourFinder.blobs[i].id); //Get list of ALL active IDs		
 
 			TUIOSocket.sendMessage(m2);//send them		
 
