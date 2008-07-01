@@ -8,40 +8,67 @@
 #define OF_ADDON_USING_OFXOSC		   // OSC COMMUNICATION		
 #include "ofAddons.h"
 #include "tracking.h"
+
+#include "boxAlign.h"				   // Used for warped image
 					
 #define HOST "localhost"
 #define PORT 3333
 
-#define _USE_LIVE_VIDEO		// uncomment this to use a live camera
+#define _USE_LIVE_VIDEO					// uncomment this to use a live camera
 
 class testApp : public ofSimpleApp
 {
 	public:
+
+		/////////////////////////////////////////////////////////////////
+		//						Public functions
+		/////////////////////////////////////////////////////////////////
+		
+		//Basic Methods
 		void setup();
 		void update();
 		void draw();
 		void exit();
 		void setupUI();
 
+		//Key events
 		void keyPressed(int key);
 		void mouseMoved(int x, int y);
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased();
 
+		//Touch Events
 		void fingerMoved(int x, int y);
 		void fingerDragged(int x, int y, int button);
 		void fingerPressed(int x, int y, int button);
 		void fingerReleased();
 
-		void changedVar(float _newVal, int arg1, int arg2, int arg3);
+		//Other Methods
+		void loadXMLSettings();								// Load Settings
+		void SendOSC();										//Send data through OSC
+        void bgCapture(ofxCvGrayscaleImage & _giLive);      //Background Capture
+	    void learnBackground( ofxCvGrayscaleImage & _giLive,//Background Learn (bgCapture and dynamic Bg subtraction 
+					  ofxCvGrayscaleImage & _grayBg, 
+					  ofxCvFloatImage & _fiLearn,
+					  float _fLearnRate );
 
-        #ifdef _USE_LIVE_VIDEO
+
+		/////////////////////////////////////////////////////////////////
+		//						Video Settings
+		/////////////////////////////////////////////////////////////////
+       
+		#ifdef _USE_LIVE_VIDEO
 		  ofVideoGrabber 		vidGrabber;
 		#else
 		  ofVideoPlayer 		vidPlayer;
 		#endif
 
+
+		/////////////////////////////////////////////////////////////////
+		//            Variables in config.xml Settings file
+		/////////////////////////////////////////////////////////////////
+        
 		int 				frameseq;	
 		int 				threshold;
 		int 				blurValue;
@@ -55,8 +82,9 @@ class testApp : public ofSimpleApp
 		int					minWidth;
 		int					minHeight;
 		int 				snapCounter;
-		int					lowRange;
-		int					highRange;
+		int					highpassBlur;
+		int					highpassNoise;
+		int					highpassAmp;
 		
 		bool				bDrawVideo;
 		bool  				bFastMode;
@@ -73,8 +101,14 @@ class testApp : public ofSimpleApp
 		bool				bHorizontalMirror;
 		bool				bSlimMode;
 		bool				bShowLabels;
+		bool				bNewFrame;		
+		//End config.xml variables
+		/////////////////////////////////////////////////////
 
-		float 				counter;
+
+		float				fLearnRate;// rate to learn background
+		
+		//float 			counter;
 		float				oldX;
 		float				oldY;
 		float				newX;
@@ -83,40 +117,48 @@ class testApp : public ofSimpleApp
 		char				eventString[255];
 		char				timeString[255];
 		
+		//---------------------------------------Fonts
 		ofTrueTypeFont		verdana;
+		ofTrueTypeFont		bigvideo;
 		ofImage				logo;
+		
+		//---------------------------------------Images
+		ofImage				background;
 		ofImage				menuBG;
 
-		//CBoxAligner		m_box;
-		//CTrackingManager	m_tracker;
-		//bool				bShowTouchScreen;		
 
+		//---------------------------------------GUI
 		AParameterUI*		parameterUI;
 		bool				bSpaced;	
-	
-		//--------------------------ParameterUI  Vars
 		//void fireFunction();
 
-		//Send contour data to OSC
-		void SendOSC();
-
+		//---------------------------------------Blob Tracker	
 		BlobTracker			tracker;
 
 	private:
 
+		//---------------------------------------Blob Finder	
+		ofxCvContourFinder	contourFinder;
+
+		//---------------------------------------OSC
 		ofxOscSender		TUIOSocket; 
 
+		//---------------------------------------Images
 		ofxCvColorImage		sourceImg;
         ofxCvGrayscaleImage grayImg;
 		ofxCvGrayscaleImage grayBg;
-		ofxCvGrayscaleImage grayDiff;		
+		ofxCvGrayscaleImage subtractBg;
+		ofxCvGrayscaleImage grayDiff;	
+		ofxCvGrayscaleImage highpassImg;
+		ofxCvGrayscaleImage	giWarped;
 
-		unsigned char * 	videoInverted;
-		ofTexture			videoInvertTexture;
-		ofTexture			videoTexture;
-		ofxCvContourFinder	contourFinder;
+	    ofxCvFloatImage		fiLearn;
 
-		//--------------------------XML Settings Vars (BLOATED)
+		//---------------------------------------Warping Box				
+		CBoxAligner			m_box;
+		ofxPoint2f			dstPts[4];
+
+		//---------------------------------------XML Settings Vars (BLOATED)
 		ofxXmlSettings		XML;
 		string				xmlStructure;
 		string				message;
@@ -125,12 +167,13 @@ class testApp : public ofSimpleApp
 		int					lineCount;
 		int					lastTagNumber;		
 
-		// FOR TEST MARKED FOR GC
+		//---------------------------------------FOR TEST MARKED FOR GC
 		float				red;
 		float				green;
 		float				blue;
+		bool				bblobs;
 
-		// FOR NETWORK 
+		//---------------------------------------FOR NETWORK 
 		char				myLocalHost[255];
 		char				myRemoteHost[255];
 		int					myTUIOPort;

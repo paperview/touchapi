@@ -6,20 +6,6 @@
  *****************************************************************************/
 void testApp::setup()
 {	 		
-//-------------------------------------------------------------- 
-//	FIRST LETS LOAD THE CONFIG XML  
-//-------------------------------------------------------------- 
-	// TODO: a seperate XML to map keyboard commands to action 
-	message = "Loading config.xml...";
-		// Can this load via http?
-	if( XML.loadFile("config.xml") ){
-		//WOOT!
-		message = "Settings Loaded!";
-	}else{
-		//FAIL!
-		message = "No Settings Found...";
-		// GENERATE DEFAULT XML DATA WHICH WILL BE SAVED INTO THE CONFIG
-	}
 
 	// ---------------------------------MISC VARS FOR SETTINGS (MARKED FOR GC) 
 	lastTagNumber	= 0;
@@ -27,102 +13,82 @@ void testApp::setup()
 	lineCount		= 0;
 	snapCounter		= 6; 
 	frameseq		= 0;
-	
-	// XML COLOR TEST (VERIFIES ITS WORKING!!)
-	red		= XML.getValue("CONFIG:BACKGROUND:COLOR:RED", 0);
-	green	= XML.getValue("CONFIG:BACKGROUND:COLOR:GREEN", 0);
-	blue	= XML.getValue("CONFIG:BACKGROUND:COLOR:BLUE", 0);
 
-	//-------------------------------------------------------------- 
-	//  START BINDING XML TO VARS
-	//-------------------------------------------------------------- 
-	frameRate			= XML.getValue("CONFIG:APPLICATION:FRAMERATE",0);
-	
-	winWidth			= XML.getValue("CONFIG:WINDOW:WIDTH",0);
-	winHeight			= XML.getValue("CONFIG:WINDOW:HEIGHT",0);
-	minWidth			= XML.getValue("CONFIG:WINDOW:MINX",0);
-	minHeight			= XML.getValue("CONFIG:WINDOW:MINY",0);
-	bFullscreen			= XML.getValue("CONFIG:WINDOW:FULLSCREEN",0);
-	
-	camWidth			= XML.getValue("CONFIG:CAMERA_0:WIDTH",0);
-	camHeight			= XML.getValue("CONFIG:CAMERA_0:HEIGHT",0);
-	//camRate			= XML.getValue("CONFIG:CAMERA_0:FRAMERATE",0);
+	//Background Subtraction Learning Rate
+	fLearnRate = 0.00001f;
 
-	bShowLabels			= XML.getValue("CONFIG:BOOLEAN:LABELS",0);
-	bDrawVideo			= XML.getValue("CONFIG:BOOLEAN:VIDEO",0);
-	bSnapshot			= XML.getValue("CONFIG:BOOLEAN:SNAPSHOT",0);
-	bFastMode			= XML.getValue("CONFIG:BOOLEAN:FAST",0);	
-	bDrawOutlines		= XML.getValue("CONFIG:BOOLEAN:OUTLINES",0);
-	bInvertVideo		= XML.getValue("CONFIG:BOOLEAN:INVERT",0);
-	bLearnBakground		= XML.getValue("CONFIG:BOOLEAN:LEARNBG",0);
+	// ---------------------------------Load Settings from config.xml File 
+	loadXMLSettings();
 
-	bCalibration		= XML.getValue("CONFIG:BOOLEAN:CALIBRATION",0);
-	bVerticalMirror		= XML.getValue("CONFIG:BOOLEAN:VMIRROR",0);
-	bHorizontalMirror	= XML.getValue("CONFIG:BOOLEAN:HMIRROR",0);	
-	
-	threshold			= XML.getValue("CONFIG:INT:THRESHOLD",0);
-	wobbleThreshold		= XML.getValue("CONFIG:INT:WTHRESHOLD",0);
-	blurValue			= XML.getValue("CONFIG:INT:BLUR",0);
-	blurGaussianValue	= XML.getValue("CONFIG:INT:BLURG",0);
-	lowRange			= XML.getValue("CONFIG:INT:LOWRANGE",0);
-	highRange			= XML.getValue("CONFIG:INT:HIGHRANGE",0);
-	
-//--------------------------------------------------- TODO XML NETWORK SETTINGS	
-	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
-	//myLocalHost			= XML.getValue("CONFIG:NETWORK:LOCALHOST",0);
-	//myRemoteHost		= XML.getValue("CONFIG:NETWORK:HOSTA",0);
-	//myTUIOPort			= XML.getValue("CONFIG:NETWORK:TUIO_PORT_OUT",0);
-	TUIOSocket.setup(HOST, PORT); 
-//-------------------------------------------------------------- 
-//  END XML SETUP
-//-------------------------------------------------------------- 
-// NOW TO SET ALL THE XML VARS :/
-//	XML.setValue("CONFIG:BACKGROUND:COLOR:RED", red);
-//	XML.setValue("CONFIG:BACKGROUND:COLOR:GREEN", green);
-//	XML.setValue("CONFIG:BACKGROUND:COLOR:BLUE", blue);
-//-------------------------------------------------------------- 
-
+	// ---------------------------------Window Properties 
 	ofSetWindowShape(winWidth,winHeight);
 	ofSetFullscreen(bFullscreen);
-	ofSetFrameRate(frameRate);
-	
+	ofSetFrameRate(30);			//This will be based on camera fps in the future		
+	ofSetVerticalSync(false);	//Set vertical sync to false for better performance
+
+
 	#ifdef _USE_LIVE_VIDEO // MAKE BOTH LIVE VIDEO AND VCR MODE WORK AT SAME TIME 
-        vidGrabber.setVerbose(true);
-        vidGrabber.initGrabber(camWidth,camHeight);
+       		
+		vidGrabber.setVerbose(true);
+        vidGrabber.initGrabber(camWidth,camHeight);		
+
 		printf("Camera Mode\n");
 		int grabW = vidGrabber.width;
 		int grabH = vidGrabber.height;
 		printf("Asked for %i by %i - actual size is %i by %i \n", 
 				camWidth, camHeight, grabW, grabH);
+
 	#else
         vidPlayer.loadMovie("test_videos/FrontDI.m4v");
         vidPlayer.play();	
 		printf("Video Mode\n");
 	#endif
     
-	sourceImg.allocate(camWidth, camHeight);
-	grayImg.allocate(camWidth, camHeight);
-	grayBg.allocate(camWidth, camHeight);
-	grayDiff.allocate(camWidth, camHeight);
+
+	//Allocate images (needed for drawing/processing images) ----Most of These won't be needed in the end
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	sourceImg.allocate(camWidth, camHeight);    //Source Image
+	grayImg.allocate(camWidth, camHeight);		//Gray Image
+	grayBg.allocate(camWidth, camHeight);		//Background Image
+	subtractBg.allocate(camWidth, camHeight);   //Background After subtraction
+	grayDiff.allocate(camWidth, camHeight);		//Difference Image between Background and Source
+	highpassImg.allocate(camWidth, camHeight);  //Highpass Image
+	giWarped.allocate(camWidth, camHeight);     //Warped Image (used for warped calibration)
+
+	fiLearn.allocate(camWidth, camHeight);		//ofxFloatImage used for simple dynamic background subtraction
+//	fiLearn.setUseTexture(false);
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//Fonts - Is there a way to dynamically change font size?
+	verdana.loadFont("verdana.ttf", 8, true, true);	   //Font used for small images
+	bigvideo.loadFont("verdana.ttf", 13, true, true);  //Font used for big images.
 	
-	videoInverted = new unsigned char[camWidth*camHeight*3];
-	videoInvertTexture.allocate(camWidth, camHeight, GL_RGB);	
-
-	ofSetWindowTitle("Configuration");
-	printf("Touchlib application is setup!\n");
-
-	verdana.loadFont("verdana.ttf", 8, false, true);		
+	//Static Images
 	logo.loadImage("images/logo.jpg");
+	background.loadImage("images/background.jpg"); //Main (Temp) Background
 
 	//Parameter UI
 	setupUI();	
 	parameterUI = AParameterUI::Instance();
 	parameterUI->init(ofGetWidth(), ofGetHeight());
 	
-	//for smooth animation... should not effect video output?
-	ofSetVerticalSync(true);
+	//Setup green warped box
+	m_box.setup( 40, 146, 320, 240); 
 
+	//Warped points
+	dstPts[0].x = 0.0f;
+    dstPts[0].y = camHeight;   
+    dstPts[1].x = camWidth;
+    dstPts[1].y = camHeight;   
+    dstPts[2].x = camWidth;
+    dstPts[2].y = 0.0f;   
+    dstPts[3].x = 0.0f;
+    dstPts[3].y = 0.0f;
+
+	printf("Touchlib application is setup!\n");
 }
+
+
 /******************************************************************************
  * The update function runs continuously. Use it to update states and variables
  *****************************************************************************/
@@ -131,7 +97,8 @@ void testApp::update()
 	ofBackground(0,0,0);
 	//	FOR XML TEST
 	ofBackground((int)red,(int)green,(int)blue);
-    bool bNewFrame = false;
+ 
+    bNewFrame = false;
 		
 	#ifdef _USE_LIVE_VIDEO
        vidGrabber.grabFrame();
@@ -140,6 +107,8 @@ void testApp::update()
         vidPlayer.idleMovie();
         bNewFrame = vidPlayer.isFrameNew();
 	#endif
+
+	//printf("Boolean2: %i \n", bNewFrame);
 	
 	if (bNewFrame)
 	{
@@ -156,74 +125,105 @@ void testApp::update()
         #endif	
 			
 		//------------------------ SET FILTERS HERE ---------------------------
-		//INVERT TEXTURE
-		if (bInvertVideo)
-		{	
-			for( int i=0; i<totalPixels; i++)
-				videoInverted[i] = 255 - pixels[i];
-			videoInvertTexture.loadData(videoInverted, camWidth,
-										camHeight, GL_RGB);
-		}		
 		
 		//Set Mirroring Horizontal/Vertical
 		sourceImg.mirror(bHorizontalMirror, bVerticalMirror);
 
-		grayImg = sourceImg;
+		//sourceImg.warpIntoMe(sourceImg, m_box.fHandles, dstPts );
+
+		subtractBg = sourceImg;
+
+		//giWarped.warpIntoMe(subtractBg, m_box.fHandles, dstPts );
+
+		//subtractBg = giWarped;
+
+		learnBackground( subtractBg, grayBg, fiLearn, 0.0001f);
+ 
 			
-		//Blur Video
-		if(blurValue > 3)
-			grayImg.blur(blurValue);
-
-		//Blur Gaussian Video
-		if(blurGaussianValue > 3)
-			grayImg.blurGaussian(blurGaussianValue);
-
-		//Invert Video
-		if(bInvertVideo)
-			grayImg.invert();
-
-		//Create Image Level Range 0 - 255		
-		grayImg.convertToRange(lowRange, highRange);
-		
-    	//sourceImg.erode();
-        
 		if (bLearnBakground == true)
 		{
-			grayBg = grayImg;	
+			bgCapture( subtractBg );
 			bLearnBakground = false;
 		}
-	
-		grayDiff.absDiff(grayBg, grayImg);
+
+		//Background Subtraction
+		subtractBg.absDiff(grayBg, subtractBg);
+
+		highpassImg = subtractBg;
+
+		//HighPass
+		highpassImg.highpass(highpassBlur, highpassNoise);
+
+		grayImg = highpassImg;
+		
+		//Amplify
+		grayImg.amplify(grayImg, highpassAmp);
+		
+		//
+		grayDiff = grayImg;
+
+		//Set a threshold value
 		grayDiff.threshold(threshold);
-		grayDiff.dilate_3x3();
-		grayDiff.dilate_3x3();
-		grayDiff.dilate_3x3();
 
-		contourFinder.findContours(grayDiff, 10,
-			                      (camWidth*camHeight)/3, 10, true);
+		//Find contours/blobs
+		contourFinder.findContours(grayDiff, 4, (camWidth*camHeight)/25, 10, false);
 
-		// track contours
+		//Track found contours/blobs
 		tracker.track(&contourFinder);
 	}
 
-	frameseq ++;	
+	
+	//We're not using frameseq right now with OSC
+	//frameseq ++;	
+	
+	
 	//----------------------------------------------ParameterUI	
 	parameterUI->update();
 	
-	//printf(eventString);
-	//printf("\n");
+}
+
+
+
+//--------------------------------------------------------------
+void testApp::learnBackground( ofxCvGrayscaleImage & _giLive, ofxCvGrayscaleImage & _grayBg, ofxCvFloatImage & _fiLearn, float _fLearnRate )
+ {
+
+	_fiLearn.addWeighted( _giLive, _fLearnRate);
+    
+    _grayBg = _fiLearn;
 
 }
+//--------------------------------------------------------------
+void testApp::bgCapture( ofxCvGrayscaleImage & _giLive )
+{
+	learnBackground( _giLive, grayBg, fiLearn, 1.0f);       
+}
+//--------------------------------------------------------------
+
 
 
 /******************************************************************************
  * The draw function paints the textures onto the screen. It runs after update.
  *****************************************************************************/
 void testApp::draw()
-{
-	//bLearnBakground = true; // ADAPTIVE BACKGROUND SUBTRATION?
+{	
 
-	ofSetupScreen(); //? NEEDED?
+//string str = "fps = ";
+
+//str+= ofToString(ofGetFrameRate(), 2)+"fps";
+//ofSetWindowTitle(str);
+
+//	printf("Boolean: %i \n", 
+//	bNewFrame);
+
+
+	string str = "fps = ";
+
+	str+= ofToString(ofGetFrameRate(), 2)+"fps";
+	ofSetWindowTitle(str);
+
+	//ofSetupScreen(); //? NEEDED?
+	
 	ofSetColor(0xffffff);	
 
 	winWidth = ofGetWidth();
@@ -252,31 +252,62 @@ void testApp::draw()
 	//if help is toggled a third column is added so we compensate for it
 	int w, h;
 	if(bToggleHelp)
-		w = (winWidth-80)/3;
+		w = (winWidth-80)/6;
 	else
-		w = (winWidth-60)/2;
-	h = (winHeight-60)/2;
+		w = (winWidth-60)/6;
+	
+	h = (winHeight-60)/6;
+
 
 	if(bDrawVideo && !bFastMode)
 	{
-		sourceImg.draw(20, 20, w, h);
-		grayImg.draw(w+40, 20, w, h);
-		grayBg.draw(20, h+40, w, h);
-		grayDiff.draw(w+40, h+40, w, h);
-	}  
+
+	//	ofSetColor(0xCCCCCC);
+	//	ofFill();
+	//	ofRect(10, 10, w*4 + 30,h*4 + 20);
+
+		background.draw(0, 0);
+
+		sourceImg.draw(40, 146, 320, 240);
+		grayDiff.draw(445, 146, 320, 240);
+		fiLearn.draw(40, 521, 128, 96);
+		subtractBg.draw(187, 521, 128, 96);
+		highpassImg.draw(337, 521, 128, 96);
+		grayImg.draw(487, 521, 128, 96);
+
+		ofSetColor(0x000000);
+
+		bigvideo.drawString("Raw Image", 145, 135);
+		bigvideo.drawString("Tracked Image", 535, 135);
 	
+		verdana.drawString("Background", 70, 630);
+		verdana.drawString("Background Removed", 189, 630);
+		verdana.drawString("Highpass", 375, 630);
+		verdana.drawString("Amplify", 530, 630);
+
+		m_box.draw( 40, 146 );
+
+} 
+
 	//first send the OSC message of the contour data
 	//why is it checking if outlines are to be drawn?
 	//I think it should be bTuioMode...~~~~
 	//~~ we have TUIO MODE mapped to the 't' key...
-	if(bDrawOutlines)
-		SendOSC();
+
+	if(bNewFrame){
+
+		if(bDrawOutlines)
+			SendOSC();
+	}
+
+
 
 	if(bDrawOutlines && !bFastMode)
 	{
 		//scale and draw on screen
-		double wScale = double(w)/double(camWidth);
-		double hScale = double(h)/double(camHeight);
+		double wScale = double(320)/double(camWidth);
+		double hScale = double(240)/double(camHeight);
+
 
 		for(int i=0; i<contourFinder.nBlobs; i++)
 		{
@@ -298,9 +329,9 @@ void testApp::draw()
 			}
 
 			//draw contours on the figures
-			drawBlob.draw(20, 20);
-			drawBlob.draw(w+40, 20);
-			drawBlob.draw(w+40, h+40);
+			//drawBlob.draw(40, 146);
+			drawBlob.draw(445, 146);
+
 
 			//if(i < 3)
 			//{
@@ -308,7 +339,7 @@ void testApp::draw()
 			//{	
 				if(bShowLabels)
 				{
-					ofSetColor(0xffffff);
+					ofSetColor(0xFFFFFF);
 					char idStr[1024];		
 					//sprintf(idStr, "id: %i\nx: %f\ny: %f\ncx: %f\nc\
 					//			   y: %f\nwd: %f\nht: %f\na: %f\n",
@@ -322,20 +353,34 @@ void testApp::draw()
 					//			   contourFinder.blobs[i].area);
 					sprintf(idStr, "id: %i",contourFinder.blobs[i].id);
 					verdana.drawString(idStr,
-						drawBlob.pts[0].x+drawBlob.boundingRect.width+30,
-						drawBlob.pts[0].y+drawBlob.boundingRect.height);
+						drawBlob.pts[0].x+drawBlob.boundingRect.width + 435,
+						drawBlob.pts[0].y+drawBlob.boundingRect.height + 160);
 				}
 			//}
 			//}
 		}
 	} 
 
+		//If there are no blobs, add to background
+		
+/*	if(bNewFrame){
 
-	
+		if (contourFinder.nBlobs == 0){		
+		
+		subtractBg = giWarped;
+
+		learnBackground( subtractBg, grayBg, fiLearn, 0.01f);
+
+		}
+	}
+*/
+
+
+
 
 	//---------------------------------------------------------------------HELP
 	// IF HELP and NO SLIDERS
-	if(bToggleHelp && bSpaced)
+/*	if(bToggleHelp && bSpaced)
 	{		
 	
 		//-------------------------------------------- DRAW XML SETTINGS OUTPUT
@@ -359,15 +404,15 @@ void testApp::draw()
 						press 'w/e' to set DisplacementThreshold: %i\n\n\
 						press 'n/m' to set Blur Amount: %i\n\
 						press 'j/k' to set Gaussian Blur Amount: %i\n\
-						press '-/=' to set Low Level: %i\n\
-						press '9/0' to set High Level: %i\n\
+						press '-/=' to set Highpass Blur: %i\n\
+						press '9/0' to set Highpass Noise: %i\n\
 						press 'h/v' to set Mirror Mode: None\n\n\
 						press 'm' toggle DI or FTIR mode\n\n\
 						press 'ESC' to exit (bug)\n\n\nblobs found: %i",
 						threshold, wobbleThreshold, blurValue, 
-						blurGaussianValue,lowRange,highRange, 
+						blurGaussianValue,highpassBlur,highpassNoise, 
 						contourFinder.nBlobs);
-		verdana.drawString(reportStr, 2*w+60, 45);
+		verdana.drawString(reportStr, w - 60, 45);
 
 		verdana.drawString("Original", 33, 40);
 		verdana.drawString("Grayscale", w+53, 40);
@@ -405,7 +450,8 @@ void testApp::draw()
 			//						[/tuio/2Dcur <x> <y>] ", 20, 585 );
 		}//END TUIO MODE
 	}	
-
+*/
+	
 	//----------------------------------------------------------------------OSC
 	// display instructions
 
@@ -430,7 +476,10 @@ void testApp::draw()
 	ofSetColor(0xFFFFFF);
 	img.draw(0,0,camWidth,camHeight);
 	*/ 	
-    //-----------------------------------------------DRAW LED FOR SHOWING VIDEO
+    
+
+
+	//-----------------------------------------------DRAW LED FOR SHOWING VIDEO
 	if(bDrawVideo)
 	{		
 		ofSetColor(255, 0, 255);
@@ -456,7 +505,6 @@ void testApp::draw()
 		ofRect(0, 0, screenW, screenH);	
 
 		//ofSetColor(0xFFFFFF);	
-		//videoInvertTexture.draw(0, 0, screenW, screenH);
 		ofSetWindowTitle("Calibration");
 		verdana.drawString("Calibration", 33, 60);	
 		char reportStr[1024];	
@@ -481,10 +529,10 @@ void testApp::draw()
 	//------------------------------------------------------------ Parameter UI
 	if(!bCalibration)
 	{
-		if(ofGetWidth() > 1000)
-		{
+//		if(ofGetWidth() > 1000)
+//		{
 			ofSetColor(0xFFFFFF);	
-			logo.draw(ofGetWidth()-155,50);
+			logo.draw(820,5);
 			
 			// render the UI
 			// Change to the projection matrix and set our viewing volume.
@@ -498,8 +546,10 @@ void testApp::draw()
 			glLoadIdentity();	
 
 			parameterUI->render();
-		}
+//		}
 	}
+
+
 }
 
 /*****************************************************************************
@@ -509,14 +559,14 @@ void testApp::keyPressed(int key)
 { 
 	sprintf(eventString, "keyPressed = (%i)", key);
 	//printf(int(key));
-	if(ofGetWidth()>1000)
-	{
+//	if(ofGetWidth()>1000)
+//	{
 		// THIS IS FOR THE ~ toggle...
 		if(key==126 || key==96) 
 		{
 			if(parameterUI->isActive)
 			{
-				parameterUI->deActivate();	
+	//			parameterUI->deActivate();	
 				bSpaced = true;
 				//bToggleHelp = true;	
 			}
@@ -527,7 +577,7 @@ void testApp::keyPressed(int key)
 				//bToggleHelp = false;	
 			}
 		}
-	}
+//	}
 
 	//------------------------------- BEGIN MAIN KEYBOARD SWITCH (LONGEST EVER)
 	switch(key)
@@ -552,13 +602,13 @@ void testApp::keyPressed(int key)
 			if(bToggleHelp)
 			{	
 				parameterUI->deActivate();	
-				bToggleHelp = false;	
+				//bToggleHelp = false;	
 				ofSetWindowShape((2.0/3.0)*(ofGetWidth()-80)+60,ofGetHeight());
 			}
 			else
 			{	
 				parameterUI->deActivate();	
-				bToggleHelp = true;
+				//bToggleHelp = true;
 				ofSetWindowShape(max((3.0/2.0)*(ofGetWidth()-60)+80, minWidth),
 					             max(ofGetHeight(), minHeight));
 			}
@@ -600,14 +650,14 @@ void testApp::keyPressed(int key)
 			if(bFastMode)
 			{	
 				bFastMode = false;	
-				bToggleHelp = true;
+				//bToggleHelp = true;
 				ofSetWindowShape(1024,768); //default size
 				ofSetWindowTitle("Configuration");
 			}
 			else
 			{	
 				bFastMode = true;
-				bToggleHelp = false;
+				//bToggleHelp = false;
 				ofSetWindowShape(175,18); //minimized size
 				ofSetWindowTitle("Mini");
 			}
@@ -619,11 +669,11 @@ void testApp::keyPressed(int key)
 				bInvertVideo = true; 
 			break;	
 		case 'n':
-			blurValue +=  2;
+			blurValue =  1;
 			if(blurValue > 255) blurValue = 255;
 			break;		
 		case 'm':
-			blurValue -= 2;
+			blurValue -= 1;
 			if(blurValue < 1) blurValue = 1;
 			break;
 		case 'j':
@@ -682,7 +732,7 @@ void testApp::keyPressed(int key)
 			else	
 				bHorizontalMirror = true;
 			break;
-		case '-':
+/*		case '-':
 			lowRange ++;
 			if(lowRange > 255) lowRange = 255;
 			break;	
@@ -698,7 +748,7 @@ void testApp::keyPressed(int key)
 			highRange --;
 			if(highRange < 0) highRange = 0;
 			break;		
-		case 'l':
+*/		case 'l':
 			if(bShowLabels)
 				bShowLabels = false;
 			else	
@@ -707,6 +757,85 @@ void testApp::keyPressed(int key)
 	}
 	// --------------------------------- END MAIN KEYBOARD SWITCH
 }
+
+
+
+//-------------------------------------------------------------- 
+//	Load Settings from the config.xml file 
+//-------------------------------------------------------------- 
+void testApp::loadXMLSettings(){
+
+	// TODO: a seperate XML to map keyboard commands to action 
+	message = "Loading config.xml...";
+	
+	// Can this load via http?
+	if( XML.loadFile("config.xml") ){
+		//WOOT!
+		message = "Settings Loaded!";
+	}else{
+		//FAIL!
+		message = "No Settings Found...";
+		// GENERATE DEFAULT XML DATA WHICH WILL BE SAVED INTO THE CONFIG
+	}
+
+	// XML COLOR TEST (VERIFIES ITS WORKING!!)
+	red		= XML.getValue("CONFIG:BACKGROUND:COLOR:RED", 0);
+	green	= XML.getValue("CONFIG:BACKGROUND:COLOR:GREEN", 0);
+	blue	= XML.getValue("CONFIG:BACKGROUND:COLOR:BLUE", 0);
+
+	//-------------------------------------------------------------- 
+	//  START BINDING XML TO VARS
+	//-------------------------------------------------------------- 
+	frameRate			= XML.getValue("CONFIG:APPLICATION:FRAMERATE",0);
+	
+	winWidth			= XML.getValue("CONFIG:WINDOW:WIDTH",0);
+	winHeight			= XML.getValue("CONFIG:WINDOW:HEIGHT",0);
+	minWidth			= XML.getValue("CONFIG:WINDOW:MINX",0);
+	minHeight			= XML.getValue("CONFIG:WINDOW:MINY",0);
+	bFullscreen			= XML.getValue("CONFIG:WINDOW:FULLSCREEN",0);
+	
+	camWidth			= XML.getValue("CONFIG:CAMERA_0:WIDTH",0);
+	camHeight			= XML.getValue("CONFIG:CAMERA_0:HEIGHT",0);
+	//camRate			= XML.getValue("CONFIG:CAMERA_0:FRAMERATE",0);
+
+	bShowLabels			= XML.getValue("CONFIG:BOOLEAN:LABELS",0);
+	bDrawVideo			= XML.getValue("CONFIG:BOOLEAN:VIDEO",0);
+	bSnapshot			= XML.getValue("CONFIG:BOOLEAN:SNAPSHOT",0);
+	bFastMode			= XML.getValue("CONFIG:BOOLEAN:FAST",0);	
+	bDrawOutlines		= XML.getValue("CONFIG:BOOLEAN:OUTLINES",0);
+	bInvertVideo		= XML.getValue("CONFIG:BOOLEAN:INVERT",0);
+	bLearnBakground		= XML.getValue("CONFIG:BOOLEAN:LEARNBG",0);
+
+	bCalibration		= XML.getValue("CONFIG:BOOLEAN:CALIBRATION",0);
+
+	bVerticalMirror		= XML.getValue("CONFIG:BOOLEAN:VMIRROR",0);
+	bHorizontalMirror	= XML.getValue("CONFIG:BOOLEAN:HMIRROR",0);	
+	
+	threshold			= XML.getValue("CONFIG:INT:THRESHOLD",0);
+	wobbleThreshold		= XML.getValue("CONFIG:INT:WTHRESHOLD",0);
+	blurValue			= XML.getValue("CONFIG:INT:BLUR",0);
+	blurGaussianValue	= XML.getValue("CONFIG:INT:BLURG",0);
+	highpassBlur		= XML.getValue("CONFIG:INT:LOWRANGE",0);
+	highpassNoise		= XML.getValue("CONFIG:INT:HIGHRANGE",0);
+	highpassAmp		= XML.getValue("CONFIG:INT:HIGHPASSAMP",0);
+	
+//--------------------------------------------------- TODO XML NETWORK SETTINGS	
+	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
+	//myLocalHost			= XML.getValue("CONFIG:NETWORK:LOCALHOST",0);
+	//myRemoteHost		= XML.getValue("CONFIG:NETWORK:HOSTA",0);
+	//myTUIOPort			= XML.getValue("CONFIG:NETWORK:TUIO_PORT_OUT",0);
+	TUIOSocket.setup(HOST, PORT); 
+//-------------------------------------------------------------- 
+//  END XML SETUP
+//-------------------------------------------------------------- 
+// NOW TO SET ALL THE XML VARS :/
+//	XML.setValue("CONFIG:BACKGROUND:COLOR:RED", red);
+//	XML.setValue("CONFIG:BACKGROUND:COLOR:GREEN", green);
+//	XML.setValue("CONFIG:BACKGROUND:COLOR:BLUE", blue);
+//-------------------------------------------------------------- 
+
+}
+
 
 /*****************************************************************************
  * Send Set message of ID, x, y, X, Y, m, weight, width to OSC
@@ -781,6 +910,7 @@ void testApp::SendOSC()
 	}
 }
 
+
 /*****************************************************************************
  * TODO:
  *****************************************************************************/
@@ -799,6 +929,16 @@ void testApp::mouseMoved(int x, int y)
 void testApp::mouseDragged(int x, int y, int button)
 {	
 	sprintf(eventString, "mouseDragged = (%i,%i - button %i)", x, y, button);
+
+
+	//-------------------------------- Warp Box
+	if(x < (40 + camWidth) && x > 40){
+
+		if(y < (146 + camHeight) && y > 146){
+	
+			m_box.adjustHandle(x, y);
+		}
+	}
 		
 	//-------------------------------- PARAMETER UI EVENT
 	parameterUI->mouseMotion(x, y);	

@@ -19,7 +19,7 @@ public:
 		//initialize ID's of all blobs
 		for(int i=0; i<newBlobs->nBlobs; i++)
 			newBlobs->blobs[i].id=-1;
-
+			
 		//go through all tracked blobs to compute nearest new point
 		for(int i=0; i<trackedBlobs.size(); i++)
 		{
@@ -80,6 +80,9 @@ public:
 				{
 					newBlobs->blobs[winner].id = trackedBlobs[i].id;
 					trackedBlobs[i] = newBlobs->blobs[winner];		
+
+					//doUpdateEvent( blobs[i].getTouchData() );
+					//doBlobMoved( blobs[i] );  
 				}
 			}
 		}
@@ -91,6 +94,10 @@ public:
 			{
 				trackedBlobs.erase(trackedBlobs.begin()+i,
 								   trackedBlobs.begin()+i+1);
+
+				//doUntouchEvent((*prev)[i].getTouchData());
+                //doBlobOff( (*prev)[i] );
+
 				i--; //decrement one since we removed an element
 			}
 		}
@@ -103,6 +110,9 @@ public:
 			{
 				newBlobs->blobs[i].id=IDCounter++;
 				trackedBlobs.push_back(newBlobs->blobs[i]);
+				
+				//doTouchEvent(blobs[i].getTouchData());
+				//doBlobOn( blobs[i] );   
 			}
 		}
 
