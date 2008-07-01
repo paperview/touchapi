@@ -34,6 +34,11 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     void operator -=	( float scalar );
 	void operator +=	( float scalar );
 
+	//amplifies signal
+	void amplify( ofxCvGrayscaleImage& mom, float level );
+	
+	void highpass(float blur1, float blur2 );
+
     void absDiff( ofxCvGrayscaleImage& mom );
     void absDiff( ofxCvGrayscaleImage& mom, ofxCvGrayscaleImage& dad );
 

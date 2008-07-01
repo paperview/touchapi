@@ -186,7 +186,9 @@ void ofxCvFloatImage::operator /=    ( float scalar ){
 void ofxCvFloatImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
 	if( mom.width == width && mom.height == height ) {
          IplImage* cvTemp = cvCreateImage( cvSize(width,height), IPL_DEPTH_32F, 1 );
-         cvConvertScale( mom.getCvImage(), cvTemp, 1, 0 );
+         
+		 cvConvertScale( mom.getCvImage(), cvTemp, 1, 0 );
+		 //cvConvert( mom.getCvImage(), cvImage ); 
          cvAddWeighted( cvTemp, f, cvImage, 1.0f-f,0, cvImageTemp );
          swapTemp();
          cvReleaseImage( &cvTemp );
