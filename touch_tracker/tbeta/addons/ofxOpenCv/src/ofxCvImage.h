@@ -109,8 +109,7 @@ class ofxCvImage {
                                   const ofPoint& B,
                                   const ofPoint& C,
                                   const ofPoint& D );
-    virtual void warpIntoMe( const ofxCvGrayscaleImage& mom,
-                             ofPoint src[4], ofPoint dst[4] );
+    virtual void warpIntoMe( const ofxCvImage& mom,ofPoint src[4], ofPoint dst[4] ); 
 
 
 

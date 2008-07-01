@@ -110,12 +110,15 @@ CVAPI(void)  cvPyrDown( const CvArr* src, CvArr* dst,
 CVAPI(void)  cvPyrUp( const CvArr* src, CvArr* dst,
                       int filter CV_DEFAULT(CV_GAUSSIAN_5x5) );
 
+/* Builds pyramid for an image */
+CVAPI(CvMat**) cvCreatePyramid( const CvArr* img, int extra_layers, double rate,
+                                const CvSize* layer_sizes CV_DEFAULT(0),
+                                CvArr* bufarr CV_DEFAULT(0),
+                                int calc CV_DEFAULT(1),
+                                int filter CV_DEFAULT(CV_GAUSSIAN_5x5) );
 
-/* Builds the whole pyramid at once. Output array of CvMat headers (levels[*])
-   is initialized with the headers of subsequent pyramid levels */
-/*CVAPI  void  cvCalcPyramid( const CvArr* src, CvArr* container,
-                              CvMat* levels, int level_count,
-                              int filter CV_DEFAULT(CV_GAUSSIAN_5x5) );*/
+/* Releases pyramid */
+CVAPI(void)  cvReleasePyramid( CvMat*** pyramid, int extra_layers );
 
 
 /* Splits color or grayscale image into multiple connected components
@@ -492,14 +495,18 @@ CVAPI(void)  cvCalcOpticalFlowPyrLK( const CvArr*  prev, const CvArr*  curr,
 
 /* Modification of a previous sparse optical flow algorithm to calculate
    affine flow */
-/*CVAPI  void  cvCalcAffineFlowPyrLK( const CvArr*  prev, const CvArr*  curr,
-                                     CvArr*  prev_pyr, CvArr*  curr_pyr,
-                                     CvPoint2D32f* prev_features,
-                                     CvPoint2D32f* curr_features,
-                                     float*  matrices, int  count,
-                                     CvSize  win_size, int  level,
-                                     char*  status, float* track_error,
-                                     CvTermCriteria criteria, int flags );*/
+CVAPI(void)  cvCalcAffineFlowPyrLK( const CvArr*  prev, const CvArr*  curr,
+                                    CvArr*  prev_pyr, CvArr*  curr_pyr,
+                                    const CvPoint2D32f* prev_features,
+                                    CvPoint2D32f* curr_features,
+                                    float* matrices, int  count,
+                                    CvSize win_size, int  level,
+                                    char* status, float* track_error,
+                                    CvTermCriteria criteria, int flags );
+
+/* Estimate rigid transformation between 2 images or 2 point sets */
+CVAPI(int)  cvEstimateRigidTransform( const CvArr* A, const CvArr* B,
+                                      CvMat* M, int full_affine );
 
 /********************************* motion templates *************************************/
 
@@ -938,9 +945,9 @@ CVAPI(void)  cvDistTransform( const CvArr* src, CvArr* dst,
 
 /* Applies fixed-level threshold to grayscale image.
    This is a basic operation applied before retrieving contours */
-CVAPI(void)  cvThreshold( const CvArr*  src, CvArr*  dst,
-                          double  threshold, double  max_value,
-                          int threshold_type );
+CVAPI(double)  cvThreshold( const CvArr*  src, CvArr*  dst,
+                            double  threshold, double  max_value,
+                            int threshold_type );
 
 #define CV_ADAPTIVE_THRESH_MEAN_C  0
 #define CV_ADAPTIVE_THRESH_GAUSSIAN_C  1
@@ -1054,8 +1061,10 @@ CVAPI(CvHaarClassifierCascade*) cvLoadHaarClassifierCascade(
 
 CVAPI(void) cvReleaseHaarClassifierCascade( CvHaarClassifierCascade** cascade );
 
-#define CV_HAAR_DO_CANNY_PRUNING 1
-#define CV_HAAR_SCALE_IMAGE      2
+#define CV_HAAR_DO_CANNY_PRUNING    1
+#define CV_HAAR_SCALE_IMAGE         2
+#define CV_HAAR_FIND_BIGGEST_OBJECT 4 
+#define CV_HAAR_DO_ROUGH_SEARCH     8
 
 CVAPI(CvSeq*) cvHaarDetectObjects( const CvArr* image,
                      CvHaarClassifierCascade* cascade,
@@ -1165,6 +1174,10 @@ CVAPI(void)  cvReleasePOSITObject( CvPOSITObject**  posit_object );
 /****************************************************************************************\
 *                                 Epipolar Geometry                                      *
 \****************************************************************************************/
+
+/* updates the number of RANSAC iterations */
+CVAPI(int) cvRANSACUpdateNumIters( double p, double err_prob,
+                                   int model_points, int max_iters );
 
 CVAPI(void) cvConvertPointsHomogenious( const CvMat* src, CvMat* dst );
 

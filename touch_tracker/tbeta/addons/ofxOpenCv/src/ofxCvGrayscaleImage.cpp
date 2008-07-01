@@ -66,7 +66,7 @@ void ofxCvGrayscaleImage::operator =	( ofxCvColorImage& mom ) {
 //--------------------------------------------------------------------------------
 void ofxCvGrayscaleImage::operator =	( ofxCvFloatImage& mom ) {
 	if( mom.width == width && mom.height == height ) {
-		cvConvertScale( mom.getCvImage(), cvImage, 1.0f/255.0f, 0);
+		cvConvert( mom.getCvImage(), cvImage ); 
 	} else {
         cout << "error in =, images are different sizes" << endl;
 	}
@@ -125,6 +125,30 @@ void ofxCvGrayscaleImage::operator -=	( float scalar ){
 void ofxCvGrayscaleImage::operator +=	( float scalar ){
 	cvAddS(cvImage, cvScalar(scalar), cvImageTemp);
 	swapTemp();
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvGrayscaleImage::amplify ( ofxCvGrayscaleImage& mom, float level ) {
+    
+	float scalef = level / 128.0f;
+
+	cvMul( mom.getCvImage(), mom.getCvImage(), cvImageTemp, scalef );
+	swapTemp();
+}
+
+void ofxCvGrayscaleImage::highpass ( float blur1, float blur2 ) {
+    
+		//Blur Original Image
+		cvSmooth( cvImage, cvImageTemp, CV_BLUR , (blur1 * 2) + 1);
+		
+		//Original Image - Blur Image = Highpass Image
+		cvSub( cvImage, cvImageTemp, cvImageTemp );
+		
+		//Blur Highpass to remove noise
+		if(blur2 > 0)
+		cvSmooth( cvImageTemp, cvImageTemp, CV_BLUR , (blur2 * 2) + 1);
+
+		swapTemp();
 }
 
 

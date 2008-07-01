@@ -253,10 +253,12 @@ void ofVideoGrabber::grabFrame(){
 	//---------------------------------
 
 		if (bGrabberInited == true){
+
+				bIsFrameNew = false; //added this line to make false
+
 			if (VI.isFrameNew(device)){
 
 				bIsFrameNew = true;
-
 
 				/*
 				 	rescale --
@@ -313,7 +315,6 @@ void ofVideoGrabber::grabFrame(){
 				} else {
 
 					memcpy(pixels, viPixels, width*height*3);
-
 				}
 
 				if (bUseTexture){
