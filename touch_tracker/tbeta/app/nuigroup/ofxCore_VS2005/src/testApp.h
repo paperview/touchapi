@@ -10,11 +10,24 @@
 #include "tracking.h"
 
 #include "boxAlign.h"				   // Used for warped image
+
+#include "rect2d.h"		
+#include "mesh2d.h"
+#include "vector2d.h"
+
 					
 #define HOST "localhost"
 #define PORT 3333
 
 #define _USE_LIVE_VIDEO					// uncomment this to use a live camera
+
+
+//set Calibration Points
+#define GRID_X	4
+#define GRID_Y	3
+#define GRID_POINTS	((GRID_X+1) * (GRID_Y+1))
+#define GRID_INDICES (GRID_X * GRID_Y * 3 * 2)
+
 
 class testApp : public ofSimpleApp
 {
@@ -52,6 +65,27 @@ class testApp : public ofSimpleApp
 					  ofxCvGrayscaleImage & _grayBg, 
 					  ofxCvFloatImage & _fiLearn,
 					  float _fLearnRate );
+
+		
+		//Calibration Methods		
+		void setScreenScale(float s);
+		void setScreenBBox(rect2df & bbox);
+
+		virtual vector2df *getScreenPoints() { return screenPoints; };
+		virtual vector2df *getCameraPoints() { return cameraPoints; };
+
+		float getScreenScale();
+		rect2df getScreenBBox() { return screenBB; };
+
+		void cameraToScreenSpace(float &x, float &y);
+		void transformDimension(float &width, float &height, float centerX, float centerY);
+
+		void initScreenPoints();
+		void initCameraPoints();
+	
+		// returns -1 if none found..
+		int findTriangleWithin(vector2df pt);
+
 
 
 		/////////////////////////////////////////////////////////////////
@@ -136,6 +170,20 @@ class testApp : public ofSimpleApp
 		BlobTracker			tracker;
 
 	private:
+		//---------------------------------------Calibration
+		// FIXME: later we may consider a denser mesh, but for now we'll consider
+		// the simpler case.
+
+		vector2df screenPoints[GRID_POINTS];		// GRID_X * GRID_Y
+		vector2df cameraPoints[GRID_POINTS];		// GRID_X * GRID_Y
+		int triangles[GRID_INDICES];				// GRID_X * GRID_Y * 2t * 3i indices for the points
+
+		rect2df screenBB;
+		mesh2df screenMesh;
+
+
+
+
 
 		//---------------------------------------Blob Finder	
 		ofxCvContourFinder	contourFinder;
