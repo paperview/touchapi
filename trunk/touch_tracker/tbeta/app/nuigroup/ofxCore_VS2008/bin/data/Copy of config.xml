@@ -1,0 +1,227 @@
+<?xml version="1.0" ?>
+<CONFIG>
+    <!--// THIS IS JUST A TEST THE XML IS WORKING -->
+    <BACKGROUND>
+        <COLOR>
+            <RED>0</RED>
+            <GREEN>0</GREEN>
+            <BLUE>0</BLUE>
+        </COLOR>
+    </BACKGROUND>
+    <!--// END THE TEST GET TO WORK  //-->
+    <GLOBALS />
+    <APPLICATION>
+        <TITLE>Terminator</TITLE>
+        <FRAMERATE>120</FRAMERATE>
+        <VERSION>0.0.0</VERSION>
+    </APPLICATION>
+    <WINDOW>
+        <WIDTH>1024</WIDTH>
+        <HEIGHT>700</HEIGHT>
+        <MINX>800</MINX>
+        <MINY>426</MINY>
+        <FULLSCREEN>0</FULLSCREEN>
+        <LIQUID>0</LIQUID>
+    </WINDOW>
+    <BOOLEAN>
+        <LABELS>1</LABELS>
+        <VIDEO>1</VIDEO>
+        <SNAPSHOT>0</SNAPSHOT>
+        <FAST>0</FAST>
+        <OUTLINES>1</OUTLINES>
+        <INVERT>0</INVERT>
+        <LEARNBG>0</LEARNBG>
+        <TUIO>0</TUIO>
+        <CALIBRATION>0</CALIBRATION>
+        <VMIRROR>0</VMIRROR>
+        <HMIRROR>1</HMIRROR>
+    </BOOLEAN>
+    <INT>
+        <!--// THIS SHOULD BE CALLED FILTERS SETTERS OR SOME JIVE //-->
+        <THRESHOLD>30</THRESHOLD>
+        <WTHRESHOLD>5</WTHRESHOLD>
+        <BLUR>1</BLUR>
+        <BLURG>7</BLURG>
+        <LOWRANGE>40</LOWRANGE>
+        <HIGHRANGE>9</HIGHRANGE>
+        <HIGHPASSAMP>10</HIGHPASSAMP>
+    </INT>
+    <FLOAT>
+        <NODE />
+    </FLOAT>
+    <!--// THIS IS FOR CALIBRATION IN THEORY WE CAN LOAD TOUCHLIB CALIBRATION THAT ARE KNOWN WORKING //-->
+    <SCREEN>
+        <BOUNDINGBOX>
+            <ulx>0.000000</ulx>
+            <uly>0.000000</uly>
+            <lrx>1.000000</lrx>
+            <lry>1.000000</lry>
+        </BOUNDINGBOX>
+        <POINT>
+            <X>0.000000</X>
+        </POINT>
+        <POINT>
+            <Y>240.000000</Y>
+        </POINT>
+        <POINT>
+            <X>80.000000</X>
+        </POINT>
+        <POINT>
+            <Y>240.000000</Y>
+        </POINT>
+        <POINT>
+            <X>160.000000</X>
+        </POINT>
+        <POINT>
+            <Y>240.000000</Y>
+        </POINT>
+        <POINT>
+            <X>240.000000</X>
+        </POINT>
+        <POINT>
+            <Y>240.000000</Y>
+        </POINT>
+        <POINT>
+            <X>320.000000</X>
+        </POINT>
+        <POINT>
+            <Y>240.000000</Y>
+        </POINT>
+        <POINT>
+            <X>0.000000</X>
+        </POINT>
+        <POINT>
+            <Y>160.000000</Y>
+        </POINT>
+        <POINT>
+            <X>80.000000</X>
+        </POINT>
+        <POINT>
+            <Y>160.000000</Y>
+        </POINT>
+        <POINT>
+            <X>160.000000</X>
+        </POINT>
+        <POINT>
+            <Y>160.000000</Y>
+        </POINT>
+        <POINT>
+            <X>240.000000</X>
+        </POINT>
+        <POINT>
+            <Y>160.000000</Y>
+        </POINT>
+        <POINT>
+            <X>320.000000</X>
+        </POINT>
+        <POINT>
+            <Y>160.000000</Y>
+        </POINT>
+        <POINT>
+            <X>0.000000</X>
+        </POINT>
+        <POINT>
+            <Y>80.000000</Y>
+        </POINT>
+        <POINT>
+            <X>80.000000</X>
+        </POINT>
+        <POINT>
+            <Y>80.000000</Y>
+        </POINT>
+        <POINT>
+            <X>160.000000</X>
+        </POINT>
+        <POINT>
+            <Y>80.000000</Y>
+        </POINT>
+        <POINT>
+            <X>240.000000</X>
+        </POINT>
+        <POINT>
+            <Y>80.000000</Y>
+        </POINT>
+        <POINT>
+            <X>320.000000</X>
+        </POINT>
+        <POINT>
+            <Y>80.000000</Y>
+        </POINT>
+        <POINT>
+            <X>0.000000</X>
+        </POINT>
+        <POINT>
+            <Y>0.000000</Y>
+        </POINT>
+        <POINT>
+            <X>80.000000</X>
+        </POINT>
+        <POINT>
+            <Y>0.000000</Y>
+        </POINT>
+        <POINT>
+            <X>160.000000</X>
+        </POINT>
+        <POINT>
+            <Y>0.000000</Y>
+        </POINT>
+        <POINT>
+            <X>240.000000</X>
+        </POINT>
+        <POINT>
+            <Y>0.000000</Y>
+        </POINT>
+        <POINT>
+            <X>320.000000</X>
+        </POINT>
+        <POINT>
+            <Y>0.000000</Y>
+        </POINT>
+    </SCREEN>
+    <!--// NETWORK SETTINGS //-->
+    <NETWORK>
+        <LOCALHOST>127.0.0.1</LOCALHOST>
+        <HOSTA>nui.mine.nu</HOSTA>
+        <HOSTB>0.0.0.0</HOSTB>
+        <HOSTC>0.0.0.0</HOSTC>
+        <LOOPBACK_OUT>5555</LOOPBACK_OUT>
+        <LOOPBACK_IN>5000</LOOPBACK_IN>
+        <OSCPORT_OUT>4444</OSCPORT_OUT>
+        <OSCPORT_IN>4000</OSCPORT_IN>
+        <TUIO>0</TUIO>
+        <TUIOPORT_OUT>3333</TUIOPORT_OUT>
+        <TUIOPORT_IN>3000</TUIOPORT_IN>
+    </NETWORK>
+    <!--////////////////////////////////////////
+   
+   Put Ideas Here!!!
+   
+   ////////////////////////////////////////
+   
+   Ambient Light Sensors   
+   MIDI INPUT
+   Arduino 
+   Bluetooth/Wifi/USB/RFID/SERIAL/USB
+      
+   //////////////////// START SENSORS & INPUT STUFF//-->
+    <CAMERA_0>
+        <WIDTH>320</WIDTH>
+        <HEIGHT>240</HEIGHT>
+        <FRAMERATE>60</FRAMERATE>
+        <SOURCE>PHILLIPS</SOURCE>
+    </CAMERA_0>
+    <!--// TODO /////////////////////////-->
+    <MICROPHONE_0>
+        <VOLUME>320</VOLUME>
+        <SOURCE>PHILLIPS</SOURCE>
+    </MICROPHONE_0>
+    <!--// TODO /////////////////////////-->
+    <GENERAL_SENSOR>
+        <ID />
+    </GENERAL_SENSOR>
+    <!--// YES WIIIII MOTE :)-->
+    <WIIMOTE_0 />
+    <!--// OFXMANYMICE -->
+    <MOUSE_0 />
+    <KEYBOARD_0 />
+</CONFIG>
