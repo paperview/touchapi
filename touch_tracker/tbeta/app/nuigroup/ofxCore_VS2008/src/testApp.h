@@ -7,7 +7,7 @@
 #define OF_ADDON_USING_OFXOPENCV	   // COMPUTER VISION STUFF
 #define OF_ADDON_USING_OFXOSC		   // OSC COMMUNICATION		
 #include "ofAddons.h"
-#include "tracking.h"
+//#include "tracking.h"
 
 #include "boxAlign.h"				   // Used for warped image
 
@@ -22,13 +22,6 @@
 #define _USE_LIVE_VIDEO					// uncomment this to use a live camera
 
 
-//set Calibration Points
-/*
-#define GRID_X	4
-#define GRID_Y	3
-#define GRID_POINTS	((GRID_X+1) * (GRID_Y+1))
-#define GRID_INDICES (GRID_X * GRID_Y * 3 * 2)
-*/
 
 class testApp : public ofSimpleApp
 {
@@ -53,10 +46,10 @@ class testApp : public ofSimpleApp
 		void mouseReleased();
 
 		//Touch Events
-		static void fingerMoved(ofxCvBlob blobs);
-		static void fingerDragged(ofxCvBlob blobs);
-		static void fingerPressed(ofxCvBlob blobs);
-		static void fingerReleased(ofxCvBlob blobs);
+		void fingerMoved(ofxCvBlob blob);
+		void fingerDragged(ofxCvBlob blob);
+		void fingerPressed(ofxCvBlob blob);
+		void fingerReleased(ofxCvBlob blob);
 
 		//Other Methods
 		void loadXMLSettings();								// Load Settings
@@ -187,7 +180,11 @@ class testApp : public ofSimpleApp
 		//void fireFunction();
 
 		//---------------------------------------Blob Tracker	
-		BlobTracker			tracker;
+		//BlobTracker			tracker;
+
+		bool bCalibrating;		
+		int calibrationStep;
+
 
 	private:
 		//---------------------------------------Calibration
@@ -212,14 +209,8 @@ class testApp : public ofSimpleApp
 		rect2df screenBB;
 		mesh2df screenMesh;
 
-		bool bCalibrating;		
-		int calibrationStep;
-
 		bool bscreenPoints;
 		bool bcameraPoints;
-
-		int configStep;
-		int curcalib;
 
 		//---------------------------------------Blob Finder	
 		ofxCvContourFinder	contourFinder;

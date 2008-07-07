@@ -2,19 +2,20 @@
 #include "uiDefinition.h"
 #include "vector2d.h"
 #include "rect2d.h"
+#include "tracking.h"
 
-
-//rect2df bBox(vector2df(0.0f,0.0f),vector2df(1.0f,1.0f));
-//rect2df previewBox(vector2df(0.0f,0.0f),vector2df(0.15f,0.25f));
 
 /******************************************************************************
  * The setup function is run once to perform initializations in the application
  *****************************************************************************/
+
+BlobTracker			tracker;
+
+//rect2df bBox(vector2df(0.0f,0.0f),vector2df(1.0f,1.0f));
+//rect2df previewBox(vector2df(0.0f,0.0f),vector2df(0.15f,0.25f));
+
 void testApp::setup()
 {	 		
-
-	configStep = 0;
-	curcalib = -1;
 
 	// ---------------------------------MISC VARS FOR SETTINGS (MARKED FOR GC) 
 	lastTagNumber	= 0;
@@ -953,6 +954,8 @@ void testApp::loadXMLSettings(){
 	bool bboxRoot = true;
 	bool screenRoot = true;
 
+	calibrationStep = 0;
+
 	//Set grid and init everything that relates to teh grid.
 
 	GRID_X		= XML.getValue("SCREEN:GRIDMESH:GRIDX",50);
@@ -1430,7 +1433,7 @@ void testApp::mouseReleased()
 
 
 
-
+/*
 void BlobTracker::downEvent(ofxCvBlob blobs)
 { 	
 	//printf("Down: %i \n", blobs.id); 
@@ -1449,6 +1452,7 @@ void BlobTracker::moveEvent(ofxCvBlob blobs)
 	testApp::fingerMoved(blobs);
 
 }
+*/
 
 
 /*****************************************************************************
@@ -1474,6 +1478,10 @@ void testApp::fingerPressed(ofxCvBlob blob)
 void testApp::fingerReleased(ofxCvBlob blob)
 {
 	printf("UP: %i \n", blob.id); 
+
+	calibrationStep = 0;
+
+	printf("calibration step: %i", calibrationStep);
 
 	//if(bCalibrating){			
 		

@@ -4,10 +4,11 @@
 #include <list>
 #include <map>
 
-class BlobTracker
+#include "testApp.h"
+
+class BlobTracker 
 {
 public: 
-
 
 	BlobTracker()
 	{
@@ -15,14 +16,12 @@ public:
 
 	}
 
-	virtual void downEvent(ofxCvBlob blobs);
-	virtual void upEvent(ofxCvBlob blobs);
-	virtual void moveEvent(ofxCvBlob blobs);
-
-
-	//void downEvent(ofxCvBlob blobs){ printf("Down: %i \n", blobs.id); }
-	//void upEvent(ofxCvBlob blobs){ printf("UP: %i \n", blobs.id); }
-	//void moveEvent(ofxCvBlob blobs){ printf("MOVE: %i \n", blobs.id); }
+	testApp* appPtr;
+	void assignAppPtr( testApp* app){appPtr = app;}
+	
+	void downEvent(ofxCvBlob blobs){ appPtr->fingerPressed(blobs);}
+	void upEvent(ofxCvBlob blobs){ appPtr->fingerReleased(blobs); }
+	void moveEvent(ofxCvBlob blobs){ appPtr->fingerMoved(blobs); }
 
 
 
