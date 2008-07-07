@@ -23,11 +23,12 @@
 
 
 //set Calibration Points
+/*
 #define GRID_X	4
 #define GRID_Y	3
 #define GRID_POINTS	((GRID_X+1) * (GRID_Y+1))
 #define GRID_INDICES (GRID_X * GRID_Y * 3 * 2)
-
+*/
 
 class testApp : public ofSimpleApp
 {
@@ -52,10 +53,10 @@ class testApp : public ofSimpleApp
 		void mouseReleased();
 
 		//Touch Events
-		void fingerMoved(int x, int y);
-		void fingerDragged(int x, int y, int button);
-		void fingerPressed(int x, int y, int button);
-		void fingerReleased();
+		static void fingerMoved(ofxCvBlob blobs);
+		static void fingerDragged(ofxCvBlob blobs);
+		static void fingerPressed(ofxCvBlob blobs);
+		static void fingerReleased(ofxCvBlob blobs);
 
 		//Other Methods
 		void loadXMLSettings();								// Load Settings
@@ -70,6 +71,9 @@ class testApp : public ofSimpleApp
 		//Calibration Methods		
 		void setScreenScale(float s);
 		void setScreenBBox(rect2df & bbox);
+
+		void setGrid(int x, int y);
+		void initTriangles();
 
 		virtual vector2df *getScreenPoints() { return screenPoints; };
 		virtual vector2df *getCameraPoints() { return cameraPoints; };
@@ -86,6 +90,16 @@ class testApp : public ofSimpleApp
 		// returns -1 if none found..
 		int findTriangleWithin(vector2df pt);
 
+		//! starts calibration
+		virtual void beginCalibration();
+
+		//! goes to the next step
+		virtual void nextCalibrationStep();
+
+		//! return to the last step
+		virtual void revertCalibrationStep();
+
+
 
 
 		/////////////////////////////////////////////////////////////////
@@ -99,9 +113,9 @@ class testApp : public ofSimpleApp
 		#endif
 
 
-		/////////////////////////////////////////////////////////////////
-		//            Variables in config.xml Settings file
-		/////////////////////////////////////////////////////////////////
+		/****************************************************************
+		*            Variables in config.xml Settings file
+		*****************************************************************/
         
 		int 				frameseq;	
 		int 				threshold;
@@ -136,17 +150,23 @@ class testApp : public ofSimpleApp
 		bool				bSlimMode;
 		bool				bShowLabels;
 		bool				bNewFrame;		
-		//End config.xml variables
-		/////////////////////////////////////////////////////
+
+		/****************************************************
+		*End config.xml variables
+		*****************************************************/
+
 
 
 		float				fLearnRate;// rate to learn background
 		
-		//float 			counter;
-		float				oldX;
-		float				oldY;
 		float				transformedX;
 		float				transformedY;
+
+
+		//FPS variables
+		int 					frames;
+		int  					fps;
+		float					lastFPSlog;
 
 		char				eventString[255];
 		char				timeString[255];
@@ -171,19 +191,35 @@ class testApp : public ofSimpleApp
 
 	private:
 		//---------------------------------------Calibration
-		// FIXME: later we may consider a denser mesh, but for now we'll consider
-		// the simpler case.
 
-		vector2df screenPoints[GRID_POINTS];		// GRID_X * GRID_Y
-		vector2df cameraPoints[GRID_POINTS];		// GRID_X * GRID_Y
-		int triangles[GRID_INDICES];				// GRID_X * GRID_Y * 2t * 3i indices for the points
+		int GRID_X;
+		int GRID_Y;
+
+		//set Calibration Points
+		int GRID_POINTS;
+		int GRID_INDICES;
+
+		//vector2df screenPoints[GRID_POINTS];		// GRID_X * GRID_Y
+		//vector2df cameraPoints[GRID_POINTS];		// GRID_X * GRID_Y
+		//int triangles[GRID_INDICES];				// GRID_X * GRID_Y * 2t * 3i indices for the points
+		
+		vector2df* screenPoints;					// GRID_X * GRID_Y
+		vector2df* cameraPoints;					// GRID_X * GRID_Y
+		int* triangles;								// GRID_X * GRID_Y * 2t * 3i indices for the points
+
+
 
 		rect2df screenBB;
 		mesh2df screenMesh;
 
+		bool bCalibrating;		
+		int calibrationStep;
 
+		bool bscreenPoints;
+		bool bcameraPoints;
 
-
+		int configStep;
+		int curcalib;
 
 		//---------------------------------------Blob Finder	
 		ofxCvContourFinder	contourFinder;

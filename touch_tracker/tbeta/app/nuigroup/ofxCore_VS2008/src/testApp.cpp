@@ -4,12 +4,17 @@
 #include "rect2d.h"
 
 
+//rect2df bBox(vector2df(0.0f,0.0f),vector2df(1.0f,1.0f));
+//rect2df previewBox(vector2df(0.0f,0.0f),vector2df(0.15f,0.25f));
 
 /******************************************************************************
  * The setup function is run once to perform initializations in the application
  *****************************************************************************/
 void testApp::setup()
 {	 		
+
+	configStep = 0;
+	curcalib = -1;
 
 	// ---------------------------------MISC VARS FOR SETTINGS (MARKED FOR GC) 
 	lastTagNumber	= 0;
@@ -29,6 +34,12 @@ void testApp::setup()
 	ofSetFullscreen(bFullscreen);
 	ofSetFrameRate(30);			//This will be based on camera fps in the future		
 	ofSetVerticalSync(false);	//Set vertical sync to false for better performance
+
+
+	//Intialize FPS variables
+	frames = 0;
+	fps = 0;
+	lastFPSlog = 0;
 
 
 	#ifdef _USE_LIVE_VIDEO // MAKE BOTH LIVE VIDEO AND VCR MODE WORK AT SAME TIME 
@@ -116,6 +127,16 @@ void testApp::update()
 	
 	if (bNewFrame)
 	{
+
+		//Calculate FPS of Camera
+		frames++;
+		float time = ofGetElapsedTimeMillis();
+		if(time > (lastFPSlog + 1000)){		
+			fps = frames;
+			frames = 0;
+			lastFPSlog = time;			
+		}
+
 		#ifdef _USE_LIVE_VIDEO
 		  sourceImg.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight);
 		  int totalPixels = camWidth*camHeight*3;
@@ -127,6 +148,8 @@ void testApp::update()
 			int totalPixels = camWidth*camHeight*3;
 		    unsigned char * pixels = vidPlayer.getPixels();
         #endif	
+
+	
 			
 		//------------------------ SET FILTERS HERE ---------------------------
 		
@@ -174,6 +197,7 @@ void testApp::update()
 
 		//Track found contours/blobs
 		tracker.track(&contourFinder);
+
 	}
 
 	
@@ -221,10 +245,13 @@ void testApp::draw()
 //	bNewFrame);
 
 
-	string str = "fps = ";
+	string str = "Tbeta: ";
+	str+= ofToString(ofGetFrameRate(), 2)+" fps";
+	
+	string str2 = " Camera: ";
+	str2+= ofToString(fps, 1)+" fps";
 
-	str+= ofToString(ofGetFrameRate(), 2)+"fps";
-	ofSetWindowTitle(str);
+	ofSetWindowTitle(str + str2);
 
 	//ofSetupScreen(); //? NEEDED?
 	
@@ -549,8 +576,8 @@ void testApp::draw()
 		ofRect(0, 0, screenW, screenH);	
 
 		//ofSetColor(0xFFFFFF);	
-		ofSetWindowTitle("Calibration");
-		verdana.drawString("Calibration", 33, 60);	
+		//ofSetWindowTitle("Calibration");
+/*		verdana.drawString("Calibration", 33, 60);	
 		char reportStr[1024];	
 		sprintf(reportStr, "press '] or [' resize grid\n\
 							press '2' to resize bounding box\n\
@@ -563,11 +590,45 @@ void testApp::draw()
 		int iHeight = screenH;
 		for(int i = 1; i < iCount; i++)
 		{
-			ofNoFill();
-			ofRect(0, 2, iWidth-2, iHeight-2);
-			ofLine(0, (iHeight/iCount) * i, iWidth, (iHeight/iCount)*i);
-			ofLine((iWidth/iCount)*i, 0, (iWidth/iCount)*i, iHeight);
+			//ofNoFill();
+			//ofRect(0, 2, iWidth-2, iHeight-2);
+			//ofLine(0, (iHeight/iCount) * i, iWidth, (iHeight/iCount)*i);
+			//ofLine((iWidth/iCount)*i, 0, (iWidth/iCount)*i, iHeight);
+
 		}
+*/
+		vector2df *screenpts = getScreenPoints();
+
+		int i;
+
+		for(i=0; i<GRID_POINTS; i++)
+		{
+
+			if(calibrationStep == i){
+				ofSetColor(0xFF0000);
+				ofCircle(screenpts[i].X * (screenBB.getWidth() * screenW), screenpts[i].Y * (screenBB.getHeight() * screenH), 7);
+				//ofLine(screenpts[i].X * (screenBB.getWidth() * iWidth), screenpts[i].Y * (screenBB.getHeight() * iHeight),
+				//	   screenpts[i].X * (screenBB.getWidth() * iWidth) + 10, screenpts[i].Y * (screenBB.getHeight() * iHeight) + 10);
+			
+			/*	ofBeginShape();
+			    ofVertex(400,135);
+			    ofVertex(215,135);
+			    ofVertex(365,25);
+			    ofVertex(305,200);
+			    ofVertex(250,25);
+			    ofEndShape();
+			*/
+			}
+			else{
+				ofSetColor(0x00FF00);
+				ofCircle(screenpts[i].X * screenW, screenpts[i].Y * screenH, 7);	
+				
+			}					
+		}
+
+		ofSetColor(0x00FF00);
+		ofNoFill();
+		ofRect(screenBB.upperLeftCorner.X * screenW, screenBB.upperLeftCorner.Y * screenH, screenBB.getWidth() * screenW, screenBB.getHeight() * screenH);
 	}		
 
 	//------------------------------------------------------------ Parameter UI
@@ -580,14 +641,14 @@ void testApp::draw()
 			
 			// render the UI
 			// Change to the projection matrix and set our viewing volume.
-			glMatrixMode( GL_PROJECTION );
-			glLoadIdentity();
+//			glMatrixMode( GL_PROJECTION );
+//			glLoadIdentity();
 
-			gluOrtho2D(0,  ofGetWidth(), ofGetHeight() ,0);
+//			gluOrtho2D(0,  ofGetWidth(), ofGetHeight() ,0);
 
 			// We don't want to modify the projection matrix. 
-			glMatrixMode( GL_MODELVIEW );
-			glLoadIdentity();	
+//			glMatrixMode( GL_MODELVIEW );
+//			glLoadIdentity();	
 
 			parameterUI->render();
 //		}
@@ -746,12 +807,18 @@ void testApp::keyPressed(int key)
 			if(wobbleThreshold < 0) wobbleThreshold = 0;
 			break;	
 		case '[':
-			snapCounter ++;
-			if(snapCounter > 16) snapCounter = 16;
+			GRID_X ++;
+			GRID_Y ++;
+			screenBB.lowerRightCorner.X += .001;
+			if(screenBB.lowerRightCorner.X > 1) screenBB.lowerRightCorner.X = 1;
+			if(GRID_X > 16) GRID_X = 16; if(GRID_Y > 16) GRID_Y = 16; setGrid(GRID_X, GRID_Y);
 			break;	
 		case ']':
-			snapCounter --;
-			if(snapCounter < 2) snapCounter = 2;
+			GRID_X --;
+			GRID_Y --;
+			screenBB.lowerRightCorner.X -= .001;
+			if(screenBB.lowerRightCorner.X < 0) screenBB.lowerRightCorner.X = 0;
+			if(GRID_X < 1) GRID_X = 1; if(GRID_Y < 1) GRID_Y = 1; setGrid(GRID_X, GRID_Y);
 			break;	
 		case 'g':
 			bSnapshot = true;
@@ -886,34 +953,19 @@ void testApp::loadXMLSettings(){
 	bool bboxRoot = true;
 	bool screenRoot = true;
 
-	int i,j;
-	int t = 0;
-	
-	for(j=0; j<GRID_Y; j++)
-	{
-		for(i=0; i<GRID_X; i++)
-		{
-			triangles[t+0] = (i+0) + ((j+0) * (GRID_X+1));
-			triangles[t+1] = (i+1) + ((j+0) * (GRID_X+1));
-			triangles[t+2] = (i+0) + ((j+1) * (GRID_X+1));
+	//Set grid and init everything that relates to teh grid.
 
-			t += 3;
+	GRID_X		= XML.getValue("SCREEN:GRIDMESH:GRIDX",50);
+	GRID_Y		= XML.getValue("SCREEN:GRIDMESH:GRIDX",50);
 
-			triangles[t+0] = (i+1) + ((j+0) * (GRID_X+1));
-			triangles[t+1] = (i+1) + ((j+1) * (GRID_X+1));
-			triangles[t+2] = (i+0) + ((j+1) * (GRID_X+1));
-
-			t += 3;
-		}
-	}
-
-
+	setGrid(GRID_X, GRID_Y);
+ 
 	
 	//Bounding Box Points
 	if(bboxRoot){
 
-	    vector2df ul(XML.getValue("CONFIG:SCREEN:BOUNDINGBOX:ulx", 0.000000),XML.getValue("CONFIG:SCREEN:BOUNDINGBOX:uly", 0.000000));
-	    vector2df lr(XML.getValue("CONFIG:SCREEN:BOUNDINGBOX:lrx", 1.000000),XML.getValue("CONFIG:SCREEN:BOUNDINGBOX:lry", 1.000000));
+	    vector2df ul(XML.getValue("SCREEN:BOUNDINGBOX:ulx", 0.000000),XML.getValue("SCREEN:BOUNDINGBOX:uly", 0.000000));
+	    vector2df lr(XML.getValue("SCREEN:BOUNDINGBOX:lrx", 1.000000),XML.getValue("SCREEN:BOUNDINGBOX:lry", 1.000000));
 		rect2df boundingbox(ul, lr);
 
 		setScreenBBox(boundingbox);
@@ -951,6 +1003,9 @@ void testApp::loadXMLSettings(){
 
 					cameraPoints[i] = vector2df(x,y);
 					printf("Calibration: %f, %f\n", cameraPoints[i].X, cameraPoints[i].Y);
+
+					bscreenPoints = true;
+					bcameraPoints = true;
 				}
 			}
 			XML.popTag(); //Set XML root back to highest level
@@ -972,6 +1027,52 @@ void testApp::setScreenBBox(rect2df &box)
 	initScreenPoints();
 }
 
+
+void testApp::setGrid(int x, int y)
+{
+	GRID_Y = y;
+	GRID_X = x;
+
+	GRID_POINTS = ((GRID_X+1) * (GRID_Y+1));
+    GRID_INDICES = (GRID_X * GRID_Y * 3 * 2);
+
+	screenPoints = new vector2df[GRID_POINTS];
+	cameraPoints = new vector2df[GRID_POINTS];
+	triangles = new int[GRID_INDICES];
+
+	initTriangles();
+
+	if(bscreenPoints && bcameraPoints){
+	initScreenPoints();
+	initCameraPoints();
+	}
+}
+
+void testApp::initTriangles(){
+
+	int i,j;
+	int t = 0;
+
+	for(j=0; j<GRID_Y; j++)
+	{
+		for(i=0; i<GRID_X; i++)
+		{
+			triangles[t+0] = (i+0) + ((j+0) * (GRID_X+1));
+			triangles[t+1] = (i+1) + ((j+0) * (GRID_X+1));
+			triangles[t+2] = (i+0) + ((j+1) * (GRID_X+1));
+
+			t += 3;
+
+			triangles[t+0] = (i+1) + ((j+0) * (GRID_X+1));
+			triangles[t+1] = (i+1) + ((j+1) * (GRID_X+1));
+			triangles[t+2] = (i+0) + ((j+1) * (GRID_X+1));
+
+			t += 3;
+		}
+	}
+}
+
+
 //Initialize Points
 void testApp::initScreenPoints()
 {
@@ -990,7 +1091,22 @@ void testApp::initScreenPoints()
 		for(i=0; i<=GRID_X; i++)
 		{			 
 			screenPoints[p] = screenBB.upperLeftCorner + xd*i + yd*j;			
-			printf("(%d, %d) = (%f, %f)\n", i, j, screenPoints[p].X, screenPoints[p].Y);
+			//printf("(%d, %d) = (%f, %f)\n", i, j, screenPoints[p].X, screenPoints[p].Y);
+			p++;
+		}
+	}
+}
+
+void testApp::initCameraPoints()
+{
+	int p = 0;
+	
+	int i,j;
+	for(j=0; j<=GRID_Y; j++)
+	{
+		for(i=0; i<=GRID_X; i++)
+		{
+			cameraPoints[p] = vector2df((i * camWidth) / (float)GRID_X, (j * camHeight) / (float)GRID_Y);
 			p++;
 		}
 	}
@@ -1063,6 +1179,7 @@ int testApp::findTriangleWithin(vector2df pt)
 // Transforms a camera space coordinate into a screen space coord
 void testApp::cameraToScreenSpace(float &x, float &y)
 {
+
 	vector2df pt(x, y);
 	
 	int t = findTriangleWithin(pt);
@@ -1101,12 +1218,81 @@ void testApp::cameraToScreenSpace(float &x, float &y)
 	x = 0;
 	y = 0;
 	// FIXME: what to do in the case that it's outside the mesh?
+}
 
+
+void testApp::beginCalibration()
+{
+	 bCalibrating = true;
+	 calibrationStep = 0;
+}
+
+
+void testApp::nextCalibrationStep()
+{
+	if(bCalibrating)
+	{
+		calibrationStep++;
+
+		if(calibrationStep >= GRID_POINTS)
+		{
+
+			printf("Calibration complete\n");
+
+			bCalibrating = false;
+			calibrationStep = 0;
+		}
+	}
+}
+
+void testApp::revertCalibrationStep()
+{
+	if(bCalibrating)
+	{
+		calibrationStep--;
+		if(calibrationStep < 0)
+		{
+			calibrationStep = 0;
+		}
+	}
 }
 
 /*************************
 * End Calibration Methods
 *************************/
+
+/*
+//! A finger is no longer active..
+virtual void fingerUp(TouchData data)
+{
+	if(curcalib != -1){			
+		
+		time_t now = time(0);
+		
+		if((now-m_lastPress)>0){
+			m_lastPress = now;
+			screen->nextCalibrationStep();
+			curcalib ++;
+
+			if(curcalib >= GRID_POINTS){
+				curcalib = -1;					
+			}
+		}
+	}
+}
+
+
+void testApp::fingerUp(TouchData data)
+{
+	testApp e;
+
+	if(bCalibrating) {
+		cameraPoints[calibrationStep] = vector2df(data.X, data.Y);
+		//printf("%d (%f, %f)\n", calibrationStep, data.X, data.Y);
+	}
+}
+
+*/
 
 
 
@@ -1116,6 +1302,7 @@ void testApp::cameraToScreenSpace(float &x, float &y)
  *****************************************************************************/
 void testApp::SendOSC()
 {
+	
 	//If there are no blobs, send alive message and fseq
 	if(contourFinder.nBlobs==0)
 	{
@@ -1206,9 +1393,9 @@ void testApp::mouseDragged(int x, int y, int button)
 
 
 	//-------------------------------- Warp Box
-	if(x < (40 + camWidth) && x > 40){
+	if(x < (40 + 320) && x > 40){
 
-		if(y < (146 + camHeight) && y > 146){
+		if(y < (146 + 240) && y > 146){
 	
 			m_box.adjustHandle(x, y);
 		}
@@ -1239,33 +1426,77 @@ void testApp::mouseReleased()
 	//-------------------------------- PARAMETER UI EVENT
 	parameterUI->mouseUp(0, 0, 0);	
 }
+
+
+
+
+
+void BlobTracker::downEvent(ofxCvBlob blobs)
+{ 	
+	//printf("Down: %i \n", blobs.id); 
+	testApp::fingerPressed(blobs);
+	
+}
+void BlobTracker::upEvent(ofxCvBlob blobs)
+{ 
+	//printf("UP: %i \n", blobs.id); 
+	testApp::fingerReleased(blobs);	
+}
+
+void BlobTracker::moveEvent(ofxCvBlob blobs)
+{
+	//printf("MOVE: %i \n", blobs.id); 
+	testApp::fingerMoved(blobs);
+
+}
+
+
 /*****************************************************************************
  * TODO:
  *****************************************************************************/
-void testApp::fingerMoved(int x, int y)
+void testApp::fingerMoved(ofxCvBlob blob)
 {
+	//printf("MOVE: %i \n", blob.id);  
 }	
 
 /*****************************************************************************
  * TODO:
  *****************************************************************************/
-void testApp::fingerDragged(int x, int y, int button)
+void testApp::fingerPressed(ofxCvBlob blob)
 {
+	printf("Down: %i \n", blob.id); 
+
 }
 
 /*****************************************************************************
  * TODO:
  *****************************************************************************/
-void testApp::fingerPressed(int x, int y, int button)
+void testApp::fingerReleased(ofxCvBlob blob)
 {
+	printf("UP: %i \n", blob.id); 
+
+	//if(bCalibrating){			
+		
+		//time_t now = time(0);		
+		//if((now-m_lastPress)>0){
+		//	m_lastPress = now;
+		    
+			//cameraPoints[calibrationStep] = vector2df(blob.centroid.x, blob.centroid.y);
+			//nextCalibrationStep();
+			
+	//		printf("%d (%f, %f)\n", calibrationStep, blob.centroid.x, blob.centroid.y);
+			
+		//	curcalib ++;
+	//}	
 }
 
 /*****************************************************************************
  * TODO:
  *****************************************************************************/
-void testApp::fingerReleased()
+void testApp::fingerDragged(ofxCvBlob blobs)
 {
 }
+
 /*****************************************************************************
  * TODO:
  *****************************************************************************/
@@ -1276,6 +1507,44 @@ void testApp::exit()
 	printf("tBeta module has exited!\n");	
 	
 	// -------------------------------- SAVE STATE ON EXIT
+
+
+	//lets see how many <STROKE> </STROKE> tags there are in the xml file
+	int numDragTags = XML.getNumTags("SCREEN:POINT"); 
+
+	//if there is at least one <POINT> tag we can read the list of points
+	if(numDragTags > 0){
+
+		//we push into the last POINT tag this temporarirly treats the tag as the document root.
+		XML.pushTag("SCREEN:POINT", numDragTags-1);
+
+		XML.clear();
+
+		//Save the Grid Mesh X/Y
+		XML.setValue("GRIDMESH:GRIDX", GRID_X);
+	    XML.setValue("GRIDMESH:GRIDY", GRID_Y);
+
+		//Save the Bounding Box
+		XML.setValue("BOUNDINGBOX:ulx", screenBB.upperLeftCorner.X);
+		XML.setValue("BOUNDINGBOX:uly", screenBB.upperLeftCorner.Y);
+		XML.setValue("BOUNDINGBOX:lrx", screenBB.lowerRightCorner.X);
+		XML.setValue("BOUNDINGBOX:lry", screenBB.lowerRightCorner.Y);
+
+		//Save all the Calibration Points
+		if(GRID_POINTS > 0){
+
+			//We then read those x y values into our array
+			for(int i = 0; i < GRID_POINTS; i++){
+
+				//the last argument of getValue can be used to specify
+				//which tag out of multiple tags you are refering to.
+				XML.setValue("POINT:X", cameraPoints[i].X, i);
+				XML.setValue("POINT:Y", cameraPoints[i].Y, i);
+			}
+		}
+		XML.popTag(); //Set XML root back to highest level
+	}
+
 	XML.saveFile("config.xml");
 	//message ="Exited...";
 }

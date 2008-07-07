@@ -8,10 +8,23 @@ class BlobTracker
 {
 public: 
 
+
 	BlobTracker()
 	{
 		IDCounter = 0;
+
 	}
+
+	virtual void downEvent(ofxCvBlob blobs);
+	virtual void upEvent(ofxCvBlob blobs);
+	virtual void moveEvent(ofxCvBlob blobs);
+
+
+	//void downEvent(ofxCvBlob blobs){ printf("Down: %i \n", blobs.id); }
+	//void upEvent(ofxCvBlob blobs){ printf("UP: %i \n", blobs.id); }
+	//void moveEvent(ofxCvBlob blobs){ printf("MOVE: %i \n", blobs.id); }
+
+
 
 	//assigns IDs to each blob in the contourFinder
 	void track(ofxCvContourFinder* newBlobs)
@@ -32,12 +45,18 @@ public:
 			 *****************************************************************/
 			int winner = trackKnn(newBlobs, &(trackedBlobs[i]), 3, 0);
 
-			if(winner==-1) //track has died, mark it for deletion
+			if(winner==-1){ //track has died, mark it for deletion
+			
+				///////////////////////////
+				upEvent( trackedBlobs[i] );
+
 				trackedBlobs[i].id = -1; //delete
+			}
+			
 			else //still alive, have to update
 			{
 				//if winning new blob was labeled winner by another track\
-				  then compare with this track to see which is closer
+				//then compare with this track to see which is closer
 				if(newBlobs->blobs[winner].id!=-1)
 				{
 					//find the currently assigned blob
@@ -65,14 +84,21 @@ public:
 						double distNew = (x-xNew)*(x-xNew)+(y-yNew)*(y-yNew);
 
 						//if this track is closer, update the ID of the blob\
-						  and update the track,\
-						  otherwise delete this track.. it's dead
+						//and update the track,\
+						//otherwise delete this track.. it's dead
 						if(distNew<distOld) //update
 						{
 							newBlobs->blobs[winner].id = trackedBlobs[i].id;
 							trackedBlobs[i] = newBlobs->blobs[winner];
+							
+							//////////////////////////
+							moveEvent( trackedBlobs[i] ); 
 						}
 						else //delete
+
+							///////////////////////////
+							upEvent( trackedBlobs[i] );
+
 							trackedBlobs[i].id = -1;
 					}
 				}
@@ -81,8 +107,8 @@ public:
 					newBlobs->blobs[winner].id = trackedBlobs[i].id;
 					trackedBlobs[i] = newBlobs->blobs[winner];		
 
-					//doUpdateEvent( blobs[i].getTouchData() );
-					//doBlobMoved( blobs[i] );  
+					/////////////////////////////
+					moveEvent( trackedBlobs[i] );  
 				}
 			}
 		}
@@ -103,7 +129,7 @@ public:
 		}
 
 		//now every new blob should be either labeled with a tracked ID or\
-		  have ID of -1... if the ID is -1... we need to make a new track
+		//have ID of -1... if the ID is -1... we need to make a new track
 		for(int i=0; i<newBlobs->nBlobs; i++)
 		{
 			if(newBlobs->blobs[i].id==-1)
@@ -111,8 +137,9 @@ public:
 				newBlobs->blobs[i].id=IDCounter++;
 				trackedBlobs.push_back(newBlobs->blobs[i]);
 				
+				//////////////////////////////////////////
 				//doTouchEvent(blobs[i].getTouchData());
-				//doBlobOn( blobs[i] );   
+				downEvent( trackedBlobs[i] );   
 			}
 		}
 
@@ -120,12 +147,12 @@ public:
 
 private:
 	//Finds the blob in 'newBlobs' that is closest to the trackedBlob with index\
-	  'ind' according to the KNN algorithm and returns the index of the winner
+	//'ind' according to the KNN algorithm and returns the index of the winner
 	//newBlobs	= list of blobs detected in the latest frame
 	//track		= current tracked blob being tested
 	//k			= number of nearest neighbors to consider\
-				  1,3,or 5 are common numbers..\
-				  must always be an odd number to avoid tying
+	//			  1,3,or 5 are common numbers..\
+	//			  must always be an odd number to avoid tying
 	//thresh	= threshold for optimization
 	int trackKnn(ofxCvContourFinder *newBlobs, ofxCvBlob *track,
 				 int k, double thresh = 0)
@@ -159,7 +186,7 @@ private:
 
 			//===
 			//check if this blob is closer to the point than what we've seen\
-			  so far and add it to the index/distance list if positive
+			//so far and add it to the index/distance list if positive
 
 			//search the list for the first point with a longer distance
 			for(iter=nbors.begin(); iter!=nbors.end()
@@ -176,8 +203,8 @@ private:
 		}
 
 		//we now have k nearest neighbors who cast a vote, and the majority\
-		  wins. we use each class average distance to the target to break any\
-		  possible ties.
+		// wins. we use each class average distance to the target to break any\
+		//possible ties.
 
 		// a mapping from labels (IDs) to count/distance
 		std::map<int, std::pair<int, double>> votes;
