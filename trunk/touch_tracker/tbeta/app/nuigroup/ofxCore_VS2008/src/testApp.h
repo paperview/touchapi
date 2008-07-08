@@ -7,7 +7,7 @@
 #define OF_ADDON_USING_OFXOPENCV	   // COMPUTER VISION STUFF
 #define OF_ADDON_USING_OFXOSC		   // OSC COMMUNICATION		
 #include "ofAddons.h"
-//#include "tracking.h"
+#include "tracking.h"
 
 #include "boxAlign.h"				   // Used for warped image
 
@@ -23,7 +23,7 @@
 
 
 
-class testApp : public ofSimpleApp
+class testApp : public ofSimpleApp, public ofCvBlobListener
 {
 	public:
 
@@ -46,10 +46,10 @@ class testApp : public ofSimpleApp
 		void mouseReleased();
 
 		//Touch Events
-		void fingerMoved(ofxCvBlob blob);
-		void fingerDragged(ofxCvBlob blob);
-		void fingerPressed(ofxCvBlob blob);
-		void fingerReleased(ofxCvBlob blob);
+		void blobOn(ofxCvBlob b);
+		void blobMoved(ofxCvBlob b);   
+		void blobOff(ofxCvBlob b);
+
 
 		//Other Methods
 		void loadXMLSettings();								// Load Settings
@@ -180,7 +180,7 @@ class testApp : public ofSimpleApp
 		//void fireFunction();
 
 		//---------------------------------------Blob Tracker	
-		//BlobTracker			tracker;
+		BlobTracker			tracker;
 
 		bool bCalibrating;		
 		int calibrationStep;
