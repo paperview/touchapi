@@ -607,7 +607,7 @@ void testApp::draw()
 
 			if(calibrationStep == i){
 				ofSetColor(0xFF0000);
-				ofCircle(screenpts[i].X * (screenBB.getWidth() * screenW), screenpts[i].Y * (screenBB.getHeight() * screenH), 7);
+				ofCircle(screenpts[i].X * screenW, screenpts[i].Y * screenH, 7);	
 				//ofLine(screenpts[i].X * (screenBB.getWidth() * iWidth), screenpts[i].Y * (screenBB.getHeight() * iHeight),
 				//	   screenpts[i].X * (screenBB.getWidth() * iWidth) + 10, screenpts[i].Y * (screenBB.getHeight() * iHeight) + 10);
 			
@@ -1479,9 +1479,9 @@ void testApp::fingerReleased(ofxCvBlob blob)
 {
 	printf("UP: %i \n", blob.id); 
 
-	calibrationStep = 0;
+	//calibrationStep = 0;
 
-	printf("calibration step: %i", calibrationStep);
+	//printf("calibration step: %i", calibrationStep);
 
 	//if(bCalibrating){			
 		

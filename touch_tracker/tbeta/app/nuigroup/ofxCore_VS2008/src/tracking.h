@@ -17,7 +17,8 @@ public:
 	}
 
 	testApp* appPtr;
-	void assignAppPtr( testApp* app){appPtr = app;}
+	//void assignAppPtr( testApp* app){testApp* appPtr = app;}
+
 	
 	void downEvent(ofxCvBlob blobs){ appPtr->fingerPressed(blobs);}
 	void upEvent(ofxCvBlob blobs){ appPtr->fingerReleased(blobs); }
