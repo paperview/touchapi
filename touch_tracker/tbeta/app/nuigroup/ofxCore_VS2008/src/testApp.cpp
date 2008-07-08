@@ -2,14 +2,12 @@
 #include "uiDefinition.h"
 #include "vector2d.h"
 #include "rect2d.h"
-#include "tracking.h"
+
 
 
 /******************************************************************************
  * The setup function is run once to perform initializations in the application
  *****************************************************************************/
-
-BlobTracker			tracker;
 
 //rect2df bBox(vector2df(0.0f,0.0f),vector2df(1.0f,1.0f));
 //rect2df previewBox(vector2df(0.0f,0.0f),vector2df(0.15f,0.25f));
@@ -102,6 +100,9 @@ void testApp::setup()
     dstPts[3].y = 0.0f;
 
 	printf("Touchlib application is setup!\n");
+
+	tracker.setListener(this);
+	
 }
 
 
@@ -568,7 +569,7 @@ void testApp::draw()
 	}		
 	//----------------------------------------------------------------DRAW LEDS
 
-	if(bCalibration)
+	if(bCalibrating)
 	{		
 		int screenW = ofGetWidth();
 		int screenH = ofGetHeight();
@@ -1432,78 +1433,29 @@ void testApp::mouseReleased()
 
 
 
-
-/*
-void BlobTracker::downEvent(ofxCvBlob blobs)
-{ 	
-	//printf("Down: %i \n", blobs.id); 
-	testApp::fingerPressed(blobs);
+void testApp::blobOn( ofxCvBlob b) { printf("Blob %i \n", b.id);}
+void testApp::blobMoved( ofxCvBlob b) {}    
+void testApp::blobOff( ofxCvBlob b) 
+{
 	
-}
-void BlobTracker::upEvent(ofxCvBlob blobs)
-{ 
-	//printf("UP: %i \n", blobs.id); 
-	testApp::fingerReleased(blobs);	
-}
+	//printf("Blob %i \n", b.id);
 
-void BlobTracker::moveEvent(ofxCvBlob blobs)
-{
-	//printf("MOVE: %i \n", blobs.id); 
-	testApp::fingerMoved(blobs);
-
-}
-*/
-
-
-/*****************************************************************************
- * TODO:
- *****************************************************************************/
-void testApp::fingerMoved(ofxCvBlob blob)
-{
-	//printf("MOVE: %i \n", blob.id);  
-}	
-
-/*****************************************************************************
- * TODO:
- *****************************************************************************/
-void testApp::fingerPressed(ofxCvBlob blob)
-{
-	printf("Down: %i \n", blob.id); 
-
-}
-
-/*****************************************************************************
- * TODO:
- *****************************************************************************/
-void testApp::fingerReleased(ofxCvBlob blob)
-{
-	printf("UP: %i \n", blob.id); 
-
-	//calibrationStep = 0;
-
-	//printf("calibration step: %i", calibrationStep);
-
-	//if(bCalibrating){			
+	if(bCalibrating){			
 		
 		//time_t now = time(0);		
 		//if((now-m_lastPress)>0){
 		//	m_lastPress = now;
-		    
-			//cameraPoints[calibrationStep] = vector2df(blob.centroid.x, blob.centroid.y);
-			//nextCalibrationStep();
+
+			cameraPoints[calibrationStep] = vector2df(b.centroid.x, b.centroid.y);
+			nextCalibrationStep();
 			
-	//		printf("%d (%f, %f)\n", calibrationStep, blob.centroid.x, blob.centroid.y);
+			printf("%d (%f, %f)\n", calibrationStep, b.centroid.x, b.centroid.y);
 			
 		//	curcalib ++;
-	//}	
+	}
 }
 
-/*****************************************************************************
- * TODO:
- *****************************************************************************/
-void testApp::fingerDragged(ofxCvBlob blobs)
-{
-}
+
 
 /*****************************************************************************
  * TODO:

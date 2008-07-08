@@ -4,8 +4,6 @@
 #include <list>
 #include <map>
 
-#include "testApp.h"
-
 class BlobTracker 
 {
 public: 
@@ -16,13 +14,38 @@ public:
 
 	}
 
-	testApp* appPtr;
-	//void assignAppPtr( testApp* app){testApp* appPtr = app;}
+	ofCvBlobListener* listener;
 
-	
-	void downEvent(ofxCvBlob blobs){ appPtr->fingerPressed(blobs);}
-	void upEvent(ofxCvBlob blobs){ appPtr->fingerReleased(blobs); }
-	void moveEvent(ofxCvBlob blobs){ appPtr->fingerMoved(blobs); }
+	void setListener( ofCvBlobListener* _listener ) {
+    listener = _listener;
+	}
+
+
+	// Delegate to Callbacks
+	//////////////////////////////////////
+	void doBlobOn( const ofxCvBlob& b ) {
+		if( listener != NULL ) {
+			listener->blobOn( b);
+		} else {
+			cout << "doBlobOn() event for blob: " << b.id << endl;
+		}
+	}    
+	void doBlobMoved( const ofxCvBlob& b ) {
+		if( listener != NULL ) {
+			listener->blobMoved( b);
+		} else {
+			cout << "doBlobMoved() event for blob: " << b.id << endl;
+		}
+	}
+	void doBlobOff( const ofxCvBlob& b ) {
+		if( listener != NULL ) {
+			listener->blobOff( b);
+		} else {
+			cout << "doBlobOff() event for blob: " << b.id << endl;
+		}
+	}
+    
+    
 
 
 
@@ -48,7 +71,7 @@ public:
 			if(winner==-1){ //track has died, mark it for deletion
 			
 				///////////////////////////
-				upEvent( trackedBlobs[i] );
+				doBlobOff( trackedBlobs[i] );
 
 				trackedBlobs[i].id = -1; //delete
 			}
@@ -92,12 +115,12 @@ public:
 							trackedBlobs[i] = newBlobs->blobs[winner];
 							
 							//////////////////////////
-							moveEvent( trackedBlobs[i] ); 
+							doBlobMoved( trackedBlobs[i] ); 
 						}
 						else //delete
 
 							///////////////////////////
-							upEvent( trackedBlobs[i] );
+							doBlobOff( trackedBlobs[i] );
 
 							trackedBlobs[i].id = -1;
 					}
@@ -108,7 +131,7 @@ public:
 					trackedBlobs[i] = newBlobs->blobs[winner];		
 
 					/////////////////////////////
-					moveEvent( trackedBlobs[i] );  
+					doBlobMoved( trackedBlobs[i] );  
 				}
 			}
 		}
@@ -120,9 +143,6 @@ public:
 			{
 				trackedBlobs.erase(trackedBlobs.begin()+i,
 								   trackedBlobs.begin()+i+1);
-
-				//doUntouchEvent((*prev)[i].getTouchData());
-                //doBlobOff( (*prev)[i] );
 
 				i--; //decrement one since we removed an element
 			}
@@ -138,8 +158,7 @@ public:
 				trackedBlobs.push_back(newBlobs->blobs[i]);
 				
 				//////////////////////////////////////////
-				//doTouchEvent(blobs[i].getTouchData());
-				downEvent( trackedBlobs[i] );   
+				doBlobOn( trackedBlobs[i] ); 
 			}
 		}
 
