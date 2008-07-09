@@ -569,8 +569,10 @@ void testApp::draw()
 	}		
 	//----------------------------------------------------------------DRAW LEDS
 
-	if(bCalibrating)
+	if(bCalibration)
 	{		
+
+
 		int screenW = ofGetWidth();
 		int screenH = ofGetHeight();
 		ofSetColor(0x000000);	
@@ -753,6 +755,15 @@ void testApp::keyPressed(int key)
 			else	
 				bCalibration = true;	
 			break;
+		case 'x':
+			if(bCalibration && bCalibrating)
+				bCalibrating = false;
+			else if(bCalibration)
+				//bCalibrating = true;
+				beginCalibration();
+			else
+			    bCalibration = false;
+			break;
 		case ' ':
 			if(bFastMode)
 			{	
@@ -814,6 +825,7 @@ void testApp::keyPressed(int key)
 			screenBB.lowerRightCorner.X += .001;
 			if(screenBB.lowerRightCorner.X > 1) screenBB.lowerRightCorner.X = 1;
 			if(GRID_X > 16) GRID_X = 16; if(GRID_Y > 16) GRID_Y = 16; setGrid(GRID_X, GRID_Y);
+			calibrationStep = 0;
 			break;	
 		case ']':
 			GRID_X --;
@@ -821,6 +833,8 @@ void testApp::keyPressed(int key)
 			screenBB.lowerRightCorner.X -= .001;
 			if(screenBB.lowerRightCorner.X < 0) screenBB.lowerRightCorner.X = 0;
 			if(GRID_X < 1) GRID_X = 1; if(GRID_Y < 1) GRID_Y = 1; setGrid(GRID_X, GRID_Y);
+
+			calibrationStep = 0;
 			break;	
 		case 'g':
 			bSnapshot = true;
@@ -954,6 +968,8 @@ void testApp::loadXMLSettings(){
 
 	bool bboxRoot = true;
 	bool screenRoot = true;
+
+	bCalibrating = false;
 
 	calibrationStep = 0;
 
@@ -1265,39 +1281,6 @@ void testApp::revertCalibrationStep()
 * End Calibration Methods
 *************************/
 
-/*
-//! A finger is no longer active..
-virtual void fingerUp(TouchData data)
-{
-	if(curcalib != -1){			
-		
-		time_t now = time(0);
-		
-		if((now-m_lastPress)>0){
-			m_lastPress = now;
-			screen->nextCalibrationStep();
-			curcalib ++;
-
-			if(curcalib >= GRID_POINTS){
-				curcalib = -1;					
-			}
-		}
-	}
-}
-
-
-void testApp::fingerUp(TouchData data)
-{
-	testApp e;
-
-	if(bCalibrating) {
-		cameraPoints[calibrationStep] = vector2df(data.X, data.Y);
-		//printf("%d (%f, %f)\n", calibrationStep, data.X, data.Y);
-	}
-}
-
-*/
-
 
 
 
@@ -1434,7 +1417,8 @@ void testApp::mouseReleased()
 
 
 void testApp::blobOn( ofxCvBlob b) { printf("Blob %i \n", b.id);}
-void testApp::blobMoved( ofxCvBlob b) {}    
+void testApp::blobMoved( ofxCvBlob b) {}  
+
 void testApp::blobOff( ofxCvBlob b) 
 {
 	
