@@ -1,29 +1,25 @@
 #include "testApp.h"
 #include "uiDefinition.h"
-#include "vector2d.h"
-#include "rect2d.h"
 
+//#include "Calibration\vector2d.h"
+//#include "Calibration\rect2d.h"
+
+//rect2df bBox(vector2df(0.0f,0.0f),vector2df(1.0f,1.0f));
+//rect2df previewBox(vector2df(0.0f,0.0f),vector2df(0.15f,0.25f));
 
 
 /******************************************************************************
  * The setup function is run once to perform initializations in the application
  *****************************************************************************/
-
-//rect2df bBox(vector2df(0.0f,0.0f),vector2df(1.0f,1.0f));
-//rect2df previewBox(vector2df(0.0f,0.0f),vector2df(0.15f,0.25f));
-
 void testApp::setup()
 {	 		
 
 	// ---------------------------------MISC VARS FOR SETTINGS (MARKED FOR GC) 
-	lastTagNumber	= 0;
-	pointCount		= 0;
-	lineCount		= 0;
 	snapCounter		= 6; 
 	frameseq		= 0;
 
 	//Background Subtraction Learning Rate
-	fLearnRate = 0.00001f;
+	fLearnRate = 0.0001f;
 
 	// ---------------------------------Load Settings from config.xml File 
 	loadXMLSettings();
@@ -53,11 +49,15 @@ void testApp::setup()
 				camWidth, camHeight, grabW, grabH);
 
 	#else
-        vidPlayer.loadMovie("test_videos/FrontDI.m4v");
+        //vidPlayer.loadMovie("test_videos/FrontDI.m4v");
+		//vidPlayer.loadMovie("test_videos/HCI.mov");
+		vidPlayer.loadMovie("test_videos/raw.mp4");
         vidPlayer.play();	
 		printf("Video Mode\n");
 	#endif
     
+	//camWidth = 640;
+	//camHeight = 480;
 
 	//Allocate images (needed for drawing/processing images) ----Most of These won't be needed in the end
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,8 +69,10 @@ void testApp::setup()
 	highpassImg.allocate(camWidth, camHeight);  //Highpass Image
 	giWarped.allocate(camWidth, camHeight);     //Warped Image (used for warped calibration)
 
-	fiLearn.allocate(camWidth, camHeight);		//ofxFloatImage used for simple dynamic background subtraction
+	fiLearn.allocate(camWidth, camHeight);		//ofxFloatImage used for simple dynamic background subtracti
 //	fiLearn.setUseTexture(false);
+
+	pressureMap.allocate(camWidth, camHeight);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//Fonts - Is there a way to dynamically change font size?
@@ -102,7 +104,7 @@ void testApp::setup()
 	printf("Touchlib application is setup!\n");
 
 	tracker.setListener(this);
-	
+
 }
 
 
@@ -162,6 +164,7 @@ void testApp::update()
 
 		subtractBg = sourceImg;
 
+
 		//giWarped.warpIntoMe(subtractBg, m_box.fHandles, dstPts );
 
 		//subtractBg = giWarped;
@@ -191,11 +194,45 @@ void testApp::update()
 		//
 		grayDiff = grayImg;
 
+
+
+		//////////////////////////////////////////////////////////
+		//Pressure Map		
+		unsigned char * rgbaPixels = grayImg.getPixels();
+		//unsigned char * colorRawPixels = [camWidth*camHeight*3]; 
+
+		//total rgb pixels
+		int totalPixel = camWidth * camHeight;
+
+		int k = 0;
+
+		for(int i = 0; i < totalPixel; i++){
+
+		  //Get the 
+		  float red = rgbaPixels[i];
+		  float green = 0;
+		  float blue = 255 - rgbaPixels[i] + 40; // Add 60
+
+		  //Set some limitations	
+		  if(blue >= 255){blue = 0;}
+
+		  //Set the RGB pixels to their colors
+		  colorRawPixels[k]     = red;
+		  colorRawPixels[k + 1] = green;
+		  colorRawPixels[k + 2] = blue;
+
+		  k +=3;
+		}
+		           
+		pressureMap.setFromPixels(colorRawPixels, camWidth, camHeight);
+
+
+
 		//Set a threshold value
 		grayDiff.threshold(threshold);
 
 		//Find contours/blobs
-		contourFinder.findContours(grayDiff, 4, (camWidth*camHeight)/25, 10, false);
+		contourFinder.findContours(grayDiff, 1, (camWidth*camHeight)/25, 10, false);
 
 		//Track found contours/blobs
 		tracker.track(&contourFinder);
@@ -302,7 +339,7 @@ void testApp::draw()
 		background.draw(0, 0);
 
 		sourceImg.draw(40, 146, 320, 240);
-		grayDiff.draw(445, 146, 320, 240);
+		pressureMap.draw(445, 146, 320, 240);
 		fiLearn.draw(40, 521, 128, 96);
 		subtractBg.draw(187, 521, 128, 96);
 		highpassImg.draw(337, 521, 128, 96);
@@ -330,125 +367,76 @@ void testApp::draw()
 	if(bNewFrame){
 
 		if(bDrawOutlines)
+		{
 			SendOSC();
+		}
 	}
 
 
 
 	if(bDrawOutlines && !bFastMode)
 	{
-		//scale and draw on screen
-		double wScale = double(320)/double(camWidth);
-		double hScale = double(240)/double(camHeight);
-
-
+		//Find the blobs
 		for(int i=0; i<contourFinder.nBlobs; i++)
 		{
 			//temp blob to rescale and draw on screen
 			ofxCvBlob drawBlob;
 			drawBlob = contourFinder.blobs[i];
 
-			//rescale the blob
-			drawBlob.boundingRect.x = wScale*(drawBlob.boundingRect.x);
-			drawBlob.boundingRect.y = hScale*(drawBlob.boundingRect.y);
-			drawBlob.boundingRect.width = wScale*(drawBlob.boundingRect.width);
-			drawBlob.boundingRect.height=hScale*(drawBlob.boundingRect.height);
-			drawBlob.area = wScale*hScale*(drawBlob.area);
-
+			//Get the contour (points) so they can be drawn
 			for( int j=0; j<contourFinder.blobs[i].nPts; j++ )
 			{
-				drawBlob.pts[j].x = wScale*(drawBlob.pts[j].x);
-				drawBlob.pts[j].y = hScale*(drawBlob.pts[j].y);
+				drawBlob.pts[j].x = .5 * (drawBlob.pts[j].x);
+				drawBlob.pts[j].y = (240/camHeight) * (drawBlob.pts[j].y);
 			}
 
 			//draw contours on the figures
-			//drawBlob.draw(40, 146);
 			drawBlob.draw(445, 146);
+			
 
 
-			//if(i < 3)
-			//{
-			//if(50<contourFinder.blobs[i].area)
-			//{	
 				if(bShowLabels)
 				{
 					ofSetColor(0xFFF000);
 					char idStr[1024];		
-					//sprintf(idStr, "id: %i\nx: %f\ny: %f\ncx: %f\nc\
-					//			   y: %f\nwd: %f\nht: %f\na: %f\n",
-					//			   contourFinder.blobs[i].id,
-					//			   contourFinder.blobs[i].pts[0].x,
-					//			   contourFinder.blobs[i].pts[0].y,
-					//			   contourFinder.blobs[i].centroid.x,
-					//			   contourFinder.blobs[i].centroid.y,
-					//			   contourFinder.blobs[i].boundingRect.width,
-					//			   contourFinder.blobs[i].boundingRect.height,
-					//			   contourFinder.blobs[i].area);
+/*					sprintf(idStr, "id: %i\nx: %f\ny: %f\ncx: %f\nc\
+								   y: %f\nwd: %f\nht: %f\na: %f\n",
+								   contourFinder.blobs[i].id,
+								   contourFinder.blobs[i].pts[0].x,
+								   contourFinder.blobs[i].pts[0].y,
+								   contourFinder.blobs[i].centroid.x,
+								   contourFinder.blobs[i].centroid.y,
+								   contourFinder.blobs[i].boundingRect.width,
+								   contourFinder.blobs[i].boundingRect.height,
+								   contourFinder.blobs[i].area);		
+*/
+
+
+					//if(bNewFrame){
+
+						transformDimension(drawBlob.boundingRect.width, drawBlob.boundingRect.height, 
+										   contourFinder.blobs[i].centroid.x, contourFinder.blobs[i].centroid.y);
+
+						cameraToScreenSpace(contourFinder.blobs[i].centroid.x, contourFinder.blobs[i].centroid.y);
+
+					//}
 					
-					
-				/*		CTouchEvent e;
-
-						float tx, ty;
-
-						tx = data.X + data.dX;
-						ty = data.Y + data.dY;
-
-						transformDimension(data.width, data.height, data.X, data.Y);
-						data.area = data.width * data.height;
-
-						cameraToScreenSpace(data.X, data.Y);
-						cameraToScreenSpace(tx, ty);
-
-						e.data = data;
-						e.type = TOUCH_UPDATE;
-						e.data.dX = tx - data.X;
-						e.data.dY = ty - data.Y;
-
-						eventList.push_back(e);
-				*/
-
-/*
-					transformDimension(drawBlob.boundingRect.width, drawBlob.boundingRect.height, 
-									   contourFinder.blobs[i].centroid.x, contourFinder.blobs[i].centroid.y);
-
-					cameraToScreenSpace(contourFinder.blobs[i].centroid.x, contourFinder.blobs[i].centroid.y);
-
-					//float X;
-					//float Y;
-      if((contourFinder.blobs[i].centroid.x * 320) >= 1 && (contourFinder.blobs[i].centroid.y * 240) >= 1){
+					//if((contourFinder.blobs[i].centroid.x * 320) >= 1 && (contourFinder.blobs[i].centroid.y * 240) >= 1){
 
 					sprintf(idStr, "id: %i \n x: %f \n y: %f",contourFinder.blobs[i].id, 
 															  (contourFinder.blobs[i].centroid.x * 320.0f), 
 															  (contourFinder.blobs[i].centroid.y * 240.0f));
 
-					printf("X: %f \n", (contourFinder.blobs[i].centroid.x * 320.0f));
-					
-					verdana.drawString(idStr, drawBlob.pts[0].x+drawBlob.boundingRect.width + 435,
-											  drawBlob.pts[0].y+drawBlob.boundingRect.height + 120);
-				}
-			//}
-			//}
-*/		}
+					//verdana.drawString(idStr, drawBlob.pts[0].x+drawBlob.boundingRect.width + 435,
+					//						  drawBlob.pts[0].y+drawBlob.boundingRect.height + 120);
+				
+
+
+				//}
+
+			}
 		}
 	}
-
-
-
-		//If there are no blobs, add to background
-		
-/*	if(bNewFrame){
-
-		if (contourFinder.nBlobs == 0){		
-		
-		subtractBg = giWarped;
-
-		learnBackground( subtractBg, grayBg, fiLearn, 0.01f);
-
-		}
-	}
-*/
-
-
 
 
 	//---------------------------------------------------------------------HELP
@@ -562,72 +550,75 @@ void testApp::draw()
 	}		
 	if(bTUIOMode)
 	{		
-			ofSetColor(0,255,0);
-			ofFill();		
-			ofCircle(35, 10, 5);
-			ofNoFill();
+		ofSetColor(0,255,0);
+		ofFill();		
+		ofCircle(35, 10, 5);
+		ofNoFill();
 	}		
 	//----------------------------------------------------------------DRAW LEDS
 
 	if(bCalibration)
 	{		
 
-
 		int screenW = ofGetWidth();
 		int screenH = ofGetHeight();
+		
+		//Change the background color when a finger presses down/up
+		if(downColor){
+			ofSetColor(0x2F2F2F);
+		}
+		else
 		ofSetColor(0x000000);	
+
 		ofFill();	
 		ofRect(0, 0, screenW, screenH);	
 
-		//ofSetColor(0xFFFFFF);	
+		ofSetColor(0xFFFFFF);	
 		//ofSetWindowTitle("Calibration");
-/*		verdana.drawString("Calibration", 33, 60);	
+		verdana.drawString("Calibration", 33, 60);	
 		char reportStr[1024];	
 		sprintf(reportStr, "press '] or [' resize grid\n\
 							press '2' to resize bounding box\n\
 							use arrow keys to move bounding box");
 		verdana.drawString(reportStr, 700, 50);
 
-		ofSetColor(0x00FF00);	
-		int iCount = snapCounter;
-		int iWidth = screenW;
-		int iHeight = screenH;
-		for(int i = 1; i < iCount; i++)
-		{
-			//ofNoFill();
-			//ofRect(0, 2, iWidth-2, iHeight-2);
-			//ofLine(0, (iHeight/iCount) * i, iWidth, (iHeight/iCount)*i);
-			//ofLine((iWidth/iCount)*i, 0, (iWidth/iCount)*i, iHeight);
 
-		}
-*/
+		//Get the screen points so we can make a grid 
 		vector2df *screenpts = getScreenPoints();
 
 		int i;
 
+		//For each grid point
 		for(i=0; i<GRID_POINTS; i++)
 		{
-
+			//Draw a Red Circle if the it's the active confg points
 			if(calibrationStep == i){
 				ofSetColor(0xFF0000);
-				ofCircle(screenpts[i].X * screenW, screenpts[i].Y * screenH, 7);	
-				//ofLine(screenpts[i].X * (screenBB.getWidth() * iWidth), screenpts[i].Y * (screenBB.getHeight() * iHeight),
-				//	   screenpts[i].X * (screenBB.getWidth() * iWidth) + 10, screenpts[i].Y * (screenBB.getHeight() * iHeight) + 10);
-			
-			/*	ofBeginShape();
-			    ofVertex(400,135);
-			    ofVertex(215,135);
-			    ofVertex(365,25);
-			    ofVertex(305,200);
-			    ofVertex(250,25);
-			    ofEndShape();
-			*/
+				ofFill();
+				ofCircle(screenpts[i].X * screenW, screenpts[i].Y * screenH, 9);	
 			}
-			else{
+			//Draw a green target (t) if the it's NOT the active point
+			else{ 
 				ofSetColor(0x00FF00);
-				ofCircle(screenpts[i].X * screenW, screenpts[i].Y * screenH, 7);	
-				
-			}					
+				ofFill();
+				ofCircle(screenpts[i].X * screenW, screenpts[i].Y * screenH, 5);				
+			}	
+
+			//Make Plus Sign
+			ofSetColor(0xFF0000);
+			//Horizontal Plus
+			ofLine(screenpts[i].X * screenW - 20, screenpts[i].Y * screenH, screenpts[i].X * screenW + 20, screenpts[i].Y * screenH);
+			//Vertical Plus
+			ofLine(screenpts[i].X * screenW, screenpts[i].Y * screenH - 20, screenpts[i].X * screenW, screenpts[i].Y * screenH + 20);
+		
+
+			ofSetColor(0xDDDDDD);
+			ofNoFill();
+
+			//if(i <= 2)
+			//ofLine(screenpts[i].X * screenW, screenpts[i].Y * screenH, screenBB.getWidth() * screenW, screenpts[i].Y * screenH);
+			//if(i <= 2)
+			//ofLine(screenpts[i].X * screenW, screenpts[i].Y * screenH, screenpts[i].X * screenW, screenBB.getHeight() * screenH);
 		}
 
 		ofSetColor(0x00FF00);
@@ -638,8 +629,6 @@ void testApp::draw()
 	//------------------------------------------------------------ Parameter UI
 	if(!bCalibration)
 	{
-//		if(ofGetWidth() > 1000)
-//		{
 			ofSetColor(0xFFFFFF);	
 			logo.draw(820,5);
 			
@@ -692,7 +681,7 @@ void testApp::keyPressed(int key)
 	switch(key)
 	{	
 		case 's':
-/* PUT THIS IN ANOTHER METHOD
+/*			PUT THIS IN ANOTHER METHOD
 			XML.setValue("CONFIG:BOOLEAN:LABELS",bShowLabels);
 			XML.setValue("CONFIG:BOOLEAN:VIDEO",bDrawVideo);
 			XML.setValue("CONFIG:BOOLEAN:SNAPSHOT",bSnapshot);
@@ -780,28 +769,6 @@ void testApp::keyPressed(int key)
 				ofSetWindowTitle("Mini");
 			}
 			break;
-		case 'i':
-			if(bInvertVideo)
-				bInvertVideo = false;
-			else
-				bInvertVideo = true; 
-			break;	
-		case 'n':
-			blurValue =  1;
-			if(blurValue > 255) blurValue = 255;
-			break;		
-		case 'm':
-			blurValue -= 1;
-			if(blurValue < 1) blurValue = 1;
-			break;
-		case 'j':
-			blurGaussianValue +=  2;
-			if(blurGaussianValue > 255) blurGaussianValue = 255;
-			break;		
-		case 'k':
-			blurGaussianValue -= 2;
-			if(blurGaussianValue < 1) blurGaussianValue = 1;
-			break;	
 		case 'a':
 			threshold ++;
 			if(threshold > 255) threshold = 255;
@@ -810,14 +777,6 @@ void testApp::keyPressed(int key)
 			threshold --;
 			if(threshold < 10) threshold = 10;
 			//if (threshold < 0) threshold = 0;
-			break;	
-		case 'w':
-			wobbleThreshold ++;
-			if(wobbleThreshold > 255) wobbleThreshold = 255;
-			break;	
-		case 'e':
-			wobbleThreshold --;
-			if(wobbleThreshold < 0) wobbleThreshold = 0;
 			break;	
 		case '[':
 			GRID_X ++;
@@ -833,7 +792,6 @@ void testApp::keyPressed(int key)
 			screenBB.lowerRightCorner.X -= .001;
 			if(screenBB.lowerRightCorner.X < 0) screenBB.lowerRightCorner.X = 0;
 			if(GRID_X < 1) GRID_X = 1; if(GRID_Y < 1) GRID_Y = 1; setGrid(GRID_X, GRID_Y);
-
 			calibrationStep = 0;
 			break;	
 		case 'g':
@@ -859,23 +817,7 @@ void testApp::keyPressed(int key)
 			else	
 				bHorizontalMirror = true;
 			break;
-/*		case '-':
-			lowRange ++;
-			if(lowRange > 255) lowRange = 255;
-			break;	
-		case '=':
-			lowRange --;
-			if(lowRange < 0) lowRange = 0;
-			break;
-		case '9':
-			highRange ++;
-			if(highRange > 255) highRange = 255;
-			break;	
-		case '0':
-			highRange --;
-			if(highRange < 0) highRange = 0;
-			break;		
-*/		case 'l':
+		case 'l':
 			if(bShowLabels)
 				bShowLabels = false;
 			else	
@@ -895,8 +837,11 @@ void testApp::loadXMLSettings(){
 	// TODO: a seperate XML to map keyboard commands to action 
 	message = "Loading config.xml...";
 	
+
+    calibrationXML.loadFile("calibration.xml");
+
 	// Can this load via http?
-	if( XML.loadFile("config.xml") ){
+	if( XML.loadFile("config.xml")){
 		//WOOT!
 		message = "Settings Loaded!";
 	}else{
@@ -930,7 +875,6 @@ void testApp::loadXMLSettings(){
 	bSnapshot			= XML.getValue("CONFIG:BOOLEAN:SNAPSHOT",0);
 	bFastMode			= XML.getValue("CONFIG:BOOLEAN:FAST",0);	
 	bDrawOutlines		= XML.getValue("CONFIG:BOOLEAN:OUTLINES",0);
-	bInvertVideo		= XML.getValue("CONFIG:BOOLEAN:INVERT",0);
 	bLearnBakground		= XML.getValue("CONFIG:BOOLEAN:LEARNBG",0);
 
 	bCalibration		= XML.getValue("CONFIG:BOOLEAN:CALIBRATION",0);
@@ -939,9 +883,6 @@ void testApp::loadXMLSettings(){
 	bHorizontalMirror	= XML.getValue("CONFIG:BOOLEAN:HMIRROR",0);	
 	
 	threshold			= XML.getValue("CONFIG:INT:THRESHOLD",0);
-	wobbleThreshold		= XML.getValue("CONFIG:INT:WTHRESHOLD",0);
-	blurValue			= XML.getValue("CONFIG:INT:BLUR",0);
-	blurGaussianValue	= XML.getValue("CONFIG:INT:BLURG",0);
 	highpassBlur		= XML.getValue("CONFIG:INT:LOWRANGE",0);
 	highpassNoise		= XML.getValue("CONFIG:INT:HIGHRANGE",0);
 	highpassAmp		= XML.getValue("CONFIG:INT:HIGHPASSAMP",0);
@@ -975,8 +916,8 @@ void testApp::loadXMLSettings(){
 
 	//Set grid and init everything that relates to teh grid.
 
-	GRID_X		= XML.getValue("SCREEN:GRIDMESH:GRIDX",50);
-	GRID_Y		= XML.getValue("SCREEN:GRIDMESH:GRIDX",50);
+	GRID_X		= calibrationXML.getValue("SCREEN:GRIDMESH:GRIDX",50);
+	GRID_Y		= calibrationXML.getValue("SCREEN:GRIDMESH:GRIDX",50);
 
 	setGrid(GRID_X, GRID_Y);
  
@@ -984,8 +925,8 @@ void testApp::loadXMLSettings(){
 	//Bounding Box Points
 	if(bboxRoot){
 
-	    vector2df ul(XML.getValue("SCREEN:BOUNDINGBOX:ulx", 0.000000),XML.getValue("SCREEN:BOUNDINGBOX:uly", 0.000000));
-	    vector2df lr(XML.getValue("SCREEN:BOUNDINGBOX:lrx", 1.000000),XML.getValue("SCREEN:BOUNDINGBOX:lry", 1.000000));
+	    vector2df ul(calibrationXML.getValue("SCREEN:BOUNDINGBOX:ulx", 0.000000),calibrationXML.getValue("SCREEN:BOUNDINGBOX:uly", 0.000000));
+	    vector2df lr(calibrationXML.getValue("SCREEN:BOUNDINGBOX:lrx", 1.000000),calibrationXML.getValue("SCREEN:BOUNDINGBOX:lry", 1.000000));
 		rect2df boundingbox(ul, lr);
 
 		setScreenBBox(boundingbox);
@@ -998,7 +939,7 @@ void testApp::loadXMLSettings(){
 	if(screenRoot)
 	{
 		//lets see how many <STROKE> </STROKE> tags there are in the xml file
-		int numDragTags = XML.getNumTags("SCREEN:POINT"); 
+		int numDragTags = calibrationXML.getNumTags("SCREEN:POINT"); 
 
 			printf("Points: %i \n", numDragTags);
 
@@ -1006,10 +947,10 @@ void testApp::loadXMLSettings(){
 			if(numDragTags > 0){
 
 				//we push into the last POINT tag this temporarirly treats the tag as the document root.
-				XML.pushTag("SCREEN:POINT", numDragTags-1);
+				calibrationXML.pushTag("SCREEN:POINT", numDragTags-1);
 
 				//we see how many points we have stored in <POINT> tags
-				int numPtTags = XML.getNumTags("POINT");
+				int numPtTags = calibrationXML.getNumTags("POINT");
 
 			if(numPtTags > 0){
 
@@ -1018,8 +959,8 @@ void testApp::loadXMLSettings(){
 
 					//the last argument of getValue can be used to specify
 					//which tag out of multiple tags you are refering to.
-					int x = XML.getValue("POINT:X", 0.000000, i);
-					int y = XML.getValue("POINT:Y", 0.000000, i);
+					int x = calibrationXML.getValue("POINT:X", 0.000000, i);
+					int y = calibrationXML.getValue("POINT:Y", 0.000000, i);
 
 					cameraPoints[i] = vector2df(x,y);
 					printf("Calibration: %f, %f\n", cameraPoints[i].X, cameraPoints[i].Y);
@@ -1028,11 +969,10 @@ void testApp::loadXMLSettings(){
 					bcameraPoints = true;
 				}
 			}
-			XML.popTag(); //Set XML root back to highest level
+			calibrationXML.popTag(); //Set XML root back to highest level
 		}
 	}
-	//End XML Calibration Settings
-
+	//End calibrationXML Calibration Settings
 }
 
 
@@ -1416,13 +1356,14 @@ void testApp::mouseReleased()
 
 
 
-void testApp::blobOn( ofxCvBlob b) { printf("Blob %i \n", b.id);}
+void testApp::blobOn( ofxCvBlob b) { printf("Blob %i \n", b.id); downColor = true;}
 void testApp::blobMoved( ofxCvBlob b) {}  
 
 void testApp::blobOff( ofxCvBlob b) 
 {
-	
-	//printf("Blob %i \n", b.id);
+	downColor = false;
+
+	printf("Blob Up %i \n", b.id);
 
 	if(bCalibrating){			
 		
@@ -1454,25 +1395,25 @@ void testApp::exit()
 
 
 	//lets see how many <STROKE> </STROKE> tags there are in the xml file
-	int numDragTags = XML.getNumTags("SCREEN:POINT"); 
+	int numDragTags = calibrationXML.getNumTags("SCREEN:POINT"); 
 
 	//if there is at least one <POINT> tag we can read the list of points
 	if(numDragTags > 0){
 
 		//we push into the last POINT tag this temporarirly treats the tag as the document root.
-		XML.pushTag("SCREEN:POINT", numDragTags-1);
+		calibrationXML.pushTag("SCREEN:POINT", numDragTags-1);
 
-		XML.clear();
+		calibrationXML.clear();
 
 		//Save the Grid Mesh X/Y
-		XML.setValue("GRIDMESH:GRIDX", GRID_X);
-	    XML.setValue("GRIDMESH:GRIDY", GRID_Y);
+		calibrationXML.setValue("GRIDMESH:GRIDX", GRID_X);
+	    calibrationXML.setValue("GRIDMESH:GRIDY", GRID_Y);
 
 		//Save the Bounding Box
-		XML.setValue("BOUNDINGBOX:ulx", screenBB.upperLeftCorner.X);
-		XML.setValue("BOUNDINGBOX:uly", screenBB.upperLeftCorner.Y);
-		XML.setValue("BOUNDINGBOX:lrx", screenBB.lowerRightCorner.X);
-		XML.setValue("BOUNDINGBOX:lry", screenBB.lowerRightCorner.Y);
+		calibrationXML.setValue("BOUNDINGBOX:ulx", screenBB.upperLeftCorner.X);
+		calibrationXML.setValue("BOUNDINGBOX:uly", screenBB.upperLeftCorner.Y);
+		calibrationXML.setValue("BOUNDINGBOX:lrx", screenBB.lowerRightCorner.X);
+		calibrationXML.setValue("BOUNDINGBOX:lry", screenBB.lowerRightCorner.Y);
 
 		//Save all the Calibration Points
 		if(GRID_POINTS > 0){
@@ -1482,14 +1423,13 @@ void testApp::exit()
 
 				//the last argument of getValue can be used to specify
 				//which tag out of multiple tags you are refering to.
-				XML.setValue("POINT:X", cameraPoints[i].X, i);
-				XML.setValue("POINT:Y", cameraPoints[i].Y, i);
+				calibrationXML.setValue("POINT:X", cameraPoints[i].X, i);
+				calibrationXML.setValue("POINT:Y", cameraPoints[i].Y, i);
 			}
 		}
-		XML.popTag(); //Set XML root back to highest level
+		calibrationXML.popTag(); //Set XML root back to highest level
 	}
-
-	XML.saveFile("config.xml");
+	calibrationXML.saveFile("calibration.xml");
 	//message ="Exited...";
 }
 

@@ -7,13 +7,17 @@
 #define OF_ADDON_USING_OFXOPENCV	   // COMPUTER VISION STUFF
 #define OF_ADDON_USING_OFXOSC		   // OSC COMMUNICATION		
 #include "ofAddons.h"
-#include "tracking.h"
 
-#include "boxAlign.h"				   // Used for warped image
+//Used for tracking algo
+#include "Tracking\tracking.h"
 
-#include "rect2d.h"		
-#include "mesh2d.h"
-#include "vector2d.h"
+//Used for warped image
+#include "Calibration\boxAlign.h"
+
+//Used other calibration
+#include "Calibration\rect2d.h"		
+#include "Calibration\mesh2d.h"
+#include "Calibration\vector2d.h"
 
 					
 #define HOST "localhost"
@@ -184,6 +188,7 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 
 		bool bCalibrating;		
 		int calibrationStep;
+		bool downColor;
 
 
 	private:
@@ -227,7 +232,11 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 		ofxCvGrayscaleImage highpassImg;
 		ofxCvGrayscaleImage	giWarped;
 
+		ofxCvColorImage		pressureMap;
+
 	    ofxCvFloatImage		fiLearn;
+
+		unsigned char    colorRawPixels [320*240*3]; 
 
 		//---------------------------------------Warping Box				
 		CBoxAligner			m_box;
@@ -235,12 +244,10 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 
 		//---------------------------------------XML Settings Vars (BLOATED)
 		ofxXmlSettings		XML;
+		ofxXmlSettings		calibrationXML;
 		string				xmlStructure;
 		string				message;
 
-		int					pointCount;
-		int					lineCount;
-		int					lastTagNumber;		
 
 		//---------------------------------------FOR TEST MARKED FOR GC
 		float				red;
