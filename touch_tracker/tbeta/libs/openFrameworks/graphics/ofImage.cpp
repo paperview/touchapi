@@ -181,7 +181,9 @@ void ofImage::update(){
 
 
 	// this is check to see if it's a gif
-	bool bNoPallette 		= (FreeImage_GetColorType(bmp) != FIC_PALETTE);
+	//bool bNoPallette 		= (FreeImage_GetColorType(bmp) != FIC_PALETTE);
+
+	bool bNoPallette        = (FreeImage_GetColorType(bmp) != FIC_PALETTE) || type == OF_IMAGE_GRAYSCALE;
 
 	switch (bpp){
 		case 8:
