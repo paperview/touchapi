@@ -1,12 +1,10 @@
+#define WIN32_LEAN_AND_MEAN
+#define _WIN32_WINNT 0x0500
+
 #include "testApp.h"
 #include "uiDefinition.h"
 
-//#include "Calibration\vector2d.h"
-//#include "Calibration\rect2d.h"
-
-//rect2df bBox(vector2df(0.0f,0.0f),vector2df(1.0f,1.0f));
-//rect2df previewBox(vector2df(0.0f,0.0f),vector2df(0.15f,0.25f));
-
+#include <windows.h>
 
 /******************************************************************************
  * The setup function is run once to perform initializations in the application
@@ -164,7 +162,6 @@ void testApp::update()
 
 		subtractBg = sourceImg;
 
-
 		//giWarped.warpIntoMe(subtractBg, m_box.fHandles, dstPts );
 
 		//subtractBg = giWarped;
@@ -196,10 +193,12 @@ void testApp::update()
 
 
 
-		//////////////////////////////////////////////////////////
-		//Pressure Map		
+		/*****************************************************
+		* Pressure Map	
+		*****************************************************/
 		unsigned char * rgbaPixels = grayImg.getPixels();
-		//unsigned char * colorRawPixels = [camWidth*camHeight*3]; 
+
+		unsigned char * colorRawPixels = new unsigned char[camWidth*camHeight*3]; 
 
 		//total rgb pixels
 		int totalPixel = camWidth * camHeight;
@@ -222,8 +221,7 @@ void testApp::update()
 		  colorRawPixels[k + 2] = blue;
 
 		  k +=3;
-		}
-		           
+		}		           
 		pressureMap.setFromPixels(colorRawPixels, camWidth, camHeight);
 
 
@@ -386,14 +384,12 @@ void testApp::draw()
 			//Get the contour (points) so they can be drawn
 			for( int j=0; j<contourFinder.blobs[i].nPts; j++ )
 			{
-				drawBlob.pts[j].x = .5 * (drawBlob.pts[j].x);
+				drawBlob.pts[j].x = (320/camWidth) * (drawBlob.pts[j].x);
 				drawBlob.pts[j].y = (240/camHeight) * (drawBlob.pts[j].y);
 			}
 
 			//draw contours on the figures
 			drawBlob.draw(445, 146);
-			
-
 
 				if(bShowLabels)
 				{
@@ -408,16 +404,14 @@ void testApp::draw()
 								   contourFinder.blobs[i].centroid.y,
 								   contourFinder.blobs[i].boundingRect.width,
 								   contourFinder.blobs[i].boundingRect.height,
-								   contourFinder.blobs[i].area);		
-*/
-
+								   contourFinder.blobs[i].area);	
 
 					//if(bNewFrame){
 
-						transformDimension(drawBlob.boundingRect.width, drawBlob.boundingRect.height, 
+						calibrate.transformDimension(drawBlob.boundingRect.width, drawBlob.boundingRect.height, 
 										   contourFinder.blobs[i].centroid.x, contourFinder.blobs[i].centroid.y);
 
-						cameraToScreenSpace(contourFinder.blobs[i].centroid.x, contourFinder.blobs[i].centroid.y);
+						calibrate.cameraToScreenSpace(contourFinder.blobs[i].centroid.x, contourFinder.blobs[i].centroid.y);
 
 					//}
 					
@@ -429,7 +423,7 @@ void testApp::draw()
 
 					//verdana.drawString(idStr, drawBlob.pts[0].x+drawBlob.boundingRect.width + 435,
 					//						  drawBlob.pts[0].y+drawBlob.boundingRect.height + 120);
-				
+*/				
 
 
 				//}
@@ -584,15 +578,15 @@ void testApp::draw()
 
 
 		//Get the screen points so we can make a grid 
-		vector2df *screenpts = getScreenPoints();
+		vector2df *screenpts = calibrate.getScreenPoints();
 
 		int i;
 
 		//For each grid point
-		for(i=0; i<GRID_POINTS; i++)
+		for(i=0; i<calibrate.GRID_POINTS; i++)
 		{
 			//Draw a Red Circle if the it's the active confg points
-			if(calibrationStep == i){
+			if(calibrate.calibrationStep == i){
 				ofSetColor(0xFF0000);
 				ofFill();
 				ofCircle(screenpts[i].X * screenW, screenpts[i].Y * screenH, 9);	
@@ -623,8 +617,12 @@ void testApp::draw()
 
 		ofSetColor(0x00FF00);
 		ofNoFill();
-		ofRect(screenBB.upperLeftCorner.X * screenW, screenBB.upperLeftCorner.Y * screenH, screenBB.getWidth() * screenW, screenBB.getHeight() * screenH);
+		ofRect(calibrate.screenBB.upperLeftCorner.X * screenW, calibrate.screenBB.upperLeftCorner.Y * screenH, 
+			   calibrate.screenBB.getWidth() * screenW, calibrate.screenBB.getHeight() * screenH);
 	}		
+
+
+
 
 	//------------------------------------------------------------ Parameter UI
 	if(!bCalibration)
@@ -745,11 +743,11 @@ void testApp::keyPressed(int key)
 				bCalibration = true;	
 			break;
 		case 'x':
-			if(bCalibration && bCalibrating)
-				bCalibrating = false;
+			if(bCalibration && calibrate.bCalibrating)
+				calibrate.bCalibrating = false;
 			else if(bCalibration)
 				//bCalibrating = true;
-				beginCalibration();
+				calibrate.beginCalibration();
 			else
 			    bCalibration = false;
 			break;
@@ -779,20 +777,20 @@ void testApp::keyPressed(int key)
 			//if (threshold < 0) threshold = 0;
 			break;	
 		case '[':
-			GRID_X ++;
-			GRID_Y ++;
-			screenBB.lowerRightCorner.X += .001;
-			if(screenBB.lowerRightCorner.X > 1) screenBB.lowerRightCorner.X = 1;
-			if(GRID_X > 16) GRID_X = 16; if(GRID_Y > 16) GRID_Y = 16; setGrid(GRID_X, GRID_Y);
-			calibrationStep = 0;
+			calibrate.GRID_X ++;
+			calibrate.GRID_Y ++;
+			calibrate.screenBB.lowerRightCorner.X += .001;
+			if(calibrate.screenBB.lowerRightCorner.X > 1) calibrate.screenBB.lowerRightCorner.X = 1;
+			if(calibrate.GRID_X > 16) calibrate.GRID_X = 16; if(calibrate.GRID_Y > 16) calibrate.GRID_Y = 16; calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+			calibrate.calibrationStep = 0;
 			break;	
 		case ']':
-			GRID_X --;
-			GRID_Y --;
-			screenBB.lowerRightCorner.X -= .001;
-			if(screenBB.lowerRightCorner.X < 0) screenBB.lowerRightCorner.X = 0;
-			if(GRID_X < 1) GRID_X = 1; if(GRID_Y < 1) GRID_Y = 1; setGrid(GRID_X, GRID_Y);
-			calibrationStep = 0;
+			calibrate.GRID_X --;
+			calibrate.GRID_Y --;
+			calibrate.screenBB.lowerRightCorner.X -= .001;
+			if(calibrate.screenBB.lowerRightCorner.X < 0) calibrate.screenBB.lowerRightCorner.X = 0;
+			if(calibrate.GRID_X < 1) calibrate.GRID_X = 1; if(calibrate.GRID_Y < 1) calibrate.GRID_Y = 1; calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+			calibrate.calibrationStep = 0;
 			break;	
 		case 'g':
 			bSnapshot = true;
@@ -836,18 +834,16 @@ void testApp::loadXMLSettings(){
 
 	// TODO: a seperate XML to map keyboard commands to action 
 	message = "Loading config.xml...";
-	
-
-    calibrationXML.loadFile("calibration.xml");
 
 	// Can this load via http?
 	if( XML.loadFile("config.xml")){
-		//WOOT!
+		
 		message = "Settings Loaded!";
+
 	}else{
+		
 		//FAIL!
 		message = "No Settings Found...";
-		// GENERATE DEFAULT XML DATA WHICH WILL BE SAVED INTO THE CONFIG
 	}
 
 	// XML COLOR TEST (VERIFIES ITS WORKING!!)
@@ -904,322 +900,14 @@ void testApp::loadXMLSettings(){
 
 
 //////////////////////////////////////////////////////////////////
-//						CALIBRATION								//
+//						STEUP CALIBRATION						//
 //////////////////////////////////////////////////////////////////
 
-	bool bboxRoot = true;
-	bool screenRoot = true;
-
-	bCalibrating = false;
-
-	calibrationStep = 0;
-
-	//Set grid and init everything that relates to teh grid.
-
-	GRID_X		= calibrationXML.getValue("SCREEN:GRIDMESH:GRIDX",50);
-	GRID_Y		= calibrationXML.getValue("SCREEN:GRIDMESH:GRIDX",50);
-
-	setGrid(GRID_X, GRID_Y);
- 
 	
-	//Bounding Box Points
-	if(bboxRoot){
-
-	    vector2df ul(calibrationXML.getValue("SCREEN:BOUNDINGBOX:ulx", 0.000000),calibrationXML.getValue("SCREEN:BOUNDINGBOX:uly", 0.000000));
-	    vector2df lr(calibrationXML.getValue("SCREEN:BOUNDINGBOX:lrx", 1.000000),calibrationXML.getValue("SCREEN:BOUNDINGBOX:lry", 1.000000));
-		rect2df boundingbox(ul, lr);
-
-		setScreenBBox(boundingbox);
-
-	}else{
-		setScreenScale(1.0f);
-	}
-
-	//Calibration Points
-	if(screenRoot)
-	{
-		//lets see how many <STROKE> </STROKE> tags there are in the xml file
-		int numDragTags = calibrationXML.getNumTags("SCREEN:POINT"); 
-
-			printf("Points: %i \n", numDragTags);
-
-			//if there is at least one <POINT> tag we can read the list of points
-			if(numDragTags > 0){
-
-				//we push into the last POINT tag this temporarirly treats the tag as the document root.
-				calibrationXML.pushTag("SCREEN:POINT", numDragTags-1);
-
-				//we see how many points we have stored in <POINT> tags
-				int numPtTags = calibrationXML.getNumTags("POINT");
-
-			if(numPtTags > 0){
-
-				//We then read those x y values into our array
-				for(int i = 0; i < numPtTags; i++){
-
-					//the last argument of getValue can be used to specify
-					//which tag out of multiple tags you are refering to.
-					int x = calibrationXML.getValue("POINT:X", 0.000000, i);
-					int y = calibrationXML.getValue("POINT:Y", 0.000000, i);
-
-					cameraPoints[i] = vector2df(x,y);
-					printf("Calibration: %f, %f\n", cameraPoints[i].X, cameraPoints[i].Y);
-
-					bscreenPoints = true;
-					bcameraPoints = true;
-				}
-			}
-			calibrationXML.popTag(); //Set XML root back to highest level
-		}
-	}
+	calibrate.setCamRes(camWidth, camHeight);
+	calibrate.loadXMLSettings();
 	//End calibrationXML Calibration Settings
 }
-
-
-/*****************************************************************************
- * Start of Calibration Methods
- *****************************************************************************/
-
-//Bounding Box Size
-void testApp::setScreenBBox(rect2df &box)
-{
-	screenBB = box;
-	initScreenPoints();
-}
-
-
-void testApp::setGrid(int x, int y)
-{
-	GRID_Y = y;
-	GRID_X = x;
-
-	GRID_POINTS = ((GRID_X+1) * (GRID_Y+1));
-    GRID_INDICES = (GRID_X * GRID_Y * 3 * 2);
-
-	screenPoints = new vector2df[GRID_POINTS];
-	cameraPoints = new vector2df[GRID_POINTS];
-	triangles = new int[GRID_INDICES];
-
-	initTriangles();
-
-	if(bscreenPoints && bcameraPoints){
-	initScreenPoints();
-	initCameraPoints();
-	}
-}
-
-void testApp::initTriangles(){
-
-	int i,j;
-	int t = 0;
-
-	for(j=0; j<GRID_Y; j++)
-	{
-		for(i=0; i<GRID_X; i++)
-		{
-			triangles[t+0] = (i+0) + ((j+0) * (GRID_X+1));
-			triangles[t+1] = (i+1) + ((j+0) * (GRID_X+1));
-			triangles[t+2] = (i+0) + ((j+1) * (GRID_X+1));
-
-			t += 3;
-
-			triangles[t+0] = (i+1) + ((j+0) * (GRID_X+1));
-			triangles[t+1] = (i+1) + ((j+1) * (GRID_X+1));
-			triangles[t+2] = (i+0) + ((j+1) * (GRID_X+1));
-
-			t += 3;
-		}
-	}
-}
-
-
-//Initialize Points
-void testApp::initScreenPoints()
-{
-	int p = 0;
-
-	int i,j;
-
-	vector2df xd(screenBB.lowerRightCorner.X-screenBB.upperLeftCorner.X,0.0f);
-	vector2df yd(0.0f, screenBB.lowerRightCorner.Y-screenBB.upperLeftCorner.Y);
-	
-	xd /= (float) GRID_X;
-	yd /= (float) GRID_Y;
-	
-	for(j=0; j<=GRID_Y; j++)
-	{
-		for(i=0; i<=GRID_X; i++)
-		{			 
-			screenPoints[p] = screenBB.upperLeftCorner + xd*i + yd*j;			
-			//printf("(%d, %d) = (%f, %f)\n", i, j, screenPoints[p].X, screenPoints[p].Y);
-			p++;
-		}
-	}
-}
-
-void testApp::initCameraPoints()
-{
-	int p = 0;
-	
-	int i,j;
-	for(j=0; j<=GRID_Y; j++)
-	{
-		for(i=0; i<=GRID_X; i++)
-		{
-			cameraPoints[p] = vector2df((i * camWidth) / (float)GRID_X, (j * camHeight) / (float)GRID_Y);
-			p++;
-		}
-	}
-}
-
-void testApp::setScreenScale(float s)
-{
-	// legacy
-	float offset = (1.0f - s)*0.5f;
-	screenBB = rect2df(vector2df(offset,offset),vector2df(1.0f-offset,1.0f-offset));
-	initScreenPoints();
-}
-
-float testApp::getScreenScale()
-{
-	// legacy, take the minimum scale value that fits inside the bounding box
-	float minValL = MIN(screenBB.lowerRightCorner.X,screenBB.lowerRightCorner.Y);
-	minValL = 1.0f - minValL;
-	float minValU = MAX(screenBB.upperLeftCorner.X,screenBB.upperLeftCorner.Y);
-	float minVal = MIN(minValL,minValU);
-	return 1.0f - (2.0f * minVal);	
-}
-
-
-void testApp::transformDimension(float &width, float &height, float centerX, float centerY)
-{
-	// transform width/height
-    float halfX = width * 0.5f;
-    float halfY = height * 0.5f;
-
-    float ulX = centerX - halfX;
-    float ulY = centerY - halfY;
-    float lrX = centerX + halfX;
-    float lrY = centerY + halfY;
-
-	//printf("%f:  %f:  %f:   %f:  \n", ulX, ulY, lrX, lrY);    
-	
-	cameraToScreenSpace(ulX, ulY);
-    cameraToScreenSpace(lrX, lrY);
-
-    width = lrX - ulX;
-    height = ulY - lrY;
-}
-
-bool isPointInTriangle(vector2df p, vector2df a, vector2df b, vector2df c)
-{
-	if (vector2df::isOnSameSide(p,a, b,c) && vector2df::isOnSameSide(p,b, a,c) && vector2df::isOnSameSide(p, c, a, b))
-		return true;
-    else 
-		return false;
-}
-
-
-int testApp::findTriangleWithin(vector2df pt)
-{
-	int t;
-
-	for(t=0; t<GRID_INDICES; t+=3)
-	{
-		if( isPointInTriangle(pt, cameraPoints[triangles[t]], cameraPoints[triangles[t+1]], cameraPoints[triangles[t+2]]) )
-		{
-			return t;
-		}
-	}
-
-	return -1;
-}
-
-
-// Transforms a camera space coordinate into a screen space coord
-void testApp::cameraToScreenSpace(float &x, float &y)
-{
-
-	vector2df pt(x, y);
-	
-	int t = findTriangleWithin(pt);
-
-	if(t != -1)
-	{
-
-		vector2df A = cameraPoints[triangles[t+0]];
-		vector2df B = cameraPoints[triangles[t+1]];
-		vector2df C = cameraPoints[triangles[t+2]];
-		float total_area = (A.X - B.X) * (A.Y - C.Y) - (A.Y - B.Y) * (A.X - C.X);
-
-		// pt,B,C
-		float area_A = (pt.X - B.X) * (pt.Y - C.Y) - (pt.Y - B.Y) * (pt.X - C.X);
-
-		// A,pt,C
-		float area_B = (A.X - pt.X) * (A.Y - C.Y) - (A.Y - pt.Y) * (A.X - C.X);
-
-		float bary_A = area_A / total_area;
-		float bary_B = area_B / total_area;
-		float bary_C = 1.0f - bary_A - bary_B;	// bary_A + bary_B + bary_C = 1
-
-		vector2df sA = screenPoints[triangles[t+0]];
-		vector2df sB = screenPoints[triangles[t+1]];
-		vector2df sC = screenPoints[triangles[t+2]];
-
-		vector2df transformedPos;
-
-		transformedPos = (sA*bary_A) + (sB*bary_B) + (sC*bary_C);
-
-		x = transformedPos.X;
-		y = transformedPos.Y;
-		return;
-	}
-
-	x = 0;
-	y = 0;
-	// FIXME: what to do in the case that it's outside the mesh?
-}
-
-
-void testApp::beginCalibration()
-{
-	 bCalibrating = true;
-	 calibrationStep = 0;
-}
-
-
-void testApp::nextCalibrationStep()
-{
-	if(bCalibrating)
-	{
-		calibrationStep++;
-
-		if(calibrationStep >= GRID_POINTS)
-		{
-
-			printf("Calibration complete\n");
-
-			bCalibrating = false;
-			calibrationStep = 0;
-		}
-	}
-}
-
-void testApp::revertCalibrationStep()
-{
-	if(bCalibrating)
-	{
-		calibrationStep--;
-		if(calibrationStep < 0)
-		{
-			calibrationStep = 0;
-		}
-	}
-}
-
-/*************************
-* End Calibration Methods
-*************************/
 
 
 
@@ -1259,8 +947,8 @@ void testApp::SendOSC()
 			float transformWidth = contourFinder.blobs[i].boundingRect.width;
 			float transformHeight = contourFinder.blobs[i].boundingRect.height;
 	
-			transformDimension(transformWidth, transformHeight, transformX, transformY);
-			cameraToScreenSpace(transformX, transformY);
+			calibrate.transformDimension(transformWidth, transformHeight, transformX, transformY);
+			calibrate.cameraToScreenSpace(transformX, transformY);
 
 			//Set Message
 			ofxOscMessage m1;
@@ -1365,16 +1053,16 @@ void testApp::blobOff( ofxCvBlob b)
 
 	printf("Blob Up %i \n", b.id);
 
-	if(bCalibrating){			
+	if(calibrate.bCalibrating){			
 		
 		//time_t now = time(0);		
 		//if((now-m_lastPress)>0){
 		//	m_lastPress = now;
 
-			cameraPoints[calibrationStep] = vector2df(b.centroid.x, b.centroid.y);
-			nextCalibrationStep();
+			calibrate.cameraPoints[calibrate.calibrationStep] = vector2df(b.centroid.x, b.centroid.y);
+			calibrate.nextCalibrationStep();
 			
-			printf("%d (%f, %f)\n", calibrationStep, b.centroid.x, b.centroid.y);
+			printf("%d (%f, %f)\n", calibrate.calibrationStep, b.centroid.x, b.centroid.y);
 			
 		//	curcalib ++;
 	}
@@ -1387,49 +1075,27 @@ void testApp::blobOff( ofxCvBlob b)
  *****************************************************************************/
 void testApp::exit()
 {
+
+	//Send ESC Key
+/*	INPUT aInput;
+	aInput.type = INPUT_KEYBOARD; 
+	aInput.ki.wVk = VK_ESCAPE;
+	aInput.ki.wScan = 0;//0x45;
+	aInput.ki.time = 0;
+	aInput.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
+	aInput.ki.dwExtraInfo = 0;
+
+	// Simulate a key press
+	int aResult = SendInput( 1,&aInput,sizeof(INPUT) );
+*/
+
 	//TODO: SEND ESC KEY TO KEEP FROM CRASHING -  can we emulate a keyboard
 	//event to trick the app into closing properly?
 	printf("tBeta module has exited!\n");	
 	
 	// -------------------------------- SAVE STATE ON EXIT
 
+	calibrate.saveCalibration();
 
-	//lets see how many <STROKE> </STROKE> tags there are in the xml file
-	int numDragTags = calibrationXML.getNumTags("SCREEN:POINT"); 
-
-	//if there is at least one <POINT> tag we can read the list of points
-	if(numDragTags > 0){
-
-		//we push into the last POINT tag this temporarirly treats the tag as the document root.
-		calibrationXML.pushTag("SCREEN:POINT", numDragTags-1);
-
-		calibrationXML.clear();
-
-		//Save the Grid Mesh X/Y
-		calibrationXML.setValue("GRIDMESH:GRIDX", GRID_X);
-	    calibrationXML.setValue("GRIDMESH:GRIDY", GRID_Y);
-
-		//Save the Bounding Box
-		calibrationXML.setValue("BOUNDINGBOX:ulx", screenBB.upperLeftCorner.X);
-		calibrationXML.setValue("BOUNDINGBOX:uly", screenBB.upperLeftCorner.Y);
-		calibrationXML.setValue("BOUNDINGBOX:lrx", screenBB.lowerRightCorner.X);
-		calibrationXML.setValue("BOUNDINGBOX:lry", screenBB.lowerRightCorner.Y);
-
-		//Save all the Calibration Points
-		if(GRID_POINTS > 0){
-
-			//We then read those x y values into our array
-			for(int i = 0; i < GRID_POINTS; i++){
-
-				//the last argument of getValue can be used to specify
-				//which tag out of multiple tags you are refering to.
-				calibrationXML.setValue("POINT:X", cameraPoints[i].X, i);
-				calibrationXML.setValue("POINT:Y", cameraPoints[i].Y, i);
-			}
-		}
-		calibrationXML.popTag(); //Set XML root back to highest level
-	}
-	calibrationXML.saveFile("calibration.xml");
-	//message ="Exited...";
 }
 

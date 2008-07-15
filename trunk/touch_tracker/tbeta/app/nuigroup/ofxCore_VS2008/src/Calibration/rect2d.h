@@ -1,7 +1,6 @@
 #ifndef __TOUCHLIB_RECT2D__
 #define __TOUCHLIB_RECT2D__
 
-//#include <vector2d.h>
 #include "vector2d.h"
 
 	// The following code was originally written by Nikolaus Gebhardt as part of Irrlicht.
