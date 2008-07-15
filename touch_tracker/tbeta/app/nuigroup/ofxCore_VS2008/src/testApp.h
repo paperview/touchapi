@@ -11,13 +11,11 @@
 //Used for tracking algo
 #include "Tracking\tracking.h"
 
-//Used for warped image
+//Used for warped image calibration
 #include "Calibration\boxAlign.h"
 
 //Used other calibration
-#include "Calibration\rect2d.h"		
-#include "Calibration\mesh2d.h"
-#include "Calibration\vector2d.h"
+#include "Calibration\calibrationB.h"
 
 					
 #define HOST "localhost"
@@ -56,52 +54,19 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 
 
 		//Other Methods
-		void loadXMLSettings();								// Load Settings
-		void SendOSC();										//Send data through OSC
-        void bgCapture(ofxCvGrayscaleImage & _giLive);      //Background Capture
-	    void learnBackground( ofxCvGrayscaleImage & _giLive,//Background Learn (bgCapture and dynamic Bg subtraction 
-					  ofxCvGrayscaleImage & _grayBg, 
-					  ofxCvFloatImage & _fiLearn,
-					  float _fLearnRate );
+		void loadXMLSettings();								  // Load Settings
+		void SendOSC();										  //Send data through OSC
+        void bgCapture(ofxCvGrayscaleImage & _giLive);        //Background Capture
+	    void learnBackground( ofxCvGrayscaleImage & _giLive,  //Background Learn (bgCapture and dynamic Bg subtraction 
+							  ofxCvGrayscaleImage & _grayBg, 
+							  ofxCvFloatImage & _fiLearn,
+							  float _fLearnRate );
 
 		
-		//Calibration Methods		
-		void setScreenScale(float s);
-		void setScreenBBox(rect2df & bbox);
-
-		void setGrid(int x, int y);
-		void initTriangles();
-
-		virtual vector2df *getScreenPoints() { return screenPoints; };
-		virtual vector2df *getCameraPoints() { return cameraPoints; };
-
-		float getScreenScale();
-		rect2df getScreenBBox() { return screenBB; };
-
-		void cameraToScreenSpace(float &x, float &y);
-		void transformDimension(float &width, float &height, float centerX, float centerY);
-
-		void initScreenPoints();
-		void initCameraPoints();
-	
-		// returns -1 if none found..
-		int findTriangleWithin(vector2df pt);
-
-		//! starts calibration
-		virtual void beginCalibration();
-
-		//! goes to the next step
-		virtual void nextCalibrationStep();
-
-		//! return to the last step
-		virtual void revertCalibrationStep();
-
-
-
-
-		/////////////////////////////////////////////////////////////////
-		//						Video Settings
-		/////////////////////////////////////////////////////////////////
+		
+		/***************************************************************
+		*						Video Settings
+		***************************************************************/
        
 		#ifdef _USE_LIVE_VIDEO
 		  ofVideoGrabber 		vidGrabber;
@@ -181,41 +146,18 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 		//---------------------------------------GUI
 		AParameterUI*		parameterUI;
 		bool				bSpaced;	
-		//void fireFunction();
+
 
 		//---------------------------------------Blob Tracker	
 		BlobTracker			tracker;
 
-		bool bCalibrating;		
-		int calibrationStep;
 		bool downColor;
 
 
 	private:
-		//---------------------------------------Calibration
-
-		int GRID_X;
-		int GRID_Y;
-
-		//set Calibration Points
-		int GRID_POINTS;
-		int GRID_INDICES;
-
-		//vector2df screenPoints[GRID_POINTS];		// GRID_X * GRID_Y
-		//vector2df cameraPoints[GRID_POINTS];		// GRID_X * GRID_Y
-		//int triangles[GRID_INDICES];				// GRID_X * GRID_Y * 2t * 3i indices for the points
 		
-		vector2df* screenPoints;					// GRID_X * GRID_Y
-		vector2df* cameraPoints;					// GRID_X * GRID_Y
-		int* triangles;								// GRID_X * GRID_Y * 2t * 3i indices for the points
-
-
-
-		rect2df screenBB;
-		mesh2df screenMesh;
-
-		bool bscreenPoints;
-		bool bcameraPoints;
+		//---------------------------------------Calibration	
+		calibrationB calibrate;
 
 		//---------------------------------------Blob Finder	
 		ofxCvContourFinder	contourFinder;
@@ -236,7 +178,7 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 
 	    ofxCvFloatImage		fiLearn;
 
-		unsigned char    colorRawPixels [320*240*3]; 
+		//unsigned char    colorRawPixels [320*240*3]; 
 
 		//---------------------------------------Warping Box				
 		CBoxAligner			m_box;
