@@ -300,8 +300,8 @@ void calibrationB::cameraToScreenSpace(float &x, float &y)
 		return;
 	}
 
-	x = 0;
-	y = 0;
+	//x = 0;
+	//y = 0;
 	// FIXME: what to do in the case that it's outside the mesh?
 }
 

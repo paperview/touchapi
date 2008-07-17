@@ -25,7 +25,7 @@ void testApp::setup()
 	// ---------------------------------Window Properties 
 	ofSetWindowShape(winWidth,winHeight);
 	ofSetFullscreen(bFullscreen);
-	ofSetFrameRate(30);			//This will be based on camera fps in the future		
+	ofSetFrameRate(130);			//This will be based on camera fps in the future		
 	ofSetVerticalSync(false);	//Set vertical sync to false for better performance
 
 
@@ -48,8 +48,8 @@ void testApp::setup()
 
 	#else
         //vidPlayer.loadMovie("test_videos/FrontDI.m4v");
-		//vidPlayer.loadMovie("test_videos/HCI.mov");
-		vidPlayer.loadMovie("test_videos/raw.mp4");
+		vidPlayer.loadMovie("test_videos/HCI_FTIR.mov");
+		//vidPlayer.loadMovie("test_videos/raw.mp4");
         vidPlayer.play();	
 		printf("Video Mode\n");
 	#endif
@@ -75,6 +75,7 @@ void testApp::setup()
 
 	//Fonts - Is there a way to dynamically change font size?
 	verdana.loadFont("verdana.ttf", 8, true, true);	   //Font used for small images
+	calibrationText.loadFont("verdana.ttf", 12, true, true);
 	bigvideo.loadFont("verdana.ttf", 13, true, true);  //Font used for big images.
 	
 	//Static Images
@@ -112,9 +113,7 @@ void testApp::setup()
 void testApp::update()
 {	
 	ofBackground(0,0,0);
-	//	FOR XML TEST
-	ofBackground((int)red,(int)green,(int)blue);
- 
+
     bNewFrame = false;
 		
 	#ifdef _USE_LIVE_VIDEO
@@ -166,7 +165,7 @@ void testApp::update()
 
 		//subtractBg = giWarped;
 
-		learnBackground( subtractBg, grayBg, fiLearn, 0.0001f);
+		learnBackground( subtractBg, grayBg, fiLearn, fLearnRate);
  
 			
 		if (bLearnBakground == true)
@@ -197,7 +196,6 @@ void testApp::update()
 		* Pressure Map	
 		*****************************************************/
 		unsigned char * rgbaPixels = grayImg.getPixels();
-
 		unsigned char * colorRawPixels = new unsigned char[camWidth*camHeight*3]; 
 
 		//total rgb pixels
@@ -222,9 +220,9 @@ void testApp::update()
 
 		  k +=3;
 		}		           
+
 		pressureMap.setFromPixels(colorRawPixels, camWidth, camHeight);
-
-
+		delete colorRawPixels;//End Pressure Map
 
 		//Set a threshold value
 		grayDiff.threshold(threshold);
@@ -235,16 +233,24 @@ void testApp::update()
 		//Track found contours/blobs
 		tracker.track(&contourFinder);
 
-	}
+		/**************************************************
+		* Background subtraction LearRate
+		* If there are no blobs, add the background faster.
+		* If there ARE blobs, add the background slower.
+		***************************************************/
+		fLearnRate = 0.04f;
 
+		if(contourFinder.nBlobs > 0){
+
+			fLearnRate = 0.001f;
+		}//End Background Learning rate
+	}
 	
 	//We're not using frameseq right now with OSC
 	//frameseq ++;	
 	
-	
 	//----------------------------------------------ParameterUI	
 	parameterUI->update();
-	
 }
 
 
@@ -270,70 +276,54 @@ void testApp::bgCapture( ofxCvGrayscaleImage & _giLive )
 /******************************************************************************
  * The draw function paints the textures onto the screen. It runs after update.
  *****************************************************************************/
-void testApp::draw()
-{	
+void testApp::draw(){	
 
-//string str = "fps = ";
-
-//str+= ofToString(ofGetFrameRate(), 2)+"fps";
-//ofSetWindowTitle(str);
-
-//	printf("Boolean: %i \n", 
-//	bNewFrame);
-
-
-	string str = "Tbeta: ";
-	str+= ofToString(ofGetFrameRate(), 2)+" fps";
-	
-	string str2 = " Camera: ";
-	str2+= ofToString(fps, 1)+" fps";
-
-	ofSetWindowTitle(str + str2);
-
-	//ofSetupScreen(); //? NEEDED?
-	
-	ofSetColor(0xffffff);	
-
-	winWidth = ofGetWidth();
-	winHeight = ofGetHeight();
-
-	if(bToggleHelp)//set a minimum size only if help is on
+	/********************
+	* IF CALIBRATING
+	********************/
+	if(bCalibration)
 	{
-		if(winWidth<minWidth && winHeight<minHeight)
-		{
-			winWidth = minWidth;
-			winHeight = minHeight;
-			ofSetWindowShape(winWidth, winHeight);
-		}
-		else if(winWidth<minWidth)
-		{
-			winWidth = minWidth;
-			ofSetWindowShape(winWidth, winHeight);
-		}
-		else if(winHeight<minHeight)
-		{
-			winHeight = minHeight;
-			ofSetWindowShape(winWidth, winHeight);
-		}
+		bDrawVideo = false;
+		bDrawOutlines = false;
+		bShowLabels = false;
+
+		doCalibration();
 	}
-	//image dimemsions with 20 pixel buffer between each frame
-	//if help is toggled a third column is added so we compensate for it
-	int w, h;
-	if(bToggleHelp)
-		w = (winWidth-80)/6;
+	/**********************
+	* ELSE (NOT CALIBRATING
+	***********************/
 	else
-		w = (winWidth-60)/6;
+	{
+		bDrawVideo = true;
+		bDrawOutlines = true;
+		bShowLabels = true;
+
+		string str = "Tbeta: ";
+		str+= ofToString(ofGetFrameRate(), 2)+" fps";	
+		string str2 = " Camera: ";
+		str2+= ofToString(fps, 1)+" fps";
+		ofSetWindowTitle(str + str2);
+
+		ofSetColor(0xFFFFFF);	
+		logo.draw(820,5);
+		
+		// render the UI
+		// Change to the projection matrix and set our viewing volume.
+		glMatrixMode( GL_PROJECTION );
+		glLoadIdentity();
+		gluOrtho2D(0,  ofGetWidth(), ofGetHeight() ,0);
+	    // We don't want to modify the projection matrix. 
+		glMatrixMode( GL_MODELVIEW );
+		glLoadIdentity();	
 	
-	h = (winHeight-60)/6;
+		parameterUI->render();
+	}
 
-
+	/********************************
+	* IF DRAW STUFF
+	********************************/
 	if(bDrawVideo && !bFastMode)
 	{
-
-	//	ofSetColor(0xCCCCCC);
-	//	ofFill();
-	//	ofRect(10, 10, w*4 + 30,h*4 + 20);
-
 		background.draw(0, 0);
 
 		sourceImg.draw(40, 146, 320, 240);
@@ -344,33 +334,50 @@ void testApp::draw()
 		grayImg.draw(487, 521, 128, 96);
 
 		ofSetColor(0x000000);
-
 		bigvideo.drawString("Raw Image", 145, 135);
-		bigvideo.drawString("Tracked Image", 535, 135);
-	
+		bigvideo.drawString("Tracked Image", 535, 135);	
 		verdana.drawString("Background", 70, 630);
 		verdana.drawString("Background Removed", 189, 630);
 		verdana.drawString("Highpass", 375, 630);
 		verdana.drawString("Amplify", 530, 630);
 
-		m_box.draw( 40, 146 );
+		//Warped Box
+		//m_box.draw( 40, 146 );
 
-} 
+		//Draw PINK CIRCLE 'ON' LIGHT
+		ofSetColor(255, 0, 255);
+		ofFill();		
+		ofCircle(20, 10, 5);
+		ofNoFill();
+	} 
 
-	//first send the OSC message of the contour data
-	//why is it checking if outlines are to be drawn?
-	//I think it should be bTuioMode...~~~~
-	//~~ we have TUIO MODE mapped to the 't' key...
-
-	if(bNewFrame){
+	/********************************
+	* IF TUIO MODE
+	********************************/
+	if(bTUIOMode){
 
 		if(bDrawOutlines)
 		{
 			SendOSC();
 		}
+
+		//Draw GREEN CIRCLE 'ON' LIGHT
+		ofSetColor(0x00FF00);
+		ofFill();		
+		ofCircle(35, 10, 5);
+		ofNoFill();
+
+	/*	if(bToggleHelp && bSpaced){
+
+			//---------------------------------
+			ofSetColor(0xffffff);
+			char buf[256];
+			sprintf(buf, "Sending OSC messages to %s : %d", HOST, PORT);
+			verdana.drawString(buf, 2*w+60, ofGetHeight()-63);
+			//	verdana.drawString( "move the mouse to send OSC message\
+			//						[/tuio/2Dcur <x> <y>] ", 20, 585 );
+	*///}
 	}
-
-
 
 	if(bDrawOutlines && !bFastMode)
 	{
@@ -391,132 +398,23 @@ void testApp::draw()
 			//draw contours on the figures
 			drawBlob.draw(445, 146);
 
-				if(bShowLabels)
-				{
-					ofSetColor(0xFFF000);
-					char idStr[1024];		
-/*					sprintf(idStr, "id: %i\nx: %f\ny: %f\ncx: %f\nc\
-								   y: %f\nwd: %f\nht: %f\na: %f\n",
-								   contourFinder.blobs[i].id,
-								   contourFinder.blobs[i].pts[0].x,
-								   contourFinder.blobs[i].pts[0].y,
-								   contourFinder.blobs[i].centroid.x,
-								   contourFinder.blobs[i].centroid.y,
-								   contourFinder.blobs[i].boundingRect.width,
-								   contourFinder.blobs[i].boundingRect.height,
-								   contourFinder.blobs[i].area);	
+			if(bShowLabels)
+			{
+				calibrate.cameraToScreenSpace(drawBlob.centroid.x, drawBlob.centroid.y);
+				//printf("blah %f \n", drawBlob.centroid.x);				
 
-					//if(bNewFrame){
-
-						calibrate.transformDimension(drawBlob.boundingRect.width, drawBlob.boundingRect.height, 
-										   contourFinder.blobs[i].centroid.x, contourFinder.blobs[i].centroid.y);
-
-						calibrate.cameraToScreenSpace(contourFinder.blobs[i].centroid.x, contourFinder.blobs[i].centroid.y);
-
-					//}
-					
-					//if((contourFinder.blobs[i].centroid.x * 320) >= 1 && (contourFinder.blobs[i].centroid.y * 240) >= 1){
-
-					sprintf(idStr, "id: %i \n x: %f \n y: %f",contourFinder.blobs[i].id, 
-															  (contourFinder.blobs[i].centroid.x * 320.0f), 
-															  (contourFinder.blobs[i].centroid.y * 240.0f));
-
-					//verdana.drawString(idStr, drawBlob.pts[0].x+drawBlob.boundingRect.width + 435,
-					//						  drawBlob.pts[0].y+drawBlob.boundingRect.height + 120);
-*/				
-
-
-				//}
-
+				//Displat Text of blob information
+				ofSetColor(0xCCCCCC);
+				char idStr[1024];	
+				sprintf(idStr, "id: %i \n x: %f \n y: %f",drawBlob.id, ceil(drawBlob.centroid.x * camWidth), 
+																	   ceil(drawBlob.centroid.y * camHeight));
+				verdana.drawString(idStr, drawBlob.centroid.x * 320.0f + drawBlob.boundingRect.width/2 + 455, 
+										  drawBlob.centroid.y * 240.0f + drawBlob.boundingRect.height/2 + 156);			
 			}
 		}
 	}
 
-
-	//---------------------------------------------------------------------HELP
-	// IF HELP and NO SLIDERS
-/*	if(bToggleHelp && bSpaced)
-	{		
-	
-		//-------------------------------------------- DRAW XML SETTINGS OUTPUT
-		//red for error, green for good
-		if(message=="No Settings Found...")
-			ofSetColor(255, 0, 0);	
-		else
-			ofSetColor(0, 255, 0);
-		verdana.drawString("Status: "+message, 2*w+60, ofGetHeight()-15);
-		//-------------------------------------------------
-		ofSetColor(0xffffff);
-		char reportStr[1024];	
-		sprintf(reportStr, "press '~' for ui\npress '1' for help\n\
-						press '2' for video\n\npress ' ' for mini\n\
-						press 'f' for fullscreen\npress 't' for TUIO\n\
-						press 'o' for outlines\npress 'l' to show labels\n\n\
-						press 's' to save settings\n\press 'c' to calibrate\n\
-						press 'r' camera setup\npress 'b' to capture bg\n\
-						press 'i' to invert\npress 'x' to set filter bg\n\n\
-						press 'a/z' to set threshold: %i\n\n\
-						press 'w/e' to set DisplacementThreshold: %i\n\n\
-						press 'n/m' to set Blur Amount: %i\n\
-						press 'j/k' to set Gaussian Blur Amount: %i\n\
-						press '-/=' to set Highpass Blur: %i\n\
-						press '9/0' to set Highpass Noise: %i\n\
-						press 'h/v' to set Mirror Mode: None\n\n\
-						press 'm' toggle DI or FTIR mode\n\n\
-						press 'ESC' to exit (bug)\n\n\nblobs found: %i",
-						threshold, wobbleThreshold, blurValue, 
-						blurGaussianValue,highpassBlur,highpassNoise, 
-						contourFinder.nBlobs);
-		verdana.drawString(reportStr, w - 60, 45);
-
-		verdana.drawString("Original", 33, 40);
-		verdana.drawString("Grayscale", w+53, 40);
-		verdana.drawString("Background", 33, h+60);
-		verdana.drawString("Contour", w+53, h+60);
-
-		string fpsStr = "FPS: "+ofToString(ofGetFrameRate(), 2)+
-						"\nCamera FPS: 34.00\nPipeline Use: 2323\n";
-		verdana.drawString(fpsStr, 2*w+60, ofGetHeight()-50);	
-		//verdana.drawString(eventString,80,25);
-
-		//---------------------------------------------------------------EVENTS
-
-		//sprintf(timeString, "Time: %0.2i:%0.2i:%0.2i \nElapsed time %i", 
-		//		  ofGetHours(), ofGetMinutes(), ofGetSeconds(), 
-		//		  ofGetElapsedTimeMillis());
-
-		//verdana.drawString(timeString, 98,98);
-
-		//ofEnableAlphaBlending();
-		//ofSetColor(255,255,255,127);   // white, 50% transparent
-		//ofFill();		
-		//ofCircle(mouseX,mouseY,10);	
-		//ofNoFill();
-		//ofDisableAlphaBlending();
-
-		if(bTUIOMode)
-		{		
-			//---------------------------------
-			ofSetColor(0xffffff);
-			char buf[256];
-			sprintf(buf, "Sending OSC messages to %s : %d", HOST, PORT);
-			verdana.drawString(buf, 2*w+60, ofGetHeight()-63);
-			//	verdana.drawString( "move the mouse to send OSC message\
-			//						[/tuio/2Dcur <x> <y>] ", 20, 585 );
-		}//END TUIO MODE
-	}	
-*/
-	
-	//----------------------------------------------------------------------OSC
-	// display instructions
-
 	/*
-	if (bSmooth)
-	{
-		//ofEnableSmoothing();
-		//ofDisableSmoothing();
-	}
-	
 	if (bSnapshot == true)
 	{
 		// grab a rectangle at 200,200, width and height of 300,180
@@ -531,121 +429,6 @@ void testApp::draw()
 	ofSetColor(0xFFFFFF);
 	img.draw(0,0,camWidth,camHeight);
 	*/ 	
-    
-
-
-	//-----------------------------------------------DRAW LED FOR SHOWING VIDEO
-	if(bDrawVideo)
-	{		
-		ofSetColor(255, 0, 255);
-		ofFill();		
-		ofCircle(20, 10, 5);
-		ofNoFill();
-	}		
-	if(bTUIOMode)
-	{		
-		ofSetColor(0,255,0);
-		ofFill();		
-		ofCircle(35, 10, 5);
-		ofNoFill();
-	}		
-	//----------------------------------------------------------------DRAW LEDS
-
-	if(bCalibration)
-	{		
-
-		int screenW = ofGetWidth();
-		int screenH = ofGetHeight();
-		
-		//Change the background color when a finger presses down/up
-		if(downColor){
-			ofSetColor(0x2F2F2F);
-		}
-		else
-		ofSetColor(0x000000);	
-
-		ofFill();	
-		ofRect(0, 0, screenW, screenH);	
-
-		ofSetColor(0xFFFFFF);	
-		//ofSetWindowTitle("Calibration");
-		verdana.drawString("Calibration", 33, 60);	
-		char reportStr[1024];	
-		sprintf(reportStr, "press '] or [' resize grid\n\
-							press '2' to resize bounding box\n\
-							use arrow keys to move bounding box");
-		verdana.drawString(reportStr, 700, 50);
-
-
-		//Get the screen points so we can make a grid 
-		vector2df *screenpts = calibrate.getScreenPoints();
-
-		int i;
-
-		//For each grid point
-		for(i=0; i<calibrate.GRID_POINTS; i++)
-		{
-			//Draw a Red Circle if the it's the active confg points
-			if(calibrate.calibrationStep == i){
-				ofSetColor(0xFF0000);
-				ofFill();
-				ofCircle(screenpts[i].X * screenW, screenpts[i].Y * screenH, 9);	
-			}
-			//Draw a green target (t) if the it's NOT the active point
-			else{ 
-				ofSetColor(0x00FF00);
-				ofFill();
-				ofCircle(screenpts[i].X * screenW, screenpts[i].Y * screenH, 5);				
-			}	
-
-			//Make Plus Sign
-			ofSetColor(0xFF0000);
-			//Horizontal Plus
-			ofLine(screenpts[i].X * screenW - 20, screenpts[i].Y * screenH, screenpts[i].X * screenW + 20, screenpts[i].Y * screenH);
-			//Vertical Plus
-			ofLine(screenpts[i].X * screenW, screenpts[i].Y * screenH - 20, screenpts[i].X * screenW, screenpts[i].Y * screenH + 20);
-		
-
-			ofSetColor(0xDDDDDD);
-			ofNoFill();
-
-			//if(i <= 2)
-			//ofLine(screenpts[i].X * screenW, screenpts[i].Y * screenH, screenBB.getWidth() * screenW, screenpts[i].Y * screenH);
-			//if(i <= 2)
-			//ofLine(screenpts[i].X * screenW, screenpts[i].Y * screenH, screenpts[i].X * screenW, screenBB.getHeight() * screenH);
-		}
-
-		ofSetColor(0x00FF00);
-		ofNoFill();
-		ofRect(calibrate.screenBB.upperLeftCorner.X * screenW, calibrate.screenBB.upperLeftCorner.Y * screenH, 
-			   calibrate.screenBB.getWidth() * screenW, calibrate.screenBB.getHeight() * screenH);
-	}		
-
-
-
-
-	//------------------------------------------------------------ Parameter UI
-	if(!bCalibration)
-	{
-			ofSetColor(0xFFFFFF);	
-			logo.draw(820,5);
-			
-			// render the UI
-			// Change to the projection matrix and set our viewing volume.
-//			glMatrixMode( GL_PROJECTION );
-//			glLoadIdentity();
-
-//			gluOrtho2D(0,  ofGetWidth(), ofGetHeight() ,0);
-
-			// We don't want to modify the projection matrix. 
-//			glMatrixMode( GL_MODELVIEW );
-//			glLoadIdentity();	
-
-			parameterUI->render();
-//		}
-	}
-
-
 }
 
 /*****************************************************************************
@@ -653,27 +436,22 @@ void testApp::draw()
  *****************************************************************************/
 void testApp::keyPressed(int key)
 { 
-	sprintf(eventString, "keyPressed = (%i)", key);
-	//printf(int(key));
-//	if(ofGetWidth()>1000)
-//	{
-		// THIS IS FOR THE ~ toggle...
-		if(key==126 || key==96) 
+	// THIS IS FOR THE ~ toggle...
+	if(key==126 || key==96) 
+	{
+		if(parameterUI->isActive)
 		{
-			if(parameterUI->isActive)
-			{
-	//			parameterUI->deActivate();	
-				bSpaced = true;
-				//bToggleHelp = true;	
-			}
-			else
-			{
-				parameterUI->activate();	
-				bSpaced = false;		
-				//bToggleHelp = false;	
-			}
+//			parameterUI->deActivate();	
+			bSpaced = true;
+			//bToggleHelp = true;	
 		}
-//	}
+		else
+		{
+			parameterUI->activate();	
+			bSpaced = false;		
+			//bToggleHelp = false;	
+		}
+	}
 
 	//------------------------------- BEGIN MAIN KEYBOARD SWITCH (LONGEST EVER)
 	switch(key)
@@ -685,7 +463,6 @@ void testApp::keyPressed(int key)
 			XML.setValue("CONFIG:BOOLEAN:SNAPSHOT",bSnapshot);
 			XML.setValue("CONFIG:BOOLEAN:FAST",bFastMode);
 			XML.setValue("CONFIG:BOOLEAN:OUTLINES",bDrawOutlines);
-			XML.setValue("CONFIG:BOOLEAN:INVERT",bInvertVideo);
 			XML.setValue("CONFIG:BOOLEAN:LEARNBG",bLearnBakground);
 			XML.setValue("CONFIG:BOOLEAN:CALIBRATION",bCalibration);
 			XML.setValue("CONFIG:BOOLEAN:VMIRROR",bVerticalMirror);
@@ -826,6 +603,105 @@ void testApp::keyPressed(int key)
 }
 
 
+void testApp::doCalibration(){
+
+	int screenW = ofGetWidth();
+	int screenH = ofGetHeight();
+	
+	//Change the background color when a finger presses down/up		
+	ofSetColor(0x000000);
+	if(calibrate.bCalibrating && downColor){ofSetColor(0x2F2F2F);}
+	ofFill();	
+	ofRect(0, 0, screenW, screenH);	
+
+	//Get the screen points so we can make a grid 
+	vector2df *screenpts = calibrate.getScreenPoints();
+
+	int i;
+
+	//For each grid point
+	for(i=0; i<calibrate.GRID_POINTS; i++)
+	{
+		//Draw a Red Circle if the it's the active confg points
+		if(calibrate.calibrationStep == i){
+			ofSetColor(0xFF0000);
+			ofFill();
+			ofCircle(screenpts[i].X * screenW, screenpts[i].Y * screenH, 9);	
+		}
+		//Draw a green target (t) if the it's NOT the active point
+		else{ 
+			ofSetColor(0x00FF00);
+			ofFill();
+			ofCircle(screenpts[i].X * screenW, screenpts[i].Y * screenH, 5);				
+		}	
+
+		//Make Plus Sign
+		ofSetColor(0xFF0000);
+		//Horizontal Plus
+		ofLine(screenpts[i].X * screenW - 20, screenpts[i].Y * screenH, screenpts[i].X * screenW + 20, screenpts[i].Y * screenH);
+		//Vertical Plus
+		ofLine(screenpts[i].X * screenW, screenpts[i].Y * screenH - 20, screenpts[i].X * screenW, screenpts[i].Y * screenH + 20);
+	
+
+		ofSetColor(0xDDDDDD);
+		ofNoFill();
+
+		//if(i <= 2)
+		//ofLine(screenpts[i].X * screenW, screenpts[i].Y * screenH, screenBB.getWidth() * screenW, screenpts[i].Y * screenH);
+		//if(i <= 2)
+		//ofLine(screenpts[i].X * screenW, screenpts[i].Y * screenH, screenpts[i].X * screenW, screenBB.getHeight() * screenH);
+	}
+
+	ofSetColor(0x00FF00);
+	ofNoFill();
+	ofRect(calibrate.screenBB.upperLeftCorner.X * screenW, calibrate.screenBB.upperLeftCorner.Y * screenH, 
+		   calibrate.screenBB.getWidth() * screenW, calibrate.screenBB.getHeight() * screenH);
+
+	
+	//Draw blobs in calibration to see where you are touching
+	if(!calibrate.bCalibrating){
+
+		//Find the blobs
+		for(int i=0; i<contourFinder.nBlobs; i++)
+		{
+			//temp blob to rescale and draw on screen
+			ofxCvBlob drawBlob2;
+			drawBlob2 = contourFinder.blobs[i];
+
+			calibrate.cameraToScreenSpace(drawBlob2.centroid.x, drawBlob2.centroid.y);
+
+			ofSetColor(0xFF0099);
+			//ofFill();
+			ofEllipse(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight(), 
+				      drawBlob2.boundingRect.width, drawBlob2.boundingRect.height);
+			
+			//Displat Text of blob information
+			ofSetColor(0x00FF00);
+			char idStr[1024];	
+			sprintf(idStr, "id: %i \n x: %f \n y: %f",drawBlob2.id, ceil(drawBlob2.centroid.x * ofGetWidth()), 
+																	ceil(drawBlob2.centroid.y * ofGetHeight()));
+			verdana.drawString(idStr, drawBlob2.centroid.x * ofGetWidth() + drawBlob2.boundingRect.width/2 + 20, 
+									  drawBlob2.centroid.y * ofGetHeight() + drawBlob2.boundingRect.height/2 + 20);
+		}	
+	}//End Blob Drawing
+
+
+	/*****************************************************************************
+	* Calibration Instructions
+	*****************************************************************************/		
+	ofSetColor(0xFFFFFF);	
+	ofSetWindowTitle("Calibration");		
+	calibrationText.drawString("Calibration", 33, 60);	
+	char reportStr[1024];	
+	sprintf(reportStr, "-press '] or [' resize grid \n\
+						-press '2' to resize bounding box \n\
+						-use arrow keys to move bounding box");
+	calibrationText.drawString(reportStr, ofGetWidth()/2.5, ofGetHeight()/2.5);
+}
+
+
+
+
 
 //-------------------------------------------------------------- 
 //	Load Settings from the config.xml file 
@@ -845,11 +721,6 @@ void testApp::loadXMLSettings(){
 		//FAIL!
 		message = "No Settings Found...";
 	}
-
-	// XML COLOR TEST (VERIFIES ITS WORKING!!)
-	red		= XML.getValue("CONFIG:BACKGROUND:COLOR:RED", 0);
-	green	= XML.getValue("CONFIG:BACKGROUND:COLOR:GREEN", 0);
-	blue	= XML.getValue("CONFIG:BACKGROUND:COLOR:BLUE", 0);
 
 	//-------------------------------------------------------------- 
 	//  START BINDING XML TO VARS
@@ -879,34 +750,27 @@ void testApp::loadXMLSettings(){
 	bHorizontalMirror	= XML.getValue("CONFIG:BOOLEAN:HMIRROR",0);	
 	
 	threshold			= XML.getValue("CONFIG:INT:THRESHOLD",0);
-	highpassBlur		= XML.getValue("CONFIG:INT:LOWRANGE",0);
-	highpassNoise		= XML.getValue("CONFIG:INT:HIGHRANGE",0);
-	highpassAmp		= XML.getValue("CONFIG:INT:HIGHPASSAMP",0);
+	highpassBlur		= XML.getValue("CONFIG:INT:HIGHPASSBLUR",0);
+	highpassNoise		= XML.getValue("CONFIG:INT:HIGHPASSNOISE",0);
+	highpassAmp			= XML.getValue("CONFIG:INT:HIGHPASSAMP",0);
 	
 //--------------------------------------------------- TODO XML NETWORK SETTINGS	
 	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
-	//myLocalHost			= XML.getValue("CONFIG:NETWORK:LOCALHOST",0);
+	//myLocalHost		= XML.getValue("CONFIG:NETWORK:LOCALHOST",0);
 	//myRemoteHost		= XML.getValue("CONFIG:NETWORK:HOSTA",0);
-	//myTUIOPort			= XML.getValue("CONFIG:NETWORK:TUIO_PORT_OUT",0);
+	//myTUIOPort		= XML.getValue("CONFIG:NETWORK:TUIO_PORT_OUT",0);
 	TUIOSocket.setup(HOST, PORT); 
 //-------------------------------------------------------------- 
 //  END XML SETUP
-//-------------------------------------------------------------- 
-// NOW TO SET ALL THE XML VARS :/
-//	XML.setValue("CONFIG:BACKGROUND:COLOR:RED", red);
-//	XML.setValue("CONFIG:BACKGROUND:COLOR:GREEN", green);
-//	XML.setValue("CONFIG:BACKGROUND:COLOR:BLUE", blue);
-//-------------------------------------------------------------- 
 
 
-//////////////////////////////////////////////////////////////////
-//						STEUP CALIBRATION						//
-//////////////////////////////////////////////////////////////////
-
+/****************************************************************
+*						STEUP CALIBRATION						
+****************************************************************/
 	
 	calibrate.setCamRes(camWidth, camHeight);
 	calibrate.loadXMLSettings();
-	//End calibrationXML Calibration Settings
+//End calibrationXML Calibration Settings
 }
 
 
@@ -990,10 +854,6 @@ void testApp::SendOSC()
 /*****************************************************************************
  * TODO:
  *****************************************************************************/
-//void testApp::fireFunction(){printf('-');}
-/*****************************************************************************
- * TODO:
- *****************************************************************************/
 void testApp::mouseMoved(int x, int y)
 {
 	sprintf(eventString, "mouseMoved = (%i,%i)", x, y);
@@ -1044,27 +904,30 @@ void testApp::mouseReleased()
 
 
 
-void testApp::blobOn( ofxCvBlob b) { printf("Blob %i \n", b.id); downColor = true;}
-void testApp::blobMoved( ofxCvBlob b) {}  
+void testApp::blobOn( ofxCvBlob b)
+{
+	printf("Blob %i \n", b.id); downColor = true;
+
+}
+
+void testApp::blobMoved( ofxCvBlob b) 
+{
+
+
+}  
 
 void testApp::blobOff( ofxCvBlob b) 
 {
 	downColor = false;
 
-	printf("Blob Up %i \n", b.id);
+	//printf("Blob Up %i \n", b.id);
 
 	if(calibrate.bCalibrating){			
 		
-		//time_t now = time(0);		
-		//if((now-m_lastPress)>0){
-		//	m_lastPress = now;
-
-			calibrate.cameraPoints[calibrate.calibrationStep] = vector2df(b.centroid.x, b.centroid.y);
-			calibrate.nextCalibrationStep();
-			
-			printf("%d (%f, %f)\n", calibrate.calibrationStep, b.centroid.x, b.centroid.y);
-			
-		//	curcalib ++;
+		calibrate.cameraPoints[calibrate.calibrationStep] = vector2df(b.centroid.x, b.centroid.y);
+		calibrate.nextCalibrationStep();
+		
+		printf("%d (%f, %f)\n", calibrate.calibrationStep, b.centroid.x, b.centroid.y);
 	}
 }
 
