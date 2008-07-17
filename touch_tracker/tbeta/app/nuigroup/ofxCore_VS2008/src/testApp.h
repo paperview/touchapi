@@ -29,9 +29,9 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 {
 	public:
 
-		/////////////////////////////////////////////////////////////////
-		//						Public functions
-		/////////////////////////////////////////////////////////////////
+		/****************************************************************
+		*						Public functions
+		****************************************************************/
 		
 		//Basic Methods
 		void setup();
@@ -61,6 +61,7 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 							  ofxCvGrayscaleImage & _grayBg, 
 							  ofxCvFloatImage & _fiLearn,
 							  float _fLearnRate );
+		void doCalibration();
 
 		
 		
@@ -135,6 +136,7 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 		
 		//---------------------------------------Fonts
 		ofTrueTypeFont		verdana;
+		ofTrueTypeFont		calibrationText;
 		ofTrueTypeFont		bigvideo;
 		ofImage				logo;
 		
@@ -174,11 +176,11 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 		ofxCvGrayscaleImage highpassImg;
 		ofxCvGrayscaleImage	giWarped;
 
+		//---------------------------------------Pressure Map
 		ofxCvColorImage		pressureMap;
 
+		//---------------------------------------Background Subtraction
 	    ofxCvFloatImage		fiLearn;
-
-		//unsigned char    colorRawPixels [320*240*3]; 
 
 		//---------------------------------------Warping Box				
 		CBoxAligner			m_box;
@@ -191,15 +193,11 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 		string				message;
 
 
-		//---------------------------------------FOR TEST MARKED FOR GC
-		float				red;
-		float				green;
-		float				blue;
-		bool				bblobs;
-
 		//---------------------------------------FOR NETWORK 
 		char				myLocalHost[255];
 		char				myRemoteHost[255];
 		int					myTUIOPort;
+
+
 };
 #endif

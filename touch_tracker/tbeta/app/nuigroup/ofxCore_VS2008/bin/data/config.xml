@@ -1,14 +1,5 @@
 <?xml version="1.0" ?>
 <CONFIG>
-    <!--// THIS IS JUST A TEST THE XML IS WORKING -->
-    <BACKGROUND>
-        <COLOR>
-            <RED>0</RED>
-            <GREEN>0</GREEN>
-            <BLUE>0</BLUE>
-        </COLOR>
-    </BACKGROUND>
-    <!--// END THE TEST GET TO WORK  //-->
     <GLOBALS />
     <APPLICATION>
         <TITLE>Terminator</TITLE>
@@ -39,17 +30,13 @@
     <INT>
         <!--// THIS SHOULD BE CALLED FILTERS SETTERS OR SOME JIVE //-->
         <THRESHOLD>30</THRESHOLD>
-        <WTHRESHOLD>5</WTHRESHOLD>
-        <BLUR>1</BLUR>
-        <BLURG>7</BLURG>
-        <LOWRANGE>40</LOWRANGE>
-        <HIGHRANGE>9</HIGHRANGE>
+        <HIGHPASSBLUR>40</HIGHPASSBLUR>
+        <HIGHPASSNOISE>9</HIGHPASSNOISE>
         <HIGHPASSAMP>10</HIGHPASSAMP>
     </INT>
     <FLOAT>
         <NODE />
     </FLOAT>
-    <!--// THIS IS FOR CALIBRATION IN THEORY WE CAN LOAD TOUCHLIB CALIBRATION THAT ARE KNOWN WORKING //-->
     <!--// NETWORK SETTINGS //-->
     <NETWORK>
         <LOCALHOST>127.0.0.1</LOCALHOST>

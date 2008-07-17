@@ -55,7 +55,7 @@ class ofxCvBlob {
 			ofSetColor(0xFF0099);
 			ofCircle(x + boundingRect.x+boundingRect.width/2,y + boundingRect.y+boundingRect.height/2,area/75); 
 		//	ofRect(x + boundingRect.x+boundingRect.width/4, y + boundingRect.y+boundingRect.height/4, boundingRect.width/2, boundingRect.height/2);
-        //    ofRect(x + boundingRect.x, y + boundingRect.y, boundingRect.width, boundingRect.height);
+        //  ofRect(x + boundingRect.x, y + boundingRect.y, boundingRect.width, boundingRect.height);
 			
 	
         }
