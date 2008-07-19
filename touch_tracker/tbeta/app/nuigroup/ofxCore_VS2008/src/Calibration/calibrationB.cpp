@@ -35,8 +35,8 @@ void calibrationB::loadXMLSettings(){
 
 	//Set grid and init everything that relates to teh grid.
 
-	GRID_X		= calibrationXML.getValue("SCREEN:GRIDMESH:GRIDX",50);
-	GRID_Y		= calibrationXML.getValue("SCREEN:GRIDMESH:GRIDX",50);
+	GRID_X		= calibrationXML.getValue("SCREEN:GRIDMESH:GRIDX", 50);
+	GRID_Y		= calibrationXML.getValue("SCREEN:GRIDMESH:GRIDY", 50);
 
 	setGrid(GRID_X, GRID_Y);
  
@@ -300,8 +300,8 @@ void calibrationB::cameraToScreenSpace(float &x, float &y)
 		return;
 	}
 
-	//x = 0;
-	//y = 0;
+	x = 0;
+	y = 0;
 	// FIXME: what to do in the case that it's outside the mesh?
 }
 

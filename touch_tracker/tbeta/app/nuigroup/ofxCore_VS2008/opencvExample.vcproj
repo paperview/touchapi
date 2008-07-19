@@ -202,6 +202,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Thingy.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Thingy.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\uiDefinition.h"
 				>
 			</File>

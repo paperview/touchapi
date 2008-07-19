@@ -17,6 +17,7 @@
 //Used other calibration
 #include "Calibration\calibrationB.h"
 
+#include "Thingy.h"
 					
 #define HOST "localhost"
 #define PORT 3333
@@ -28,6 +29,8 @@
 class testApp : public ofSimpleApp, public ofCvBlobListener
 {
 	public:
+
+		vector<Thingy> thingies;
 
 		/****************************************************************
 		*						Public functions
@@ -42,6 +45,7 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 
 		//Key events
 		void keyPressed(int key);
+		void keyReleased(int key);
 		void mouseMoved(int x, int y);
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
@@ -99,6 +103,8 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 		
 		bool				bDrawVideo;
 		bool  				bFastMode;
+		bool				bShowInterface;
+		bool				bShowPressure;
 		bool				bLearnBakground;		
 		bool				bInvertVideo;		
 		bool				bToggleHelp;
@@ -118,7 +124,10 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 		*End config.xml variables
 		*****************************************************/
 
-
+		bool				bW;
+		bool				bS;
+		bool				bA;
+		bool				bD;
 
 		float				fLearnRate;// rate to learn background
 		
@@ -153,7 +162,7 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 		//---------------------------------------Blob Tracker	
 		BlobTracker			tracker;
 
-		bool downColor;
+		float				downColor;
 
 
 	private:

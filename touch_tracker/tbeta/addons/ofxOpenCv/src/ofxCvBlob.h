@@ -49,15 +49,14 @@ class ofxCvBlob {
             }
             ofEndShape(true);
             ofSetColor(0xFFFFFF);
-		//  ofLine(x + boundingRect.x+boundingRect.width/2,y + boundingRect.y+boundingRect.height/2,x+boundingRect.width+100,y+boundingRect.height+200); //hands		
-		//	ofFill();  
-		//	ofNoFill();
+		    //ofLine(x + boundingRect.x+boundingRect.width/2,y + boundingRect.y+boundingRect.height/2,x+boundingRect.width+100,y+boundingRect.height+200); //hands		
+			ofFill();  
+			ofNoFill();
 			ofSetColor(0xFF0099);
-			ofCircle(x + boundingRect.x+boundingRect.width/2,y + boundingRect.y+boundingRect.height/2,area/75); 
-		//	ofRect(x + boundingRect.x+boundingRect.width/4, y + boundingRect.y+boundingRect.height/4, boundingRect.width/2, boundingRect.height/2);
-        //  ofRect(x + boundingRect.x, y + boundingRect.y, boundingRect.width, boundingRect.height);
-			
-	
+			//ofCircle(x + boundingRect.x+boundingRect.width/2,y + boundingRect.y+boundingRect.height/2,area/100); 
+			//ofRect(x + boundingRect.x+boundingRect.width/4, y + boundingRect.y+boundingRect.height/4, boundingRect.width/2, boundingRect.height/2);
+            ofRect(x + boundingRect.x, y + boundingRect.y, boundingRect.width, boundingRect.height);
+				
         }
 };
 
