@@ -6,7 +6,6 @@
 
 #include "ofxCvContourFinder.h"
 
-
 class BlobTracker 
 {
 

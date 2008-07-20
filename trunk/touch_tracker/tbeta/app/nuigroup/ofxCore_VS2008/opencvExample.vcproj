@@ -257,6 +257,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Communication"
+				>
+				<File
+					RelativePath=".\src\Communication\TUIOOSC.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\Communication\TUIOOSC.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="libs"
