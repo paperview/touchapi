@@ -17,6 +17,9 @@
 //Used other calibration
 #include "Calibration\calibrationB.h"
 
+//Communications
+#include "Communication\TUIOOSC.h"
+
 #include "Thingy.h"
 					
 #define HOST "localhost"
@@ -59,7 +62,6 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 
 		//Other Methods
 		void loadXMLSettings();								  // Load Settings
-		void SendOSC();										  //Send data through OSC
         void bgCapture(ofxCvGrayscaleImage & _giLive);        //Background Capture
 	    void learnBackground( ofxCvGrayscaleImage & _giLive,  //Background Learn (bgCapture and dynamic Bg subtraction 
 							  ofxCvGrayscaleImage & _grayBg, 
@@ -203,10 +205,6 @@ class testApp : public ofSimpleApp, public ofCvBlobListener
 
 
 		//---------------------------------------FOR NETWORK 
-		char				myLocalHost[255];
-		char				myRemoteHost[255];
-		int					myTUIOPort;
-
-
+		TUIOOSC				myTUIO;
 };
 #endif

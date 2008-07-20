@@ -1,6 +1,7 @@
 #include "testApp.h"
 #include "uiDefinition.h"
 
+
 /******************************************************************************
  * The setup function is run once to perform initializations in the application
  *****************************************************************************/
@@ -10,11 +11,13 @@ void testApp::setup()
 	snapCounter		= 6; 
 	frameseq		= 0;
 
+
 	//Background Subtraction Learning Rate
 	fLearnRate = 0.0001f;
 
 	// ---------------------------------Load Settings from config.xml File 
 	loadXMLSettings();
+	myTUIO.setup();
 
 	// ---------------------------------Window Properties 
 	ofSetWindowShape(winWidth,winHeight);
@@ -252,8 +255,10 @@ void testApp::update()
 		}//End Background Learning rate
 	}
 	
-	//We're not using frameseq right now with OSC
-	//frameseq ++;	
+	if(bTUIOMode){
+		//We're not using frameseq right now with OSC
+		//myTUIO.update();
+	}
 	
 	//----------------------------------------------ParameterUI	
 	parameterUI->update();
@@ -321,11 +326,8 @@ void testApp::draw(){
 	*********************************/
 	if(bTUIOMode){
 
-		if(bDrawOutlines)
-		{
-			SendOSC();
-		}
-
+		myTUIO.sendOSC();
+		
 		//Draw GREEN CIRCLE 'ON' LIGHT
 		ofSetColor(0x00FF00);
 		ofFill();		
@@ -500,13 +502,15 @@ void testApp::loadXMLSettings(){
 	highpassAmp			= XML.getValue("CONFIG:INT:HIGHPASSAMP",0);
 	
 //--------------------------------------------------- TODO XML NETWORK SETTINGS	
-	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
-	//myLocalHost		= XML.getValue("CONFIG:NETWORK:LOCALHOST",0);
-	//myRemoteHost		= XML.getValue("CONFIG:NETWORK:HOSTA",0);
-	//myTUIOPort		= XML.getValue("CONFIG:NETWORK:TUIO_PORT_OUT",0);
-	TUIOSocket.setup(HOST, PORT); 
+	bTUIOMode			  = XML.getValue("CONFIG:BOOLEAN:TUIO",0);
+	//myTUIO.myLocalHost  = XML.getValue("CONFIG:NETWORK:LOCALHOST",0);
+	//myTUIO.myRemoteHost = XML.getValue("CONFIG:NETWORK:HOSTA",0);
+	//myTUIO.myTUIOPort	  = XML.getValue("CONFIG:NETWORK:TUIO_PORT_OUT",0);
+	myTUIO.TUIOSocket.setup(HOST, PORT);
 //-------------------------------------------------------------- 
 //  END XML SETUP
+
+	
 
 
 /******************************
@@ -673,83 +677,6 @@ void testApp::doCalibration(){
 }
 
 /*****************************************************************************
-* Send Set message of ID, x, y, X, Y, m, weight, width to OSC
-*****************************************************************************/
-void testApp::SendOSC()
-{
-	
-	//If there are no blobs, send alive message and fseq
-	if(contourFinder.nBlobs==0)
-	{
-		//Sends alive message - saying 'Hey, there's no alive blobs'
-		ofxOscMessage m1;
-		m1.setAddress("/tuio/2Dcur");		
-		m1.addStringArg("alive");
-		TUIOSocket.sendMessage(m1);
-
-		//Send fseq message
-		/*		Commented out Since We're not using fseq right now
-		ofxOscMessage m2;
-		m2.setAddress( "/tuio/2Dcur" );		
-		m2.addStringArg( "fseq" );
-		m2.addIntArg(frameseq);
-		TUIOSocket.sendMessage( m2 );
-		*/
-	}
-	else //actually send the blobs
-	{
-		for(int i=0; i<contourFinder.nBlobs; i++)
-		{
-
-			float transformX = contourFinder.blobs[i].centroid.x;
-			float transformY = contourFinder.blobs[i].centroid.y;
-
-			float transformWidth = contourFinder.blobs[i].boundingRect.width;
-			float transformHeight = contourFinder.blobs[i].boundingRect.height;
-	
-			calibrate.transformDimension(transformWidth, transformHeight, transformX, transformY);
-			calibrate.cameraToScreenSpace(transformX, transformY);
-
-			//Set Message
-			ofxOscMessage m1;
-			m1.setAddress("/tuio/2Dcur");
-			m1.addStringArg("set");
-			m1.addIntArg(contourFinder.blobs[i].id); //id
-			m1.addFloatArg(transformX);  // x
-			m1.addFloatArg(transformY); // y 
-			m1.addFloatArg(0); //X
-			m1.addFloatArg(0); //Y
-			m1.addFloatArg(contourFinder.blobs[i].area); //m	
-			m1.addFloatArg(transformWidth); // wd
-			m1.addFloatArg(transformHeight);// ht
-			TUIOSocket.sendMessage(m1 );
-
-			//Send alive message of all alive IDs
-			ofxOscMessage m2;
-			m2.setAddress("/tuio/2Dcur");		
-			m2.addStringArg("alive");
-
-			for(int i=0; i<contourFinder.nBlobs; i++)
-				m2.addIntArg(contourFinder.blobs[i].id); //Get list of ALL active IDs		
-
-			TUIOSocket.sendMessage(m2);//send them		
-
-			//Send fseq message
-			/* Commented out Since We're not using fseq right now
-			ofxOscMessage m3;
-			m3.setAddress( "/tuio/2Dcur" );		
-			m3.addStringArg( "fseq" );
-			m3.addIntArg(frameseq);
-			TUIOSocket.sendMessage( m3 );
-			*/
-		}
-	}
-}
-
-
-
-
-/*****************************************************************************
  * KEY EVENTS
  *****************************************************************************/
 void testApp::keyPressed(int key)
@@ -810,7 +737,8 @@ void testApp::keyPressed(int key)
 		case 't':
 			if(bTUIOMode)
 			{
-				bTUIOMode = false;		
+				bTUIOMode = false;	
+				myTUIO.blobs.clear();
 				//ofSetWindowShape(700,600);
 			}
 			else
@@ -1099,27 +1027,56 @@ void testApp::blobOn( ofxCvBlob b)
 {
 	printf("Blob DOWN %i \n", b.id); 
 
-	downColor = 0x2FB5FF;
+	if(bCalibration)
+	{
+	downColor = 0x2FB5FF; //change target color when a finger is down
+	}
+	
+	if(bTUIOMode)
+	{
+		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);
+		myTUIO.blobs[b.id] = b;
+	}
+
 }
 
 void testApp::blobMoved( ofxCvBlob b) 
 {
-
-
+	if(bTUIOMode)
+	{
+		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);
+		myTUIO.blobs[b.id] = b;
+	}
 }  
 
 void testApp::blobOff( ofxCvBlob b) 
 {
 	downColor = 0xFF0000;
 
-	//printf("Blob UP %i \n", b.id);
+	printf("Blob UP %i \n", b.id);
 
+	
 	if(calibrate.bCalibrating){			
 		
 		calibrate.cameraPoints[calibrate.calibrationStep] = vector2df(b.centroid.x, b.centroid.y);
 		calibrate.nextCalibrationStep();
 		
 		printf("%d (%f, %f)\n", calibrate.calibrationStep, b.centroid.x, b.centroid.y);
+	}
+
+	if(bTUIOMode)
+	{
+		std::map<int, ofxCvBlob>::iterator iter;
+		for(iter = myTUIO.blobs.begin(); iter != myTUIO.blobs.end();)
+		{
+			if(iter->second.id == b.id)
+			{
+				iter = myTUIO.blobs.erase(iter);
+			}
+			else{
+				iter++;
+			}
+		}
 	}
 }
 
