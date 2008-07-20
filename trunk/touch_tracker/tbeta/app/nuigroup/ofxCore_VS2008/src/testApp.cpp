@@ -1,17 +1,11 @@
-#define WIN32_LEAN_AND_MEAN
-#define _WIN32_WINNT 0x0500
-
 #include "testApp.h"
 #include "uiDefinition.h"
-
-#include <windows.h>
 
 /******************************************************************************
  * The setup function is run once to perform initializations in the application
  *****************************************************************************/
 void testApp::setup()
-{	 		
-
+{	
 	// ---------------------------------MISC VARS FOR SETTINGS (MARKED FOR GC) 
 	snapCounter		= 6; 
 	frameseq		= 0;
@@ -53,10 +47,13 @@ void testApp::setup()
 
 	#else
         //vidPlayer.loadMovie("test_videos/FrontDI.m4v");
-		vidPlayer.loadMovie("test_videos/HCI_FTIR.mov");
-		//vidPlayer.loadMovie("test_videos/raw.mp4");
+		//vidPlayer.loadMovie("test_videos/HCI_FTIR.mov");
+		vidPlayer.loadMovie("test_videos/raw.mp4");
         vidPlayer.play();	
 		printf("Video Mode\n");
+		camHeight = vidPlayer.height;
+		camWidth = vidPlayer.width;
+		
 	#endif
     
 	//camWidth = 640;
@@ -133,7 +130,6 @@ void testApp::update()
 	
 	if (bNewFrame)
 	{
-
 		//Calculate FPS of Camera
 		frames++;
 		float time = ofGetElapsedTimeMillis();
@@ -165,6 +161,8 @@ void testApp::update()
 		//sourceImg.warpIntoMe(sourceImg, m_box.fHandles, dstPts );
 
 		subtractBg = sourceImg;
+
+		subtractBg.blur(3);
 
 		//giWarped.warpIntoMe(subtractBg, m_box.fHandles, dstPts );
 
@@ -201,7 +199,7 @@ void testApp::update()
 		*****************************************************/
 		if(bShowPressure){
 
-			unsigned char * rgbaPixels = grayImg.getPixels();
+			unsigned char * rgbaPixels = grayDiff.getPixels();
 			unsigned char * colorRawPixels = new unsigned char[camWidth*camHeight*3]; 
 
 			//total rgb pixels
@@ -218,6 +216,7 @@ void testApp::update()
 
 			  //Set some limitations	
 			  if(blue >= 255){blue = 0;}
+			  if(blue <= 50){blue = 0;}
 
 			  //Set the RGB pixels to their colors
 			  colorRawPixels[k]     = red;
@@ -245,7 +244,7 @@ void testApp::update()
 		* If there are no blobs, add the background faster.
 		* If there ARE blobs, add the background slower.
 		***************************************************/
-		fLearnRate = 0.05f;
+		fLearnRate = 0.01f;
 
 		if(contourFinder.nBlobs > 0){
 
@@ -300,9 +299,8 @@ void testApp::draw(){
 		grayImg.draw(487, 521, 128, 96);
 
 		ofSetColor(0x000000);
-		bigvideo.drawString("Raw Image", 145, 135);
-		
-		if(bShowPressure){bigvideo.drawString("Pressure Image", 535, 135);}
+		bigvideo.drawString("Raw Image", 145, 135);		
+		if(bShowPressure){bigvideo.drawString("Pressure Map", 535, 135);}
 		else			 {bigvideo.drawString("Tracked Image", 535, 135);}	
 						   verdana.drawString("Background", 70, 630);
 						   verdana.drawString("Background Removed", 189, 630);
@@ -408,15 +406,11 @@ void testApp::draw(){
 				float xpos = drawBlob.centroid.x * (320.0f/camWidth);
 				float ypos = drawBlob.centroid.y * (240.0f/camHeight);
 
-				calibrate.cameraToScreenSpace(drawBlob.centroid.x, drawBlob.centroid.y);
-
 				//Displat Text of blob information
 				ofSetColor(0xCCFFCC);
 				char idStr[1024];	
-				sprintf(idStr, "id: %i \n x: %i \n y: %i",drawBlob.id, (int)(drawBlob.centroid.x * camWidth), 
-																	   (int)(drawBlob.centroid.y * camHeight));
-				verdana.drawString(idStr, xpos + drawBlob.boundingRect.width/2 + 450, 
-										  ypos + drawBlob.boundingRect.height/2 + 150);			
+				sprintf(idStr, "id: %i",drawBlob.id);
+				verdana.drawString(idStr, xpos + 430, ypos + drawBlob.boundingRect.height/2 + 160);			
 			}
 		}
 		ofSetColor(0xFFFFFF);
@@ -1136,20 +1130,6 @@ void testApp::blobOff( ofxCvBlob b)
 *****************************************************************************/
 void testApp::exit()
 {
-
-	//Send ESC Key
-/*	INPUT aInput;
-	aInput.type = INPUT_KEYBOARD; 
-	aInput.ki.wVk = VK_ESCAPE;
-	aInput.ki.wScan = 0;//0x45;
-	aInput.ki.time = 0;
-	aInput.ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
-	aInput.ki.dwExtraInfo = 0;
-
-	// Simulate a key press
-	int aResult = SendInput( 1,&aInput,sizeof(INPUT) );
-*/
-
 	//TODO: SEND ESC KEY TO KEEP FROM CRASHING -  can we emulate a keyboard
 	//event to trick the app into closing properly?
 	printf("tBeta module has exited!\n");	
@@ -1157,6 +1137,5 @@ void testApp::exit()
 	// -------------------------------- SAVE STATE ON EXIT
 
 	calibrate.saveCalibration();
-
 }
 
