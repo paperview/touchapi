@@ -7,20 +7,17 @@
         <VERSION>0.0.0</VERSION>
     </APPLICATION>
     <WINDOW>
-        <WIDTH>1024</WIDTH>
-        <HEIGHT>700</HEIGHT>
+        <WIDTH>950</WIDTH>
+        <HEIGHT>600</HEIGHT>
         <MINX>800</MINX>
         <MINY>426</MINY>
-        <FULLSCREEN>0</FULLSCREEN>
         <LIQUID>0</LIQUID>
     </WINDOW>
     <BOOLEAN>
         <LABELS>1</LABELS>
         <VIDEO>1</VIDEO>
         <SNAPSHOT>0</SNAPSHOT>
-        <FAST>0</FAST>
         <OUTLINES>1</OUTLINES>
-        <INVERT>0</INVERT>
         <LEARNBG>0</LEARNBG>
         <TUIO>0</TUIO>
         <CALIBRATION>0</CALIBRATION>

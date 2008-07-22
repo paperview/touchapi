@@ -6,6 +6,12 @@
 #define OF_ADDON_USING_OFXPARAMETERUI  // RENDER GUI (SLIDERS/BUTTONS).
 #define OF_ADDON_USING_OFXOPENCV	   // COMPUTER VISION STUFF
 #define OF_ADDON_USING_OFXOSC		   // OSC COMMUNICATION		
+
+#define OF_ADDON_USING_OFXDIRLIST
+//#define OF_ADDON_USING_OFXVECTORMATH
+//#define OF_ADDON_USING_OFXXMLSETTINGS
+
+
 #include "ofAddons.h"
 
 //Used for tracking algo
@@ -20,20 +26,71 @@
 //Communications
 #include "Communication\TUIOOSC.h"
 
+//GUI
+#include "ofxGui\ofxGui.h"
+#include "ofxGui\ofxGuiTypes.h"
+
 #include "Thingy.h"
 					
 #define HOST "localhost"
 #define PORT 3333
 
-#define _USE_LIVE_VIDEO					// uncomment this to use a live camera
+//#define _USE_LIVE_VIDEO					// uncomment this to use a live camera
 
 
 
-class testApp : public ofSimpleApp, public ofCvBlobListener
+class testApp : public ofSimpleApp, public ofCvBlobListener, public ofxGuiListener
 {
-	public:
+	
+enum
+	{
+		kParameter_Panel1,
+		kParameter_Panel2,
+		kParameter_Panel3,
+		kParameter_Panel4,
+
+		backgroundPanel,
+		backgroundPanel_remove,
+
+		amplifyPanel,
+		amplifyPanel_amp,
+
+		highpassPanel,
+		highpassPanel_blur,
+		highpassPanel_noise,
+
+		thresholdPanel,
+		thresholdPanel_threshold,
+
+
+		
+
+		kParameter_SaveXml,
+		kParameter_File,
+		kParameter_Color1,
+		kParameter_Color2,
+		kParameter_Color3,
+	};
+
+public:
 
 		vector<Thingy> thingies;
+
+
+		void		handleGui(int parameterId, int task, void* data, int length);
+		
+		ofxGui*		gui;
+
+		float		rotation;
+		float		distance;
+		float		size;
+		ofxPoint2f	position;
+		float		edges;
+		float		ticks1, ticks2;
+		bool		animate;
+		float		speed1, speed2;
+		ofRGBA		color1, color2, color3;
+		int			matrix;
 
 		/****************************************************************
 		*						Public functions
