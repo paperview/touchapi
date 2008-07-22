@@ -7,34 +7,34 @@
  *****************************************************************************/
 void testApp::setup()
 {	
-	// ---------------------------------MISC VARS FOR SETTINGS (MARKED FOR GC) 
-	snapCounter		= 6; 
-	frameseq		= 0;
-
-
+	// ---------------------------------Initalize Variables
+	//For screengrab
+	snapCounter	= 6; 
 	//Background Subtraction Learning Rate
-	fLearnRate = 0.0001f;
+	fLearnRate	= 0.0001f;
+	//Intialize FPS variables
+	frames		= 0;
+	fps			= 0;
+	lastFPSlog	= 0;
+	//Calibration Booleans
+	bW			= false;
+	bA			= false;
+	bS			= false;
+	bD			= false;
 
 	// ---------------------------------Load Settings from config.xml File 
 	loadXMLSettings();
 	myTUIO.setup();
 
+	// ---------------------------------Load Calibration Settings
+	calibrate.setCamRes(camWidth, camHeight);
+	calibrate.loadXMLSettings();
+
 	// ---------------------------------Window Properties 
 	ofSetWindowShape(winWidth,winHeight);
-	ofSetFullscreen(bFullscreen);
 	ofSetFrameRate(30);			//This will be based on camera fps in the future		
 	ofSetVerticalSync(false);	//Set vertical sync to false for better performance
 
-
-	//Intialize FPS variables
-	frames = 0;
-	fps = 0;
-	lastFPSlog = 0;
-
-	bW = false;
-	bA = false;
-	bS = false;
-	bD = false;
 
 
 	#ifdef _USE_LIVE_VIDEO // MAKE BOTH LIVE VIDEO AND VCR MODE WORK AT SAME TIME 
@@ -47,7 +47,6 @@ void testApp::setup()
 		int grabH = vidGrabber.height;
 		printf("Asked for %i by %i - actual size is %i by %i \n", 
 				camWidth, camHeight, grabW, grabH);
-
 	#else
         //vidPlayer.loadMovie("test_videos/FrontDI.m4v");
 		//vidPlayer.loadMovie("test_videos/HCI_FTIR.mov");
@@ -55,15 +54,12 @@ void testApp::setup()
         vidPlayer.play();	
 		printf("Video Mode\n");
 		camHeight = vidPlayer.height;
-		camWidth = vidPlayer.width;
-		
+		camWidth = vidPlayer.width;		
 	#endif
     
-	//camWidth = 640;
-	//camHeight = 480;
-
-	//Allocate images (needed for drawing/processing images) ----Most of These won't be needed in the end
-	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*****************************************************************************************************
+	* Allocate images (needed for drawing/processing images) ----Most of These won't be needed in the end
+	******************************************************************************************************/
 	sourceImg.allocate(camWidth, camHeight);    //Source Image
 	grayImg.allocate(camWidth, camHeight);		//Gray Image
 	grayBg.allocate(camWidth, camHeight);		//Background Image
@@ -75,7 +71,7 @@ void testApp::setup()
 	fiLearn.allocate(camWidth, camHeight);		//ofxFloatImage used for simple dynamic background subtracti
 //	fiLearn.setUseTexture(false);
 
-	pressureMap.allocate(camWidth, camHeight);
+	pressureMap.allocate(camWidth, camHeight);	//Pressure Map Image
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//Fonts - Is there a way to dynamically change font size?
@@ -85,7 +81,7 @@ void testApp::setup()
 	
 	//Static Images
 	logo.loadImage("images/logo.jpg");
-	background.loadImage("images/background.jpg"); //Main (Temp) Background
+	background.loadImage("images/background.jpg"); //Main (Temp?) Background
 
 	//Parameter UI
 	setupUI();	
@@ -105,10 +101,44 @@ void testApp::setup()
     dstPts[3].x = 0.0f;
     dstPts[3].y = 0.0f;
 
+	//Setup testApp to listen for touch events
+	tracker.setListener(this); 
+
 	printf("Touchlib application is setup!\n");
 
-	tracker.setListener(this);
 
+
+	gui	= ofxGui::Instance(this);
+
+	//if(!gui->buildFromXml(OFXGUI_XML))
+	//{	
+		//ofxGuiPanel* panel4 = gui->addPanel(kParameter_Panel4, "new", 155, 10, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		//panel4->addKnob(kParameter_Distance, "distance", 60, 60, 10.0f, 100.0f, distance, kofxGui_Display_Float2, 0);
+		//panel4->addKnob(kParameter_Size, "threshold", 60, 60, 0.0f, 500.0f, threshold, kofxGui_Display_Float2, 0);
+
+		ofxGuiPanel* panel2 = gui->addPanel(kParameter_Panel2, "files", 800, 380, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		//panel2->addFiles(kParameter_File, "files", 110, OFXGUI_FILES_HEIGHT, "", "", "xml");
+		panel2->addButton(kParameter_SaveXml, "saveToXml", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger);
+		//panel2->addButton(kParameter_SaveXml, "saveToXml", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger);
+		
+		ofxGuiPanel* threshPanel = gui->addPanel(thresholdPanel, "Threshold", 385, 340, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		threshPanel->addSlider(thresholdPanel_threshold, "Threshold", 300, 13, 0.0f, 255.0f, threshold, kofxGui_Display_Int, 0);
+
+		ofxGuiPanel* bkPanel = gui->addPanel(backgroundPanel, "Background", 187, 517, 13, 7);
+		bkPanel->addButton(backgroundPanel_remove, "Remove (b)\nBackground", 13, 15, kofxGui_Button_Off, kofxGui_Button_Trigger);
+
+		ofxGuiPanel* hpPanel = gui->addPanel(highpassPanel, "Highpass", 337, 517, OFXGUI_PANEL_BORDER, 7);
+		hpPanel->addSlider(highpassPanel_blur, "Blur", 110, 13, 0.0f, 200.0f, highpassBlur, kofxGui_Display_Int, 0);
+		hpPanel->addSlider(highpassPanel_noise, "Noise", 110, 13, 0.0f, 30.0f, highpassNoise, kofxGui_Display_Int, 0);
+
+		ofxGuiPanel* ampPanel = gui->addPanel(amplifyPanel, "Amplify", 487, 517, OFXGUI_PANEL_BORDER, 7);
+		ampPanel->addSlider(amplifyPanel_amp, "Amplify", 110, 13, 0.0f, 300.0f, highpassAmp, kofxGui_Display_Int, 0);
+	
+		//	do update while inactive
+		gui->forceUpdate(true);	
+		gui->activate(true);
+
+	//}
 }
 
 
@@ -117,6 +147,7 @@ void testApp::setup()
  *****************************************************************************/
 void testApp::update()
 {	
+
 	ofBackground(0,0,0);
 
     bNewFrame = false;
@@ -128,8 +159,6 @@ void testApp::update()
         vidPlayer.idleMovie();
         bNewFrame = vidPlayer.isFrameNew();
 	#endif
-
-	//printf("Boolean2: %i \n", bNewFrame);
 	
 	if (bNewFrame)
 	{
@@ -140,8 +169,9 @@ void testApp::update()
 			fps = frames;
 			frames = 0;
 			lastFPSlog = time;			
-		}
+		}//End calculation
 
+		//Set sourceImg as new camera/video frame
 		#ifdef _USE_LIVE_VIDEO
 		  sourceImg.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight);
 		  int totalPixels = camWidth*camHeight*3;
@@ -153,11 +183,10 @@ void testApp::update()
 			int totalPixels = camWidth*camHeight*3;
 		    unsigned char * pixels = vidPlayer.getPixels();
         #endif	
-
-	
 			
-		//------------------------ SET FILTERS HERE ---------------------------
-		
+		/************************************************
+		*				SET FILTERS HERE
+		************************************************/
 		//Set Mirroring Horizontal/Vertical
 		sourceImg.mirror(bHorizontalMirror, bVerticalMirror);
 
@@ -167,13 +196,15 @@ void testApp::update()
 
 		subtractBg.blur(3);
 
-		//giWarped.warpIntoMe(subtractBg, m_box.fHandles, dstPts );
-
-		//subtractBg = giWarped;
-
+/*		if(warpImg){
+			giWarped.warpIntoMe(subtractBg, m_box.fHandles, dstPts );
+			subtractBg = giWarped;
+		}|
+*/
+		//Dynamic background with learn rate
 		learnBackground( subtractBg, grayBg, fiLearn, fLearnRate);
- 
-			
+		
+		//Capture full background
 		if (bLearnBakground == true)
 		{
 			bgCapture( subtractBg );
@@ -183,18 +214,36 @@ void testApp::update()
 		//Background Subtraction
 		subtractBg.absDiff(grayBg, subtractBg);
 
-		highpassImg = subtractBg;
-
 		//HighPass
+		highpassImg = subtractBg;
 		highpassImg.highpass(highpassBlur, highpassNoise);
 
-		grayImg = highpassImg;
-		
 		//Amplify
+		grayImg = highpassImg;		
 		grayImg.amplify(grayImg, highpassAmp);
 		
-		//
 		grayDiff = grayImg;
+
+		//Set a threshold value
+		grayDiff.threshold(threshold);
+
+		//Find contours/blobs
+		contourFinder.findContours(grayDiff, 1, (camWidth*camHeight)/25, 10, false);
+
+		//Track found contours/blobs
+		tracker.track(&contourFinder);
+
+		/**************************************************
+		* Background subtraction LearRate
+		* If there are no blobs, add the background faster.
+		* If there ARE blobs, add the background slower.
+		***************************************************/
+		fLearnRate = 0.01f;
+
+		if(contourFinder.nBlobs > 0){
+
+			fLearnRate = 0.0001f;
+		}//End Background Learning rate
 
 
 		/*****************************************************
@@ -202,7 +251,7 @@ void testApp::update()
 		*****************************************************/
 		if(bShowPressure){
 
-			unsigned char * rgbaPixels = grayDiff.getPixels();
+			unsigned char * rgbaPixels = grayImg.getPixels();
 			unsigned char * colorRawPixels = new unsigned char[camWidth*camHeight*3]; 
 
 			//total rgb pixels
@@ -227,41 +276,16 @@ void testApp::update()
 			  colorRawPixels[k + 2] = blue;
 
 			  k +=3;
-			}		           
-
+			}	
 			pressureMap.setFromPixels(colorRawPixels, camWidth, camHeight);
 			delete colorRawPixels;//End Pressure Map
 		}
 
-		//Set a threshold value
-		grayDiff.threshold(threshold);
-
-		//Find contours/blobs
-		contourFinder.findContours(grayDiff, 1, (camWidth*camHeight)/25, 10, false);
-
-		//Track found contours/blobs
-		tracker.track(&contourFinder);
-
-		/**************************************************
-		* Background subtraction LearRate
-		* If there are no blobs, add the background faster.
-		* If there ARE blobs, add the background slower.
-		***************************************************/
-		fLearnRate = 0.01f;
-
-		if(contourFinder.nBlobs > 0){
-
-			fLearnRate = 0.0001f;
-		}//End Background Learning rate
-	}
-	
-	if(bTUIOMode){
+		if(bTUIOMode){
 		//We're not using frameseq right now with OSC
 		//myTUIO.update();
+		}
 	}
-	
-	//----------------------------------------------ParameterUI	
-	parameterUI->update();
 }
 
 /******************************************************************************
@@ -287,33 +311,34 @@ void testApp::draw(){
 	if(bDrawVideo && bShowInterface && !bFastMode)
 	{
 		//Draw Everything
-		background.draw(0, 0);
+		//background.draw(0, 0);
+		ofBackground(120, 20, 20);
 
-		sourceImg.draw(40, 146, 320, 240);
+		sourceImg.draw(40, 100, 320, 240);
 
 		if(bShowPressure){
-			pressureMap.draw(445, 146, 320, 240);
+			pressureMap.draw(385, 100, 320, 240);
 		}
 		else{
-			grayDiff.draw(445, 146, 320, 240);
+			grayDiff.draw(385, 100, 320, 240);
 		}
 
-		fiLearn.draw(40, 521, 128, 96);
-		subtractBg.draw(187, 521, 128, 96);
-		highpassImg.draw(337, 521, 128, 96);
-		grayImg.draw(487, 521, 128, 96);
+		fiLearn.draw(40, 421, 128, 96);
+		subtractBg.draw(187, 421, 128, 96);
+		highpassImg.draw(337, 421, 128, 96);
+		grayImg.draw(487, 421, 128, 96);
 
 		ofSetColor(0x000000);
-		bigvideo.drawString("Raw Image", 145, 135);		
-		if(bShowPressure){bigvideo.drawString("Pressure Map", 535, 135);}
-		else			 {bigvideo.drawString("Tracked Image", 535, 135);}	
-						   verdana.drawString("Background", 70, 630);
+		bigvideo.drawString("Raw Image", 145, 90);		
+		if(bShowPressure){bigvideo.drawString("Pressure Map", 475, 90);}
+		else			 {bigvideo.drawString("Tracked Image", 475, 90);}	
+/*						   verdana.drawString("Background", 70, 630);
 						   verdana.drawString("Background Removed", 189, 630);
 						   verdana.drawString("Highpass", 375, 630);
 						   verdana.drawString("Amplify", 530, 630);
-
+*/
 		//Warped Box
-		m_box.draw( 40, 146 );
+		//m_box.draw( 40, 146 );
 
 		//Draw PINK CIRCLE 'ON' LIGHT
 		ofSetColor(255, 0, 255);
@@ -326,6 +351,7 @@ void testApp::draw(){
 	*********************************/
 	if(bTUIOMode){
 
+		//Start sending OSC
 		myTUIO.sendOSC();
 		
 		//Draw GREEN CIRCLE 'ON' LIGHT
@@ -400,7 +426,7 @@ void testApp::draw(){
 			drawBlob.boundingRect.y		 *= (240.0f/camHeight);
 			
 			//Draw contours on the figures
-			drawBlob.draw(445, 146);
+			drawBlob.draw(385, 100);
 
 			//Show Labels (ID, x, y);
 			if(bShowLabels)
@@ -412,7 +438,7 @@ void testApp::draw(){
 				ofSetColor(0xCCFFCC);
 				char idStr[1024];	
 				sprintf(idStr, "id: %i",drawBlob.id);
-				verdana.drawString(idStr, xpos + 430, ypos + drawBlob.boundingRect.height/2 + 160);			
+				verdana.drawString(idStr, xpos + 365, ypos + drawBlob.boundingRect.height/2 + 110);			
 			}
 		}
 		ofSetColor(0xFFFFFF);
@@ -442,6 +468,9 @@ void testApp::draw(){
 			thingies[i].update();
 		}
 	}
+
+	gui->draw();
+
 }
 
 
@@ -457,14 +486,10 @@ void testApp::loadXMLSettings(){
 
 	// TODO: a seperate XML to map keyboard commands to action 
 	message = "Loading config.xml...";
-
 	// Can this load via http?
 	if( XML.loadFile("config.xml")){
-		
 		message = "Settings Loaded!";
-
-	}else{
-		
+	}else{		
 		//FAIL!
 		message = "No Settings Found...";
 	}
@@ -479,7 +504,7 @@ void testApp::loadXMLSettings(){
 	minWidth			= XML.getValue("CONFIG:WINDOW:MINX",0);
 	minHeight			= XML.getValue("CONFIG:WINDOW:MINY",0);
 	bFullscreen			= XML.getValue("CONFIG:WINDOW:FULLSCREEN",0);
-	
+
 	camWidth			= XML.getValue("CONFIG:CAMERA_0:WIDTH",0);
 	camHeight			= XML.getValue("CONFIG:CAMERA_0:HEIGHT",0);
 	//camRate			= XML.getValue("CONFIG:CAMERA_0:FRAMERATE",0);
@@ -509,16 +534,9 @@ void testApp::loadXMLSettings(){
 	myTUIO.TUIOSocket.setup(HOST, PORT);
 //-------------------------------------------------------------- 
 //  END XML SETUP
-
-	
-
-
-/******************************
-* STEUP CALIBRATION						
-******************************/	
-	calibrate.setCamRes(camWidth, camHeight);
-	calibrate.loadXMLSettings();
 }
+
+
 
 /******************************
 *	BACKGROUND SUBTRACTION						
@@ -698,7 +716,6 @@ void testApp::keyPressed(int key)
 		}
 	}
 
-	//------------------------------- BEGIN MAIN KEYBOARD SWITCH (LONGEST EVER)
 	switch(key)
 	{	
 /*		case 's':
@@ -710,13 +727,13 @@ void testApp::keyPressed(int key)
 			{	
 				parameterUI->deActivate();	
 				//bToggleHelp = false;	
-				ofSetWindowShape((2.0/3.0)*(ofGetWidth()-80)+60,ofGetHeight());
+				//ofSetWindowShape((2.0/3.0)*(ofGetWidth()-80)+60,ofGetHeight());
 			}
 			else
 			{	
 				parameterUI->deActivate();	
 				//bToggleHelp = true;
-				ofSetWindowShape(max((3.0/2.0)*(ofGetWidth()-60)+80, minWidth), max(ofGetHeight(), minHeight));
+				//ofSetWindowShape(max((3.0/2.0)*(ofGetWidth()-60)+80, minWidth), max(ofGetHeight(), minHeight));
 			}
 			break;
 		case '2':
@@ -747,31 +764,12 @@ void testApp::keyPressed(int key)
 				//ofSetWindowShape(950,700);
 			}
 			break;	
-		case 'c':
-			if(bCalibration){
-				bCalibration = false;
-				bFullscreen = false;
-			}
-			else{	
-				bCalibration = true;
-				bFullscreen = true;
-			}
-			break;
-		case 'x':
-			if(bCalibration && calibrate.bCalibrating)
-				calibrate.bCalibrating = false;
-			else if(bCalibration)
-				//bCalibrating = true;
-				calibrate.beginCalibration();
-			else
-			    bCalibration = false;
-			break;
 		case ' ':
 			if(bFastMode)
 			{	
 				bFastMode = false;	
 				//bToggleHelp = true;
-				ofSetWindowShape(1024,768); //default size
+				ofSetWindowShape(900,600); //default size
 				ofSetWindowTitle("Configuration");
 			}
 			else
@@ -782,15 +780,147 @@ void testApp::keyPressed(int key)
 				ofSetWindowTitle("Mini");
 			}
 			break;
-/*		case 'a':
-			threshold ++;
-			if(threshold > 255) threshold = 255;
-			break;		
-*/		case 'z':
-			threshold --;
-			if(threshold < 10) threshold = 10;
-			//if (threshold < 0) threshold = 0;
+		case 'g':
+			bSnapshot = true;
+			break;
+		case 'v':
+			#ifdef _USE_LIVE_VIDEO
+				vidGrabber.videoSettings();
+			#endif
 			break;	
+		case 'l':
+			if(bShowLabels)
+				bShowLabels = false;
+			else	
+				bShowLabels = true;
+			break;
+		case 'i':
+			if(bShowInterface)
+				bShowInterface = false;
+			else	
+				bShowInterface = true;
+			break;
+		case 'p':
+			if(bShowPressure)
+				bShowPressure = false;
+			else	
+				bShowPressure = true;
+			break;
+		/***********************
+		* Keys for Calibration
+		***********************/
+		case 'c': //Enter/Exit Calibration
+			if(bCalibration){
+				bCalibration = false;
+				bFullscreen = false;
+			}else{	
+				bCalibration = true;
+				bFullscreen = true;
+			}
+			break;
+		case 'x': //Begin Calibrating
+			if(bCalibration && calibrate.bCalibrating)
+				calibrate.bCalibrating = false;
+			else if(bCalibration)
+				calibrate.beginCalibration();
+			else
+			    bCalibration = false;
+			break;
+		case 'r': //Revert Calibration
+			if(calibrate.bCalibrating)calibrate.revertCalibrationStep();
+		case 'w': //Up
+			bW = true;
+			break;	
+		case 's': //Down
+			bS = true;
+			break;
+		case 'a': //Left
+			bA = true;
+			break;
+		case 'd': //Right
+			bD = true;
+			break;
+		case OF_KEY_RIGHT: //Move bounding box right
+			if(bD){
+				calibrate.screenBB.lowerRightCorner.X += .001;
+				if(calibrate.screenBB.lowerRightCorner.X > 1) calibrate.screenBB.lowerRightCorner.X = 1;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else if(bA){
+				calibrate.screenBB.upperLeftCorner.X += .001;
+				if(calibrate.screenBB.upperLeftCorner.X > 1) calibrate.screenBB.upperLeftCorner.X = 1;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else{
+				calibrate.screenBB.lowerRightCorner.X += .001;
+				if(calibrate.screenBB.lowerRightCorner.X > 1) calibrate.screenBB.lowerRightCorner.X = 1;
+				calibrate.screenBB.upperLeftCorner.X += .001;
+				if(calibrate.screenBB.upperLeftCorner.X > 1) calibrate.screenBB.upperLeftCorner.X = 1;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}
+			break;
+		case OF_KEY_LEFT: //Move bounding box left
+			if(bD){
+				calibrate.screenBB.lowerRightCorner.X -= .001;
+				if(calibrate.screenBB.lowerRightCorner.X < 0) calibrate.screenBB.lowerRightCorner.X = 0;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else if(bA){
+				calibrate.screenBB.upperLeftCorner.X -= .001;
+				if(calibrate.screenBB.upperLeftCorner.X < 0) calibrate.screenBB.upperLeftCorner.X = 0;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else{
+				calibrate.screenBB.lowerRightCorner.X -= .001;
+				if(calibrate.screenBB.lowerRightCorner.X < 0) calibrate.screenBB.lowerRightCorner.X = 0;
+				calibrate.screenBB.upperLeftCorner.X -= .001;
+				if(calibrate.screenBB.upperLeftCorner.X < 0) calibrate.screenBB.upperLeftCorner.X = 0;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}
+			break;
+		case OF_KEY_DOWN: //Move bounding box down
+			if(bS){
+				calibrate.screenBB.lowerRightCorner.Y += .001;
+				if(calibrate.screenBB.lowerRightCorner.Y > 1) calibrate.screenBB.lowerRightCorner.Y = 1;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else if(bW){
+				calibrate.screenBB.upperLeftCorner.Y += .001;
+				if(calibrate.screenBB.upperLeftCorner.Y > 1) calibrate.screenBB.upperLeftCorner.Y = 1;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else{
+				calibrate.screenBB.lowerRightCorner.Y += .001;
+				if(calibrate.screenBB.lowerRightCorner.Y > 1) calibrate.screenBB.lowerRightCorner.Y = 1;
+				calibrate.screenBB.upperLeftCorner.Y += .001;
+				if(calibrate.screenBB.upperLeftCorner.Y > 1) calibrate.screenBB.upperLeftCorner.Y = 1;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}
+			break;
+		case OF_KEY_UP: //Move bounding box up
+			if(bS){
+				calibrate.screenBB.lowerRightCorner.Y -= .001;
+				if(calibrate.screenBB.lowerRightCorner.Y < 0) calibrate.screenBB.lowerRightCorner.Y = 0;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else if(bW){
+				calibrate.screenBB.upperLeftCorner.Y -= .001;
+				if(calibrate.screenBB.upperLeftCorner.Y < 0) calibrate.screenBB.upperLeftCorner.Y = 0;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else{
+				calibrate.screenBB.lowerRightCorner.Y -= .001;
+				if(calibrate.screenBB.lowerRightCorner.Y < 0) calibrate.screenBB.lowerRightCorner.Y = 0;
+				calibrate.screenBB.upperLeftCorner.Y -= .001;
+				if(calibrate.screenBB.upperLeftCorner.Y < 0) calibrate.screenBB.upperLeftCorner.Y = 0;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}
+			break;
+		//Start Grid Point Changing
 		case '=':
 			if(bCalibration)
 			calibrate.GRID_X ++;
@@ -815,143 +945,9 @@ void testApp::keyPressed(int key)
 			if(calibrate.GRID_Y < 1) calibrate.GRID_Y = 1; calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
 			calibrate.calibrationStep = 0;
 			break;
-		case 'g':
-			bSnapshot = true;
-			break;
-		case 'v':
-			#ifdef _USE_LIVE_VIDEO
-				vidGrabber.videoSettings();
-			#endif
-			break;	
-		case 'f':
-			ofToggleFullscreen();
-			break;
-		case 'l':
-			if(bShowLabels)
-				bShowLabels = false;
-			else	
-				bShowLabels = true;
-			break;
-		case 'i':
-			if(bShowInterface)
-				bShowInterface = false;
-			else	
-				bShowInterface = true;
-			break;
-		case 'p':
-			if(bShowPressure)
-				bShowPressure = false;
-			else	
-				bShowPressure = true;
-			break;
-		/***********************
-		* Keys for Calibration
-		***********************/
-		case 'r': //Revert Calibration
-			if(calibrate.bCalibrating)calibrate.revertCalibrationStep();
-		case 'w': //Up
-			bW = true;
-			break;	
-		case 's': //Down
-			bS = true;
-			break;
-		case 'a': //Left
-			bA = true;
-			break;
-		case 'd': //Right
-			bD = true;
-			break;
-		case OF_KEY_RIGHT: //Move bounding box right
-			if(bD){
-				calibrate.screenBB.lowerRightCorner.X += .001;
-				if(calibrate.screenBB.lowerRightCorner.X > 1) calibrate.screenBB.lowerRightCorner.X = 1;
-				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
-				calibrate.calibrationStep = 0;
-			}
-			else if(bA){
-				calibrate.screenBB.upperLeftCorner.X += .001;
-				if(calibrate.screenBB.upperLeftCorner.X > 1) calibrate.screenBB.upperLeftCorner.X = 1;
-				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
-				calibrate.calibrationStep = 0;
-			}
-			else{
-				calibrate.screenBB.lowerRightCorner.X += .001;
-				if(calibrate.screenBB.lowerRightCorner.X > 1) calibrate.screenBB.lowerRightCorner.X = 1;
-				calibrate.screenBB.upperLeftCorner.X += .001;
-				if(calibrate.screenBB.upperLeftCorner.X > 1) calibrate.screenBB.upperLeftCorner.X = 1;
-				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
-				calibrate.calibrationStep = 0;
-			}
-			break;
-		case OF_KEY_LEFT: //Move bounding box left
-			if(bD){
-				calibrate.screenBB.lowerRightCorner.X -= .001;
-				if(calibrate.screenBB.lowerRightCorner.X < 0) calibrate.screenBB.lowerRightCorner.X = 0;
-				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
-				calibrate.calibrationStep = 0;
-			}
-			else if(bA){
-				calibrate.screenBB.upperLeftCorner.X -= .001;
-				if(calibrate.screenBB.upperLeftCorner.X < 0) calibrate.screenBB.upperLeftCorner.X = 0;
-				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
-				calibrate.calibrationStep = 0;
-			}
-			else{
-				calibrate.screenBB.lowerRightCorner.X -= .001;
-				if(calibrate.screenBB.lowerRightCorner.X < 0) calibrate.screenBB.lowerRightCorner.X = 0;
-				calibrate.screenBB.upperLeftCorner.X -= .001;
-				if(calibrate.screenBB.upperLeftCorner.X < 0) calibrate.screenBB.upperLeftCorner.X = 0;
-				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
-				calibrate.calibrationStep = 0;
-			}
-			break;
-		case OF_KEY_DOWN: //Move bounding box down
-			if(bS){
-				calibrate.screenBB.lowerRightCorner.Y += .001;
-				if(calibrate.screenBB.lowerRightCorner.Y > 1) calibrate.screenBB.lowerRightCorner.Y = 1;
-				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
-				calibrate.calibrationStep = 0;
-			}
-			else if(bW){
-				calibrate.screenBB.upperLeftCorner.Y += .001;
-				if(calibrate.screenBB.upperLeftCorner.Y > 1) calibrate.screenBB.upperLeftCorner.Y = 1;
-				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
-				calibrate.calibrationStep = 0;
-			}
-			else{
-				calibrate.screenBB.lowerRightCorner.Y += .001;
-				if(calibrate.screenBB.lowerRightCorner.Y > 1) calibrate.screenBB.lowerRightCorner.Y = 1;
-				calibrate.screenBB.upperLeftCorner.Y += .001;
-				if(calibrate.screenBB.upperLeftCorner.Y > 1) calibrate.screenBB.upperLeftCorner.Y = 1;
-				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
-				calibrate.calibrationStep = 0;
-			}
-			break;
-		case OF_KEY_UP: //Move bounding box up
-			if(bS){
-				calibrate.screenBB.lowerRightCorner.Y -= .001;
-				if(calibrate.screenBB.lowerRightCorner.Y < 0) calibrate.screenBB.lowerRightCorner.Y = 0;
-				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
-				calibrate.calibrationStep = 0;
-			}
-			else if(bW){
-				calibrate.screenBB.upperLeftCorner.Y -= .001;
-				if(calibrate.screenBB.upperLeftCorner.Y < 0) calibrate.screenBB.upperLeftCorner.Y = 0;
-				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
-				calibrate.calibrationStep = 0;
-			}
-			else{
-				calibrate.screenBB.lowerRightCorner.Y -= .001;
-				if(calibrate.screenBB.lowerRightCorner.Y < 0) calibrate.screenBB.lowerRightCorner.Y = 0;
-				calibrate.screenBB.upperLeftCorner.Y -= .001;
-				if(calibrate.screenBB.upperLeftCorner.Y < 0) calibrate.screenBB.upperLeftCorner.Y = 0;
-				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
-				calibrate.calibrationStep = 0;
-			}
-			break;
 	}
-	// --------------------------------- END MAIN KEYBOARD SWITCH
 }
+
 void testApp::keyReleased(int key){
 
 	switch(key)
@@ -972,10 +968,8 @@ void testApp::keyReleased(int key){
 }
 
 
-
-
 /*****************************************************************************
-* MOUSE EVENTS
+*								MOUSE EVENTS
 *****************************************************************************/
 void testApp::mouseMoved(int x, int y)
 {
@@ -999,8 +993,9 @@ void testApp::mouseDragged(int x, int y, int button)
 		}
 	}
 		
-	//-------------------------------- PARAMETER UI EVENT
 	parameterUI->mouseMotion(x, y);	
+
+	gui->mouseDragged(x, y, button);
 }
 
 void testApp::mousePressed(int x, int y, int button)
@@ -1008,30 +1003,34 @@ void testApp::mousePressed(int x, int y, int button)
 	sprintf(eventString, "mousePressed = (%i,%i - button %i)", x, y, button);
 	printf("button\n", button);
 
-	//-------------------------------- PARAMETER UI EVENT
+	
 	parameterUI->mouseDown(x, y, button);	
+
+
+	gui->mousePressed(x, y, button);	
 }
 
 void testApp::mouseReleased()
 {	
 	sprintf(eventString, "mouseReleased");
-	//-------------------------------- PARAMETER UI EVENT
+	
 	parameterUI->mouseUp(0, 0, 0);	
+
+	gui->mouseReleased(mouseX, mouseY, 0);	
 }
 
 
 /*****************************************************************************
-* TOUCH EVENTS
+*								TOUCH EVENTS
 *****************************************************************************/
 void testApp::blobOn( ofxCvBlob b)
 {
 	printf("Blob DOWN %i \n", b.id); 
 
 	if(bCalibration)
-	{
 	downColor = 0x2FB5FF; //change target color when a finger is down
-	}
-	
+		
+	//If sending TUIO, add the blob to the map list
 	if(bTUIOMode)
 	{
 		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);
@@ -1042,6 +1041,7 @@ void testApp::blobOn( ofxCvBlob b)
 
 void testApp::blobMoved( ofxCvBlob b) 
 {
+	//If sending TUIO, update the move information for the blob
 	if(bTUIOMode)
 	{
 		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);
@@ -1051,11 +1051,12 @@ void testApp::blobMoved( ofxCvBlob b)
 
 void testApp::blobOff( ofxCvBlob b) 
 {
-	downColor = 0xFF0000;
-
 	printf("Blob UP %i \n", b.id);
 
-	
+	if(bCalibration)
+	downColor = 0xFF0000;
+
+	//If Calibrating, register the calibration point on blobOff
 	if(calibrate.bCalibrating){			
 		
 		calibrate.cameraPoints[calibrate.calibrationStep] = vector2df(b.centroid.x, b.centroid.y);
@@ -1064,6 +1065,7 @@ void testApp::blobOff( ofxCvBlob b)
 		printf("%d (%f, %f)\n", calibrate.calibrationStep, b.centroid.x, b.centroid.y);
 	}
 
+	//If sending TUIO, Delete Blobs from map list
 	if(bTUIOMode)
 	{
 		std::map<int, ofxCvBlob>::iterator iter;
@@ -1092,7 +1094,80 @@ void testApp::exit()
 	printf("tBeta module has exited!\n");	
 	
 	// -------------------------------- SAVE STATE ON EXIT
-
+	//saveSettngs();
 	calibrate.saveCalibration();
 }
 
+
+
+
+
+
+
+
+
+
+
+
+void testApp::handleGui(int parameterId, int task, void* data, int length)
+{
+	switch(parameterId)
+	{
+		case kParameter_Panel1:
+		case kParameter_Panel2:
+			break;
+
+			
+		case backgroundPanel_remove:
+			if(length == sizeof(bool))
+				bLearnBakground = *(bool*)data;
+			break;
+		case highpassPanel_blur:
+			if(length == sizeof(float))
+				highpassBlur = *(float*)data;
+			break;
+		case highpassPanel_noise:
+			if(length == sizeof(float))
+				highpassNoise = *(float*)data;
+			break;
+		case amplifyPanel_amp:
+			if(length == sizeof(float))
+				highpassAmp = *(float*)data;
+			break;
+		case thresholdPanel_threshold:
+			if(length == sizeof(float))
+				threshold = *(float*)data;
+			break;
+						
+			
+		case kParameter_SaveXml:
+			if(length == sizeof(bool))
+			{
+				if(*(bool*)data)
+					gui->saveToXml(OFXGUI_XML);
+			}
+			break;
+		case kParameter_File:
+			if(length == sizeof(string))
+			{
+				string file = *(string*)data;
+				gui->buildFromXml(file);
+			}
+			break;
+		
+		case kParameter_Color1:
+			if(length == sizeof(ofRGBA))
+				color1 = *(ofRGBA*)data;
+			break;
+			
+		case kParameter_Color2:
+			if(length == sizeof(ofRGBA))
+				color2 = *(ofRGBA*)data;
+			break;
+			
+		case kParameter_Color3:
+			if(length == sizeof(ofRGBA))
+				color3 = *(ofRGBA*)data;
+			break;
+	}
+}
