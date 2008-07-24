@@ -1,16 +1,16 @@
 #ifndef _TEST_APP
 #define _TEST_APP
 
-#include "ofMain.h"
 #define OF_ADDON_USING_OFXXMLSETTINGS  // LOAD CONFIG.XML
 #define OF_ADDON_USING_OFXPARAMETERUI  // RENDER GUI (SLIDERS/BUTTONS).
 #define OF_ADDON_USING_OFXOPENCV	   // COMPUTER VISION STUFF
 #define OF_ADDON_USING_OFXOSC		   // OSC COMMUNICATION		
 
 #define OF_ADDON_USING_OFXDIRLIST
-//#define OF_ADDON_USING_OFXVECTORMATH
-//#define OF_ADDON_USING_OFXXMLSETTINGS
+#define OF_ADDON_USING_OFXVECTORMATH
+#define OF_ADDON_USING_OFXXMLSETTINGS
 
+#include "ofMain.h"
 
 #include "ofAddons.h"
 
@@ -35,7 +35,7 @@
 #define HOST "localhost"
 #define PORT 3333
 
-//#define _USE_LIVE_VIDEO					// uncomment this to use a live camera
+#define _USE_LIVE_VIDEO					// uncomment this to use a live camera
 
 
 
@@ -49,6 +49,22 @@ enum
 		kParameter_Panel3,
 		kParameter_Panel4,
 
+
+
+		propertiesPanel,
+		propertiesPanel_flipV,
+		propertiesPanel_flipH,
+		propertiesPanel_pressure,
+
+		optionPanel,
+		optionPanel_tuio,
+		optionPanel_draw,
+
+		sourcePanel,
+		sourcePanel_nextCam,
+		sourcePanel_previousCam,
+
+
 		backgroundPanel,
 		backgroundPanel_remove,
 
@@ -59,17 +75,14 @@ enum
 		highpassPanel_blur,
 		highpassPanel_noise,
 
-		thresholdPanel,
-		thresholdPanel_threshold,
+		trackedPanel,
+		trackedPanel_threshold,
+		trackedPanel_outlines,
+		trackedPanel_ids,
 
-
-		
 
 		kParameter_SaveXml,
 		kParameter_File,
-		kParameter_Color1,
-		kParameter_Color2,
-		kParameter_Color3,
 	};
 
 public:
@@ -143,6 +156,7 @@ public:
 		*            Variables in config.xml Settings file
 		*****************************************************************/
         
+	    int					deviceID;
 		int 				frameseq;	
 		int 				threshold;
 		int 				blurValue;
@@ -187,6 +201,8 @@ public:
 		bool				bS;
 		bool				bA;
 		bool				bD;
+
+		bool				activeInput;
 
 		float				fLearnRate;// rate to learn background
 		
