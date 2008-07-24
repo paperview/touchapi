@@ -1,14 +1,14 @@
 #include "Thingy.h"
 
 Thingy::Thingy(float _x, float _y, float _height, float _width) {
-	printf("created thingy(x,y): %p\n", this);
+	//printf("created thingy(x,y): %p\n", this);
 	// use given starting position
 	setup(_x, _y, _height, _width);
 }
 
 Thingy::~Thingy() {
 	// this could be useful for whenever we get rid of an object
-	printf("killed thingy: %p\n", this);
+	//printf("killed thingy: %p\n", this);
 }
 
 void Thingy::setup(float _x, float _y, float _height, float _width) {
@@ -38,6 +38,4 @@ void Thingy::draw() {
 	// draw the thingy insides
 	ofFill();
 	ofEllipse( pos.x, pos.y, height, width);
-	//ofDisableAlphaBlending();
-	//ofDisableSmoothing();
 }

@@ -7,7 +7,10 @@
  *****************************************************************************/
 void testApp::setup()
 {	
-	// ---------------------------------Initalize Variables
+	/********************
+	* Initalize Variables
+	*********************/
+
 	//For screengrab
 	snapCounter	= 6; 
 	//Background Subtraction Learning Rate
@@ -22,15 +25,15 @@ void testApp::setup()
 	bS			= false;
 	bD			= false;
 
-	// ---------------------------------Load Settings from config.xml File 
+	//Load Settings from config.xml file 
 	loadXMLSettings();
 	myTUIO.setup();
 
-	// ---------------------------------Load Calibration Settings
+	//Load Calibration Settings from calibration.xml file
 	calibrate.setCamRes(camWidth, camHeight);
 	calibrate.loadXMLSettings();
 
-	// ---------------------------------Window Properties 
+	//Setup Window Properties 
 	ofSetWindowShape(winWidth,winHeight);
 	ofSetFrameRate(30);			//This will be based on camera fps in the future		
 	ofSetVerticalSync(false);	//Set vertical sync to false for better performance
@@ -39,7 +42,11 @@ void testApp::setup()
 
 	#ifdef _USE_LIVE_VIDEO // MAKE BOTH LIVE VIDEO AND VCR MODE WORK AT SAME TIME 
        		
-		vidGrabber.setVerbose(true);
+		activeInput = true;
+
+		vidGrabber.listDevices();
+		vidGrabber.setDeviceID(deviceID);
+		vidGrabber.setVerbose(true);		
         vidGrabber.initGrabber(camWidth,camHeight);		
 
 		printf("Camera Mode\n");
@@ -48,6 +55,9 @@ void testApp::setup()
 		printf("Asked for %i by %i - actual size is %i by %i \n", 
 				camWidth, camHeight, grabW, grabH);
 	#else
+
+		activeIput = true;	
+
         //vidPlayer.loadMovie("test_videos/FrontDI.m4v");
 		//vidPlayer.loadMovie("test_videos/HCI_FTIR.mov");
 		vidPlayer.loadMovie("test_videos/raw.mp4");
@@ -72,7 +82,7 @@ void testApp::setup()
 //	fiLearn.setUseTexture(false);
 
 	pressureMap.allocate(camWidth, camHeight);	//Pressure Map Image
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/********************************************************************************************************/
 
 	//Fonts - Is there a way to dynamically change font size?
 	verdana.loadFont("verdana.ttf", 8, true, true);	   //Font used for small images
@@ -83,11 +93,6 @@ void testApp::setup()
 	logo.loadImage("images/logo.jpg");
 	background.loadImage("images/background.jpg"); //Main (Temp?) Background
 
-	//Parameter UI
-	setupUI();	
-	parameterUI = AParameterUI::Instance();
-	parameterUI->init(ofGetWidth(), ofGetHeight());
-	
 	//Setup green warped box
 	m_box.setup( 40, 146, 320, 240); 
 
@@ -110,32 +115,108 @@ void testApp::setup()
 
 	gui	= ofxGui::Instance(this);
 
+
 	//if(!gui->buildFromXml(OFXGUI_XML))
 	//{	
 		//ofxGuiPanel* panel4 = gui->addPanel(kParameter_Panel4, "new", 155, 10, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
 		//panel4->addKnob(kParameter_Distance, "distance", 60, 60, 10.0f, 100.0f, distance, kofxGui_Display_Float2, 0);
 		//panel4->addKnob(kParameter_Size, "threshold", 60, 60, 0.0f, 500.0f, threshold, kofxGui_Display_Float2, 0);
 
-		ofxGuiPanel* panel2 = gui->addPanel(kParameter_Panel2, "files", 800, 380, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
-		//panel2->addFiles(kParameter_File, "files", 110, OFXGUI_FILES_HEIGHT, "", "", "xml");
-		panel2->addButton(kParameter_SaveXml, "saveToXml", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger);
-		//panel2->addButton(kParameter_SaveXml, "saveToXml", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger);
+
+/*		srcPanel->mObjHeight = 100;
+		srcPanel->mObjWidth = 320;
+		srcPanel->mBorder = 10;
+		srcPanel->mCtrX = 40;
+		srcPanel->mCtrHeight = 100;
+		srcPanel->mBorder = 100;
+		srcPanel->mCtrX = 50;
+*/
+
+		gui->mGlobals->mBorderColor.r = 0;
+		gui->mGlobals->mBorderColor.g = 0;
+		gui->mGlobals->mBorderColor.b = 0;
+		gui->mGlobals->mBorderColor.a = .5;
+
+		gui->mGlobals->mCoverColor.r = 140;
+		gui->mGlobals->mCoverColor.g = 40;
+		gui->mGlobals->mCoverColor.b = 40;
+		gui->mGlobals->mCoverColor.a = .5;
+
+		gui->mGlobals->mFrameColor.r = 0;
+		gui->mGlobals->mFrameColor.g = 0;
+		gui->mGlobals->mFrameColor.b = 0;
+		gui->mGlobals->mFrameColor.a = .2;
 		
-		ofxGuiPanel* threshPanel = gui->addPanel(thresholdPanel, "Threshold", 385, 340, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
-		threshPanel->addSlider(thresholdPanel_threshold, "Threshold", 300, 13, 0.0f, 255.0f, threshold, kofxGui_Display_Int, 0);
+		gui->mGlobals->mTextColor.r = 0;
+		gui->mGlobals->mTextColor.g = 0;
+		gui->mGlobals->mTextColor.b = 0;
+		gui->mGlobals->mTextColor.a = 1;
 
-		ofxGuiPanel* bkPanel = gui->addPanel(backgroundPanel, "Background", 187, 517, 13, 7);
-		bkPanel->addButton(backgroundPanel_remove, "Remove (b)\nBackground", 13, 15, kofxGui_Button_Off, kofxGui_Button_Trigger);
+		gui->mGlobals->mButtonColor.r = 120;
+		gui->mGlobals->mButtonColor.g = 0;
+		gui->mGlobals->mButtonColor.b = 0;
+		gui->mGlobals->mButtonColor.a = 1;
 
-		ofxGuiPanel* hpPanel = gui->addPanel(highpassPanel, "Highpass", 337, 517, OFXGUI_PANEL_BORDER, 7);
+		gui->mGlobals->mCurveColor.r = 110;
+		gui->mGlobals->mCurveColor.g = 0;
+		gui->mGlobals->mCurveColor.b = 0;
+		gui->mGlobals->mCurveColor.a = 255;
+
+
+		ofxGuiPanel* propPanel = gui->addPanel(propertiesPanel, "Source Properties", 730, 60, 12, OFXGUI_PANEL_SPACING);
+		propPanel->addButton(propertiesPanel_flipV, "Flip Vertical (v)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
+		propPanel->addButton(propertiesPanel_flipH, "Flip Horizontal (h)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
+		propPanel->addButton(propertiesPanel_pressure, "Pressure Map (p)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
+
+		ofxGuiPanel* oPanel = gui->addPanel(optionPanel, "Tracking Options", 730, 163, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		oPanel->addButton(optionPanel_tuio, "Send TUIO (t)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
+		oPanel->addButton(optionPanel_draw, "Draw Windows (d)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
+
+
+/*
+	bSnapshot			= XML.getValue("CONFIG:BOOLEAN:SNAPSHOT",0);
+	bFastMode			= XML.getValue("CONFIG:BOOLEAN:FAST",0);	
+	bCalibration		= XML.getValue("CONFIG:BOOLEAN:CALIBRATION",0);
+*/
+
+
+	//	ofxGuiPanel* panel2 = gui->addPanel(kParameter_Panel2, "files", 800, 380, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		//panel2->addFiles(kParameter_File, "files", 110, OFXGUI_FILES_HEIGHT, "", "", "xml");
+	//	panel2->addButton(kParameter_SaveXml, "saveToXml", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger);
+
+		//Tracked Image
+		ofxGuiPanel* trackPanel = gui->addPanel(trackedPanel, "Tracked Image", 386, 270, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		trackPanel->addButton(trackedPanel_outlines, "Show Outlines (o)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
+		trackPanel->addButton(trackedPanel_ids, "Show IDs (i)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
+		trackPanel->addSlider(trackedPanel_threshold, "Threshold (a/z)", 300, 13, 0.0f, 255.0f, threshold, kofxGui_Display_Int, 0);
+		trackPanel->mObjHeight = 105;
+		trackPanel->mObjWidth = 319;
+
+		//Source Image
+		ofxGuiPanel* srcPanel = gui->addPanel(sourcePanel, "Source Image", 41, 270, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		srcPanel->addButton(sourcePanel_previousCam, "Previous Camera", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger);
+		srcPanel->addButton(sourcePanel_nextCam, "Next Camera", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger);
+		srcPanel->mObjHeight = 105;
+		srcPanel->mObjWidth = 319;
+
+		//Background Image
+		ofxGuiPanel* bkPanel = gui->addPanel(backgroundPanel, "Background", 236, 487, 10, 7);
+		bkPanel->addButton(backgroundPanel_remove, "Remove (b)\nBackground", 10, 10, kofxGui_Button_Off, kofxGui_Button_Trigger);
+		bkPanel->mObjWidth = 127;
+
+		//Highpass Image
+		ofxGuiPanel* hpPanel = gui->addPanel(highpassPanel, "Highpass", 386, 487, OFXGUI_PANEL_BORDER, 7);
 		hpPanel->addSlider(highpassPanel_blur, "Blur", 110, 13, 0.0f, 200.0f, highpassBlur, kofxGui_Display_Int, 0);
 		hpPanel->addSlider(highpassPanel_noise, "Noise", 110, 13, 0.0f, 30.0f, highpassNoise, kofxGui_Display_Int, 0);
+		hpPanel->mObjWidth = 127;
 
-		ofxGuiPanel* ampPanel = gui->addPanel(amplifyPanel, "Amplify", 487, 517, OFXGUI_PANEL_BORDER, 7);
+		//Amplify Image
+		ofxGuiPanel* ampPanel = gui->addPanel(amplifyPanel, "Amplify", 536, 487, OFXGUI_PANEL_BORDER, 7);
 		ampPanel->addSlider(amplifyPanel_amp, "Amplify", 110, 13, 0.0f, 300.0f, highpassAmp, kofxGui_Display_Int, 0);
-	
-		//	do update while inactive
-		gui->forceUpdate(true);	
+		ampPanel->mObjWidth = 127;
+
+		//do update while inactive
+		gui->forceUpdate(false);	
 		gui->activate(true);
 
 	//}
@@ -147,11 +228,14 @@ void testApp::setup()
  *****************************************************************************/
 void testApp::update()
 {	
+	
 
-	ofBackground(0,0,0);
+	ofBackground(0, 0, 0);
 
     bNewFrame = false;
 		
+	if(activeInput){
+
 	#ifdef _USE_LIVE_VIDEO
        vidGrabber.grabFrame();
 	   bNewFrame = vidGrabber.isFrameNew();
@@ -183,12 +267,13 @@ void testApp::update()
 			int totalPixels = camWidth*camHeight*3;
 		    unsigned char * pixels = vidPlayer.getPixels();
         #endif	
+		
 			
 		/************************************************
 		*				SET FILTERS HERE
 		************************************************/
 		//Set Mirroring Horizontal/Vertical
-		sourceImg.mirror(bHorizontalMirror, bVerticalMirror);
+		sourceImg.mirror(bVerticalMirror, bHorizontalMirror);
 
 		//sourceImg.warpIntoMe(sourceImg, m_box.fHandles, dstPts );
 
@@ -239,10 +324,10 @@ void testApp::update()
 		* If there ARE blobs, add the background slower.
 		***************************************************/
 		fLearnRate = 0.01f;
+		
+		if(contourFinder.nBlobs > 1){
 
-		if(contourFinder.nBlobs > 0){
-
-			fLearnRate = 0.0001f;
+			fLearnRate = 0.0008f;
 		}//End Background Learning rate
 
 
@@ -282,10 +367,14 @@ void testApp::update()
 		}
 
 		if(bTUIOMode){
-		//We're not using frameseq right now with OSC
-		//myTUIO.update();
+			//We're not using frameseq right now with OSC
+			//myTUIO.update();
+
+			//Start sending OSC
+			myTUIO.sendOSC();
 		}
 	}
+}
 }
 
 /******************************************************************************
@@ -310,33 +399,27 @@ void testApp::draw(){
 	********************************/
 	if(bDrawVideo && bShowInterface && !bFastMode)
 	{
+		ofSetColor(0xFFFFFF);	
 		//Draw Everything
-		//background.draw(0, 0);
-		ofBackground(120, 20, 20);
+		background.draw(0, 0);
 
-		sourceImg.draw(40, 100, 320, 240);
+		if(bShowPressure)
+			pressureMap.draw(40, 30, 320, 240);
+		else
+			sourceImg.draw(40, 30, 320, 240);
 
-		if(bShowPressure){
-			pressureMap.draw(385, 100, 320, 240);
-		}
-		else{
-			grayDiff.draw(385, 100, 320, 240);
-		}
+		grayDiff.draw(385, 30, 320, 240);
 
-		fiLearn.draw(40, 421, 128, 96);
-		subtractBg.draw(187, 421, 128, 96);
-		highpassImg.draw(337, 421, 128, 96);
-		grayImg.draw(487, 421, 128, 96);
+		fiLearn.draw(85, 392, 128, 96);
+		subtractBg.draw(235, 392, 128, 96);
+		highpassImg.draw(385, 392, 128, 96);
+		grayImg.draw(535, 392, 128, 96);
 
 		ofSetColor(0x000000);
-		bigvideo.drawString("Raw Image", 145, 90);		
-		if(bShowPressure){bigvideo.drawString("Pressure Map", 475, 90);}
-		else			 {bigvideo.drawString("Tracked Image", 475, 90);}	
-/*						   verdana.drawString("Background", 70, 630);
-						   verdana.drawString("Background Removed", 189, 630);
-						   verdana.drawString("Highpass", 375, 630);
-						   verdana.drawString("Amplify", 530, 630);
-*/
+		if(bShowPressure){bigvideo.drawString("Pressure Map", 140, 20);}
+		else             {bigvideo.drawString("Source Image", 140, 20);}		
+						  bigvideo.drawString("Tracked Image", 475, 20);	
+
 		//Warped Box
 		//m_box.draw( 40, 146 );
 
@@ -351,9 +434,6 @@ void testApp::draw(){
 	*********************************/
 	if(bTUIOMode){
 
-		//Start sending OSC
-		myTUIO.sendOSC();
-		
 		//Draw GREEN CIRCLE 'ON' LIGHT
 		ofSetColor(0x00FF00);
 		ofFill();		
@@ -385,20 +465,6 @@ void testApp::draw(){
 		string str2 = "    Camera: ";
 		str2+= ofToString(fps, 1)+"fps";
 		ofSetWindowTitle(str + str2);
-
-		ofSetColor(0xFFFFFF);	
-		logo.draw(820,5);
-		
-/*		// render the UI
-		// Change to the projection matrix and set our viewing volume.
-		glMatrixMode( GL_PROJECTION );
-		glLoadIdentity();
-		gluOrtho2D(0,  ofGetWidth(), ofGetHeight() ,0);
-	    // We don't want to modify the projection matrix. 
-		glMatrixMode( GL_MODELVIEW );
-		glLoadIdentity();	
-*/	
-		parameterUI->render();
 	}
 	/*********************************
 	* IF DRAWING BLOB OUTLINES
@@ -415,7 +481,7 @@ void testApp::draw(){
 			//Get the contour (points) so they can be drawn
 			for( int j=0; j<contourFinder.blobs[i].nPts; j++ )
 			{
-				drawBlob.pts[j].x = (320.0f/camWidth) * (drawBlob.pts[j].x);
+				drawBlob.pts[j].x = (320.0f/camWidth)  * (drawBlob.pts[j].x);
 				drawBlob.pts[j].y = (240.0f/camHeight) * (drawBlob.pts[j].y);
 			}
 	
@@ -425,20 +491,19 @@ void testApp::draw(){
 			drawBlob.boundingRect.x		 *= (320.0f/camWidth);;
 			drawBlob.boundingRect.y		 *= (240.0f/camHeight);
 			
-			//Draw contours on the figures
-			drawBlob.draw(385, 100);
+			//Draw contours (outlines) on the tracked image
+			drawBlob.draw(385, 30);
 
-			//Show Labels (ID, x, y);
+			//Show ID label;
 			if(bShowLabels)
 			{
 				float xpos = drawBlob.centroid.x * (320.0f/camWidth);
 				float ypos = drawBlob.centroid.y * (240.0f/camHeight);
 
-				//Displat Text of blob information
 				ofSetColor(0xCCFFCC);
 				char idStr[1024];	
 				sprintf(idStr, "id: %i",drawBlob.id);
-				verdana.drawString(idStr, xpos + 365, ypos + drawBlob.boundingRect.height/2 + 110);			
+				verdana.drawString(idStr, xpos + 365, ypos + drawBlob.boundingRect.height/2 + 45);			
 			}
 		}
 		ofSetColor(0xFFFFFF);
@@ -460,6 +525,7 @@ void testApp::draw(){
 	img.draw(0,0,camWidth,camHeight);
 	*/ 	
 
+
 	//Update Demo Blobs
 	if(!calibrate.bCalibrating && bCalibration){
 
@@ -469,8 +535,8 @@ void testApp::draw(){
 		}
 	}
 
-	gui->draw();
-
+	if(!bCalibration)
+		gui->draw();
 }
 
 
@@ -505,6 +571,7 @@ void testApp::loadXMLSettings(){
 	minHeight			= XML.getValue("CONFIG:WINDOW:MINY",0);
 	bFullscreen			= XML.getValue("CONFIG:WINDOW:FULLSCREEN",0);
 
+	deviceID			= XML.getValue("CONFIG:CAMERA_0:DEVICE",0);
 	camWidth			= XML.getValue("CONFIG:CAMERA_0:WIDTH",0);
 	camHeight			= XML.getValue("CONFIG:CAMERA_0:HEIGHT",0);
 	//camRate			= XML.getValue("CONFIG:CAMERA_0:FRAMERATE",0);
@@ -561,8 +628,10 @@ void testApp::bgCapture( ofxCvGrayscaleImage & _giLive )
 *******************************/
 void testApp::doCalibration(){
 
-	
+	if(activeInput){	
+
 	ofSetFullscreen(bFullscreen);
+	
 
 	//Change the background color when a finger presses down/up		
 	ofSetColor(0x000000);
@@ -693,6 +762,7 @@ void testApp::doCalibration(){
 		calibrationText.drawString(reportStr, 33, 60);
 	}
 }
+}
 
 /*****************************************************************************
  * KEY EVENTS
@@ -702,18 +772,6 @@ void testApp::keyPressed(int key)
 	// THIS IS FOR THE ~ toggle...
 	if(key==126 || key==96) 
 	{
-		if(parameterUI->isActive)
-		{
-//			parameterUI->deActivate();	
-			bSpaced = true;
-			//bToggleHelp = true;	
-		}
-		else
-		{
-			parameterUI->activate();	
-			bSpaced = false;		
-			//bToggleHelp = false;	
-		}
 	}
 
 	switch(key)
@@ -725,13 +783,11 @@ void testApp::keyPressed(int key)
 */		case '1':
 			if(bToggleHelp)
 			{	
-				parameterUI->deActivate();	
 				//bToggleHelp = false;	
 				//ofSetWindowShape((2.0/3.0)*(ofGetWidth()-80)+60,ofGetHeight());
 			}
 			else
 			{	
-				parameterUI->deActivate();	
 				//bToggleHelp = true;
 				//ofSetWindowShape(max((3.0/2.0)*(ofGetWidth()-60)+80, minWidth), max(ofGetHeight(), minHeight));
 			}
@@ -993,7 +1049,6 @@ void testApp::mouseDragged(int x, int y, int button)
 		}
 	}
 		
-	parameterUI->mouseMotion(x, y);	
 
 	gui->mouseDragged(x, y, button);
 }
@@ -1003,8 +1058,6 @@ void testApp::mousePressed(int x, int y, int button)
 	sprintf(eventString, "mousePressed = (%i,%i - button %i)", x, y, button);
 	printf("button\n", button);
 
-	
-	parameterUI->mouseDown(x, y, button);	
 
 
 	gui->mousePressed(x, y, button);	
@@ -1013,8 +1066,6 @@ void testApp::mousePressed(int x, int y, int button)
 void testApp::mouseReleased()
 {	
 	sprintf(eventString, "mouseReleased");
-	
-	parameterUI->mouseUp(0, 0, 0);	
 
 	gui->mouseReleased(mouseX, mouseY, 0);	
 }
@@ -1113,11 +1164,67 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 {
 	switch(parameterId)
 	{
-		case kParameter_Panel1:
-		case kParameter_Panel2:
+		
+		case sourcePanel_nextCam:
+			if(length == sizeof(bool))
+			{
+				if(*(bool*)data)
+				{
+					activeInput = false;
+
+					if(deviceID < vidGrabber.getNumDevices() - 2)
+					{
+						deviceID += 1;
+						vidGrabber.close();
+						vidGrabber.setDeviceID(deviceID);
+						vidGrabber.setVerbose(false);		
+						vidGrabber.initGrabber(camWidth,camHeight);
+					}
+					activeInput = true;
+					bLearnBakground = true;
+				}					
+			}
+			break;
+		case sourcePanel_previousCam:
+			if(length == sizeof(bool))
+			{
+				if(*(bool*)data)
+				{
+					activeInput = false;
+
+					if(deviceID > 0)
+					{
+						deviceID -= 1;
+						vidGrabber.close();
+						vidGrabber.setDeviceID(deviceID);
+						vidGrabber.setVerbose(false);		
+						vidGrabber.initGrabber(camWidth,camHeight);
+					}
+					activeInput = true;
+					bLearnBakground = true;
+				}					
+			}
 			break;
 
+		case propertiesPanel_flipH:
+			if(length == sizeof(bool))
+				bHorizontalMirror = *(bool*)data;
+			break;
+		case propertiesPanel_flipV:
+			if(length == sizeof(bool))
+				bVerticalMirror = *(bool*)data;
+			break;
+
+		case optionPanel_tuio:
+			if(length == sizeof(bool))
+				bTUIOMode = *(bool*)data;
+			break;
+		case optionPanel_draw:
+			if(length == sizeof(bool))
+				bDrawVideo = *(bool*)data;
+			break;
 			
+
 		case backgroundPanel_remove:
 			if(length == sizeof(bool))
 				bLearnBakground = *(bool*)data;
@@ -1134,11 +1241,20 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 			if(length == sizeof(float))
 				highpassAmp = *(float*)data;
 			break;
-		case thresholdPanel_threshold:
+		case trackedPanel_threshold:
 			if(length == sizeof(float))
 				threshold = *(float*)data;
 			break;
-						
+		case trackedPanel_outlines:
+			if(length == sizeof(bool))
+				bDrawOutlines = *(bool*)data;
+			break;
+		case trackedPanel_ids:
+			if(length == sizeof(bool))
+				bShowLabels = *(bool*)data;
+			break;
+					
+								
 			
 		case kParameter_SaveXml:
 			if(length == sizeof(bool))
@@ -1155,19 +1271,5 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 			}
 			break;
 		
-		case kParameter_Color1:
-			if(length == sizeof(ofRGBA))
-				color1 = *(ofRGBA*)data;
-			break;
-			
-		case kParameter_Color2:
-			if(length == sizeof(ofRGBA))
-				color2 = *(ofRGBA*)data;
-			break;
-			
-		case kParameter_Color3:
-			if(length == sizeof(ofRGBA))
-				color3 = *(ofRGBA*)data;
-			break;
 	}
 }

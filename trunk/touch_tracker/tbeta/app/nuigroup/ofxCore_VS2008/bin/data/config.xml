@@ -61,6 +61,7 @@
       
    //////////////////// START SENSORS & INPUT STUFF//-->
     <CAMERA_0>
+	<DEVICE>0</DEVICE>
         <WIDTH>320</WIDTH>
         <HEIGHT>240</HEIGHT>
         <FRAMERATE>60</FRAMERATE>

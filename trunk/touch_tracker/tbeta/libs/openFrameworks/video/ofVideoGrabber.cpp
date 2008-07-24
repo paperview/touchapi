@@ -212,11 +212,20 @@ bool  ofVideoGrabber::isFrameNew(){
 }
 
 //--------------------------------------------------------------------
+int ofVideoGrabber::getNumDevices(){
+
+	return VI.listDevices();
+
+}
+
+
 void ofVideoGrabber::grabFrame(){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	//---------------------------------
+
+	
 
 		if (bGrabberInited == true){
 			SGIdle(gSeqGrabber);
@@ -251,7 +260,7 @@ void ofVideoGrabber::grabFrame(){
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
 	//---------------------------------
-
+		
 		if (bGrabberInited == true){
 
 				bIsFrameNew = false; //added this line to make false
