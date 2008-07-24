@@ -14,15 +14,16 @@
         <LIQUID>0</LIQUID>
     </WINDOW>
     <BOOLEAN>
+	<PRESSURE>0</PRESSURE>
         <LABELS>1</LABELS>
         <VIDEO>1</VIDEO>
         <SNAPSHOT>0</SNAPSHOT>
         <OUTLINES>1</OUTLINES>
         <LEARNBG>0</LEARNBG>
         <TUIO>0</TUIO>
-        <CALIBRATION>0</CALIBRATION>
         <VMIRROR>0</VMIRROR>
         <HMIRROR>1</HMIRROR>
+	<WARP>1</WARP>
     </BOOLEAN>
     <INT>
         <!--// THIS SHOULD BE CALLED FILTERS SETTERS OR SOME JIVE //-->
@@ -61,24 +62,11 @@
       
    //////////////////// START SENSORS & INPUT STUFF//-->
     <CAMERA_0>
+	<USECAMERA>1</USECAMERA> <!--// 1 = camera, 0 = video //-->
 	<DEVICE>0</DEVICE>
         <WIDTH>320</WIDTH>
         <HEIGHT>240</HEIGHT>
-        <FRAMERATE>60</FRAMERATE>
+        <FRAMERATE>30</FRAMERATE>
         <SOURCE>PHILLIPS</SOURCE>
     </CAMERA_0>
-    <!--// TODO /////////////////////////-->
-    <MICROPHONE_0>
-        <VOLUME>320</VOLUME>
-        <SOURCE>PHILLIPS</SOURCE>
-    </MICROPHONE_0>
-    <!--// TODO /////////////////////////-->
-    <GENERAL_SENSOR>
-        <ID />
-    </GENERAL_SENSOR>
-    <!--// YES WIIIII MOTE :)-->
-    <WIIMOTE_0 />
-    <!--// OFXMANYMICE -->
-    <MOUSE_0 />
-    <KEYBOARD_0 />
 </CONFIG>
