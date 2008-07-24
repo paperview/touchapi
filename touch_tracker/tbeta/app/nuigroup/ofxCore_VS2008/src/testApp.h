@@ -35,7 +35,7 @@
 #define HOST "localhost"
 #define PORT 3333
 
-#define _USE_LIVE_VIDEO					// uncomment this to use a live camera
+//#define _USE_LIVE_VIDEO					// uncomment this to use a live camera
 
 
 
@@ -44,26 +44,25 @@ class testApp : public ofSimpleApp, public ofCvBlobListener, public ofxGuiListen
 	
 enum
 	{
-		kParameter_Panel1,
-		kParameter_Panel2,
-		kParameter_Panel3,
-		kParameter_Panel4,
-
-
-
 		propertiesPanel,
 		propertiesPanel_flipV,
 		propertiesPanel_flipH,
+		propertiesPanel_settings,
 		propertiesPanel_pressure,
 
 		optionPanel,
 		optionPanel_tuio,
 		optionPanel_draw,
 
+		calibrationPanel,
+		calibrationPanel_calibrate,
+		calibrationPanel_warp,
+
 		sourcePanel,
+		sourcePanel_cam,
 		sourcePanel_nextCam,
 		sourcePanel_previousCam,
-
+		sourcePanel_video,
 
 		backgroundPanel,
 		backgroundPanel_remove,
@@ -80,7 +79,7 @@ enum
 		trackedPanel_outlines,
 		trackedPanel_ids,
 
-
+		savePanel,
 		kParameter_SaveXml,
 		kParameter_File,
 	};
@@ -145,11 +144,11 @@ public:
 		*						Video Settings
 		***************************************************************/
        
-		#ifdef _USE_LIVE_VIDEO
+		//#ifdef _USE_LIVE_VIDEO
 		  ofVideoGrabber 		vidGrabber;
-		#else
+		//#else
 		  ofVideoPlayer 		vidPlayer;
-		#endif
+		//#endif
 
 
 		/****************************************************************
@@ -162,7 +161,7 @@ public:
 		int 				blurValue;
 		int 				blurGaussianValue;
 		int					wobbleThreshold;
-		int 				frameRate;
+		int 				camRate;
 		int 				camWidth;
 		int 				camHeight;
 		int					winWidth;
@@ -191,7 +190,10 @@ public:
 		bool				bHorizontalMirror;
 		bool				bSlimMode;
 		bool				bShowLabels;
-		bool				bNewFrame;		
+		bool				bNewFrame;
+		bool				bWarpImg;
+
+		bool				bcamera;
 
 		/****************************************************
 		*End config.xml variables
@@ -267,7 +269,7 @@ public:
 	    ofxCvFloatImage		fiLearn;
 
 		//---------------------------------------Warping Box				
-		CBoxAligner			m_box;
+		CBoxAligner			warp_box;
 		ofxPoint2f			dstPts[4];
 
 		//---------------------------------------XML Settings Vars (BLOATED)

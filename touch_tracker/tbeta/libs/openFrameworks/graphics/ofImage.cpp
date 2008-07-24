@@ -216,7 +216,7 @@ void ofImage::update(){
 	// for folks to work with...
 
 	if (imgPixels != NULL && bAllocatedPixels == true)
-		delete imgPixels;				// delete anything that might have existed
+		delete [] imgPixels;				// delete anything that might have existed
 	int byteCount = bpp / 8;		// bytes ber pixel (not bits per pixel)
 	imgPixels = new unsigned char[width*height*byteCount];	//allocate that memory for the image (contiguously)
 	bAllocatedPixels = true;
@@ -344,7 +344,7 @@ void ofImage::setFromPixels(unsigned char * pixels, int w, int h, int newType, b
 	
 	//-------------------------------
 	if (imgPixels != NULL && bAllocatedPixels == true){
-		delete imgPixels;            // delete anything that might have existed
+		delete [] imgPixels;            // delete anything that might have existed
 		imgPixels 		= NULL;
 		bAllocatedPixels 	= false;
 	} 
