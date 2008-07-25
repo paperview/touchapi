@@ -102,7 +102,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 			// be careful if you call this function with alot of different
 			// sized "input" images!, it does allocation every time
 			// a new size is passed in....
-			inputCopy.clear();
+			//inputCopy.clear();
 			inputCopy.allocate( input.width, input.height );
 			inputCopy = input;
 		}

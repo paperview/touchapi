@@ -213,12 +213,12 @@ ofxGuiPoints* ofxGuiPanel::addPoints(int id, string name, int width, int height,
 
 //	----------------------------------------------------------------------------------------------------
 
-ofxGuiButton* ofxGuiPanel::addButton(int id, string name, int width, int height, bool value, int mode)
+ofxGuiButton* ofxGuiPanel::addButton(int id, string name, int width, int height, bool value, int mode, string image = "")
 {
 	int offset = (mObjects.size() == 0 && mParamName == "") ? 0 : mSpacing;
 
 	ofxGuiButton* button = new ofxGuiButton();
-	button->init(id, name, mBorder, mObjHeight - mBorder + offset, width, height, value, mode);
+	button->init(id, name, mBorder, mObjHeight - mBorder + offset, width, height, value, mode, image);
 	mObjects.push_back(button);
 	
 	adjustToNewContent(button->mObjWidth, button->mObjHeight + offset);
@@ -336,6 +336,7 @@ void ofxGuiPanel::buildFromXml()
 			int		display	= mGlobals->mXml.getValue("DISPLAY", 0);
 			int		steps	= mGlobals->mXml.getValue("STEPS", 0);
 			int		mode	= mGlobals->mXml.getValue("MODE", 0);
+			string	image	= mGlobals->mXml.getValue("IMAGE", "");
 			
 			if(type == "SLIDER")
 			{
@@ -382,7 +383,7 @@ void ofxGuiPanel::buildFromXml()
 			{
 				bool value = mGlobals->mXml.getValue("VALUE", 0);
 				
-				ofxGuiButton* button = addButton(id, name, width, height, value, mode);
+				ofxGuiButton* button = addButton(id, name, width, height, value, mode, image);
 				button->buildFromXml();
 			}
 			else if(type == "FILES")

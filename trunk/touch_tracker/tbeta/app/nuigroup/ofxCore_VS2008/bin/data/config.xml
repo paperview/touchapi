@@ -21,7 +21,7 @@
         <OUTLINES>1</OUTLINES>
         <LEARNBG>0</LEARNBG>
         <TUIO>0</TUIO>
-        <VMIRROR>0</VMIRROR>
+        <VMIRROR>1</VMIRROR>
         <HMIRROR>1</HMIRROR>
 	<WARP>1</WARP>
     </BOOLEAN>

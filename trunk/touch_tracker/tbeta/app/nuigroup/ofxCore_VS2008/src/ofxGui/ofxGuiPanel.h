@@ -47,7 +47,7 @@ public:
 	ofxGuiSlider*	addSlider(int id, string name, int width, int height, float min, float max, float value, int display, int steps);
 	ofxGuiXYPad*	addXYPad(int id, string name, int width, int height, ofxPoint2f min, ofxPoint2f max, ofxPoint2f value, int display, int steps);
 	ofxGuiPoints*	addPoints(int id, string name, int width, int height, ofxPoint2f min, ofxPoint2f max, ofxPoint2f value, int display, int steps);
-	ofxGuiButton*	addButton(int id, string name, int width, int height, bool value, int mode);
+	ofxGuiButton*	addButton(int id, string name, int width, int height, bool value, int mode, string image);
 	ofxGuiFiles*	addFiles(int id, string name, int width, int height, string value, string subPath, string suffix);
 	ofxGuiColor*	addColor(int id, string name, int width, int height, ofRGBA value, int mode);
 	ofxGuiMatrix*	addMatrix(int id, string name, int width, int height, int xGrid, int yGrid, int value, int mode, int spacing);
