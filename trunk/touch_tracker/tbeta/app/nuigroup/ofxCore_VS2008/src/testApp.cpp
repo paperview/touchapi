@@ -95,14 +95,14 @@ void testApp::setup()
 	background.loadImage("images/background.jpg"); //Main (Temp?) Background
 
 	//Setup green warped box
-	warp_box.setup( 40, 30, 320, 240); 
+	warp_box.setup( 40, 30, camWidth, camHeight, camWidth/320, camHeight/240); 
 
 	//Warped points
 	dstPts[0].x = 0.0f;
-    dstPts[0].y = 240.0f;   
-    dstPts[1].x = 320.0f;
-    dstPts[1].y = 240.0f;   
-    dstPts[2].x = 320.0f;
+    dstPts[0].y = camHeight;   
+    dstPts[1].x = camWidth;
+    dstPts[1].y = camHeight;   
+    dstPts[2].x = camWidth;
     dstPts[2].y = 0.0f;   
     dstPts[3].x = 0.0f;
     dstPts[3].y = 0.0f;
@@ -230,6 +230,15 @@ void testApp::setup()
 		gui->activate(true);
 
 	//}
+
+		gui->update(propertiesPanel_flipV, kofxGui_Set_Bool, &bVerticalMirror, sizeof(bool));
+		gui->update(propertiesPanel_flipV, kofxGui_Set_Bool, &bHorizontalMirror, sizeof(bool));
+		gui->update(optionPanel_draw, kofxGui_Set_Bool, &bDrawVideo, sizeof(bool));
+		gui->update(trackedPanel_outlines, kofxGui_Set_Bool, &bDrawOutlines, sizeof(bool));
+		gui->update(trackedPanel_ids, kofxGui_Set_Bool, &bShowLabels, sizeof(bool));
+		gui->update(sourcePanel_cam, kofxGui_Set_Bool, &bcamera, sizeof(bool));
+		gui->update(calibrationPanel_warp, kofxGui_Set_Bool, &bWarpImg, sizeof(bool));
+		//gui->update(sourcePanel_cam, kofxGui_Set_Bool, &bcamera, sizeof(bool));
 }
 
 
@@ -422,15 +431,6 @@ void testApp::draw(){
 		
 		
 		ofSetColor(0xFFFFFF);
-		ofFill();
-		ofRect(40,270, 320, 25);
-
-		ofSetColor(0x000000);
-		ofNoFill();
-		ofRect(40,270, 320, 25);
-
-
-
 
 
 		if(bShowPressure)
@@ -608,6 +608,7 @@ void testApp::loadXMLSettings(){
 	bFastMode			= XML.getValue("CONFIG:BOOLEAN:FAST",0);	
 	bDrawOutlines		= XML.getValue("CONFIG:BOOLEAN:OUTLINES",0);
 	bLearnBakground		= XML.getValue("CONFIG:BOOLEAN:LEARNBG",0);
+	bWarpImg			= XML.getValue("CONFIG:BOOLEAN:WARP",0);
 
 	bVerticalMirror		= XML.getValue("CONFIG:BOOLEAN:VMIRROR",0);
 	bHorizontalMirror	= XML.getValue("CONFIG:BOOLEAN:HMIRROR",0);	
@@ -1092,10 +1093,11 @@ void testApp::mouseDragged(int x, int y, int button)
 
 		if(y < (30 + 240) && y > 30){
 	
-			if(warp_box.findSelectionDistance(x, y) < 35){
-
+			//if(warp_box.findSelectionDistance(x, y) < 35){
+				
+			
 				warp_box.adjustHandle(x,y);
-			}
+			//}
 		}
 	}
 		
@@ -1222,8 +1224,6 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 						camWidth = vidGrabber.width;
 						camHeight = vidGrabber.height;
 						vidGrabber.initGrabber(camWidth,camHeight);
-						activeInput = true;
-						bLearnBakground = true;
 
 						sourceImg.allocate(camWidth, camHeight);    //Source Image
 						grayImg.allocate(camWidth, camHeight);		//Gray Image
@@ -1234,7 +1234,13 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 						giWarped.allocate(camWidth, camHeight);     //Warped Image (used for warped calibration)
 						fiLearn.allocate(camWidth, camHeight);		//ofxFloatImage used for simple dynamic background subtracti
 						pressureMap.allocate(camWidth, camHeight);	//Pressure Map Image
-
+						
+						//reset warp box
+						warp_box.setup( 40, 30, camWidth, camHeight, camWidth/320, camHeight/240); 
+						
+						activeInput = true;
+						bLearnBakground = true;
+						
 						//Turn off the video button;
 						bool setBool = false;
 						gui->update(sourcePanel_video, kofxGui_Set_Bool, &setBool, length);
@@ -1267,6 +1273,9 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 						fiLearn.allocate(camWidth, camHeight);		//ofxFloatImage used for simple dynamic background subtracti
 						pressureMap.allocate(camWidth, camHeight);	//Pressure Map Image
 
+						//reset warp box
+						warp_box.setup( 40, 30, camWidth, camHeight, camWidth/320, camHeight/240); 
+				
 						activeInput = true;
 						bLearnBakground = true;
 						//Turn off the camera button;

@@ -23,7 +23,7 @@
         <TUIO>0</TUIO>
         <VMIRROR>1</VMIRROR>
         <HMIRROR>1</HMIRROR>
-	<WARP>1</WARP>
+	<WARP>0</WARP>
     </BOOLEAN>
     <INT>
         <!--// THIS SHOULD BE CALLED FILTERS SETTERS OR SOME JIVE //-->

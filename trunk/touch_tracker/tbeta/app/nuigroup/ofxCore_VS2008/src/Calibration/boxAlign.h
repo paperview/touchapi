@@ -24,7 +24,7 @@ class CBoxAligner {
 		~CBoxAligner();
 		
 		void           setup();
-		void           setup( int x, int y, float w, float h);
+		void           setup( int x, int y, float w, float h, float resW, float resH);
         
         // moves a handle to mouse position
         void           adjustHandle(float mouseX, float mouseY );
@@ -48,6 +48,8 @@ class CBoxAligner {
         float          getBottomRightX(){ return fHandles[2].x; }
         float          getBottomRightY(){ return fHandles[2].y; }
         
+		float			resWidth;
+		float			resHeight;
        
 	   		
         ofxPoint2f      fHandles[4];
