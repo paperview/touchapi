@@ -19,14 +19,14 @@
         <FILESYTEXT>3</FILESYTEXT>
         <POINTSIZE>100</POINTSIZE>
         <KNOBSIZE>10</KNOBSIZE>
-        <COVERCOLOR>FFFFFFCC</COVERCOLOR>
+        <COVERCOLOR>FFFFFF66</COVERCOLOR>
         <TEXTCOLOR>000000FF</TEXTCOLOR>
-        <BORDERCOLOR>00000080</BORDERCOLOR>
-        <FRAMECOLOR>00000040</FRAMECOLOR>
+        <BORDERCOLOR>0000004D</BORDERCOLOR>
+        <FRAMECOLOR>0000004D</FRAMECOLOR>
         <SLIDERCOLOR>FF0000CC</SLIDERCOLOR>
         <AXISCOLOR>00FF00FF</AXISCOLOR>
         <HANDLECOLOR>000000FF</HANDLECOLOR>
-        <BUTTONCOLOR>FF0000CC</BUTTONCOLOR>
+        <BUTTONCOLOR>0099FF80</BUTTONCOLOR>
         <CURVECOLOR>FF9900FF</CURVECOLOR>
         <SCOPECOLOR>FF9900FF</SCOPECOLOR>
         <ACTIVECOLOR>FF0000FF</ACTIVECOLOR>
@@ -35,8 +35,8 @@
         <ID>0</ID>
         <TYPE>PANEL</TYPE>
         <NAME>Source Properties</NAME>
-        <LEFT>730.000000</LEFT>
-        <TOP>60.000000</TOP>
+        <LEFT>735.000000</LEFT>
+        <TOP>30.000000</TOP>
         <WIDTH>165.000000</WIDTH>
         <HEIGHT>84.000000</HEIGHT>
         <MODE>0</MODE>
@@ -68,7 +68,7 @@
             <MODE>2</MODE>
             <DISPLAY>2</DISPLAY>
             <STEPS>0</STEPS>
-            <VALUE>0</VALUE>
+            <VALUE>1</VALUE>
         </OBJECT>
         <OBJECT>
             <ID>2</ID>
@@ -88,8 +88,8 @@
         <ID>5</ID>
         <TYPE>PANEL</TYPE>
         <NAME>Tracking Options</NAME>
-        <LEFT>730.000000</LEFT>
-        <TOP>163.000000</TOP>
+        <LEFT>735.000000</LEFT>
+        <TOP>137.000000</TOP>
         <WIDTH>152.000000</WIDTH>
         <HEIGHT>62.000000</HEIGHT>
         <MODE>0</MODE>
@@ -121,15 +121,15 @@
             <MODE>2</MODE>
             <DISPLAY>2</DISPLAY>
             <STEPS>0</STEPS>
-            <VALUE>0</VALUE>
+            <VALUE>1</VALUE>
         </OBJECT>
     </OBJECT>
     <OBJECT>
         <ID>8</ID>
         <TYPE>PANEL</TYPE>
         <NAME>Calibration</NAME>
-        <LEFT>730.000000</LEFT>
-        <TOP>263.000000</TOP>
+        <LEFT>735.000000</LEFT>
+        <TOP>233.000000</TOP>
         <WIDTH>161.000000</WIDTH>
         <HEIGHT>62.000000</HEIGHT>
         <MODE>0</MODE>
@@ -168,8 +168,8 @@
         <ID>27</ID>
         <TYPE>PANEL</TYPE>
         <NAME>files</NAME>
-        <LEFT>800.000000</LEFT>
-        <TOP>380.000000</TOP>
+        <LEFT>735.000000</LEFT>
+        <TOP>320.000000</TOP>
         <WIDTH>99.000000</WIDTH>
         <HEIGHT>42.000000</HEIGHT>
         <MODE>0</MODE>
@@ -215,27 +215,27 @@
             <MODE>2</MODE>
             <DISPLAY>2</DISPLAY>
             <STEPS>0</STEPS>
-            <VALUE>0</VALUE>
+            <VALUE>1</VALUE>
         </OBJECT>
         <OBJECT>
             <ID>26</ID>
             <TYPE>BUTTON</TYPE>
             <NAME>Show IDs (i)</NAME>
-            <LEFT>10.000000</LEFT>
-            <TOP>52.000000</TOP>
+            <LEFT>130.000000</LEFT>
+            <TOP>32.000000</TOP>
             <WIDTH>10.000000</WIDTH>
             <HEIGHT>10.000000</HEIGHT>
             <MODE>2</MODE>
             <DISPLAY>2</DISPLAY>
             <STEPS>0</STEPS>
-            <VALUE>0</VALUE>
+            <VALUE>1</VALUE>
         </OBJECT>
         <OBJECT>
             <ID>24</ID>
             <TYPE>SLIDER</TYPE>
             <NAME>Threshold (a/z)</NAME>
             <LEFT>10.000000</LEFT>
-            <TOP>72.000000</TOP>
+            <TOP>52.000000</TOP>
             <WIDTH>300.000000</WIDTH>
             <HEIGHT>13.000000</HEIGHT>
             <MODE>0</MODE>
@@ -276,8 +276,8 @@
             <ID>14</ID>
             <TYPE>BUTTON</TYPE>
             <NAME>Previous Camera</NAME>
-            <LEFT>10.000000</LEFT>
-            <TOP>52.000000</TOP>
+            <LEFT>100.000000</LEFT>
+            <TOP>32.000000</TOP>
             <WIDTH>10.000000</WIDTH>
             <HEIGHT>10.000000</HEIGHT>
             <MODE>3</MODE>
@@ -289,8 +289,8 @@
             <ID>13</ID>
             <TYPE>BUTTON</TYPE>
             <NAME>Next Camera</NAME>
-            <LEFT>10.000000</LEFT>
-            <TOP>72.000000</TOP>
+            <LEFT>214.000000</LEFT>
+            <TOP>32.000000</TOP>
             <WIDTH>10.000000</WIDTH>
             <HEIGHT>10.000000</HEIGHT>
             <MODE>3</MODE>
@@ -303,7 +303,7 @@
             <TYPE>BUTTON</TYPE>
             <NAME>Use Video</NAME>
             <LEFT>10.000000</LEFT>
-            <TOP>92.000000</TOP>
+            <TOP>55.000000</TOP>
             <WIDTH>10.000000</WIDTH>
             <HEIGHT>10.000000</HEIGHT>
             <MODE>2</MODE>
@@ -311,6 +311,20 @@
             <STEPS>0</STEPS>
             <VALUE>1</VALUE>
         </OBJECT>
+    </OBJECT>
+    <OBJECT>
+        <ID>16</ID>
+        <TYPE>PANEL</TYPE>
+        <NAME>Background</NAME>
+        <LEFT>86.000000</LEFT>
+        <TOP>487.000000</TOP>
+        <WIDTH>89.000000</WIDTH>
+        <HEIGHT>22.000000</HEIGHT>
+        <MODE>0</MODE>
+        <DISPLAY>2</DISPLAY>
+        <STEPS>0</STEPS>
+        <BORDER>10</BORDER>
+        <SPACING>7</SPACING>
     </OBJECT>
     <OBJECT>
         <ID>16</ID>

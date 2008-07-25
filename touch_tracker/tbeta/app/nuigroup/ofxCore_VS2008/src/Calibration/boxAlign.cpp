@@ -23,7 +23,7 @@ void CBoxAligner::setup()
        fDrawOffset.y = 0.0f;        
 }
 //--------------------------------------------------------------
-void CBoxAligner::setup( int x, int y, float w, float h)
+void CBoxAligner::setup( int x, int y, float w, float h, float resW, float resH)
 {
        
        
@@ -45,6 +45,9 @@ void CBoxAligner::setup( int x, int y, float w, float h)
        
        fDrawOffset.x = x;
        fDrawOffset.y = y;
+
+	   resWidth = resW;
+	   resHeight = resH;
        
 }
 //--------------------------------------------------------------
@@ -52,11 +55,11 @@ void CBoxAligner::adjustHandle(float mouseX, float mouseY)
 {	 
    	
     // find out which handle is closest to mouse and adjust that one   
-    int iHandle = 	findClosestHandle( mouseX,  mouseY);
+    int iHandle = 	findClosestHandle( mouseX * resWidth,  mouseY * resHeight);
    	
    	// account for the offset in mouse position based on where the handles are drawn
-    fHandles[iHandle].x = mouseX - fDrawOffset.x;
-    fHandles[iHandle].y = mouseY - fDrawOffset.y;
+    fHandles[iHandle].x = (mouseX * resWidth) - (fDrawOffset.x * resWidth);
+    fHandles[iHandle].y = (mouseY * resHeight) - (fDrawOffset.y * resHeight);
     
         
 }
@@ -121,17 +124,17 @@ void CBoxAligner::draw( int x, int y, float radius )
         
         // draw box
 		glBegin( GL_LINE_STRIP );
-		         glVertex2f(fHandles[0].x, fHandles[0].y);
-		         glVertex2f(fHandles[1].x, fHandles[1].y);
-	             glVertex2f(fHandles[2].x, fHandles[2].y);
-		         glVertex2f(fHandles[3].x, fHandles[3].y);
-		         glVertex2f(fHandles[0].x, fHandles[0].y);
+		         glVertex2f(fHandles[0].x/resWidth, fHandles[0].y/resHeight);
+		         glVertex2f(fHandles[1].x/resWidth, fHandles[1].y/resHeight);
+	             glVertex2f(fHandles[2].x/resWidth, fHandles[2].y/resHeight);
+		         glVertex2f(fHandles[3].x/resWidth, fHandles[3].y/resHeight);
+		         glVertex2f(fHandles[0].x/resWidth, fHandles[0].y/resHeight);
         glEnd();
 		
 		// draw handles
 		for( int i = 0; i < 4; i++)
         {  
-             ofCircle( fHandles[i].x, fHandles[i].y, radius);
+             ofCircle( fHandles[i].x/resWidth, fHandles[i].y/resHeight, radius);
         }
 		
 		glPopMatrix();
