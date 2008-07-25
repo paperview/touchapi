@@ -121,27 +121,27 @@ void testApp::setup()
 		gui->mGlobals->mBorderColor.r = 0;
 		gui->mGlobals->mBorderColor.g = 0;
 		gui->mGlobals->mBorderColor.b = 0;
-		gui->mGlobals->mBorderColor.a = .5;
+		gui->mGlobals->mBorderColor.a = .3;
 
 		gui->mGlobals->mCoverColor.r = 1;
 		gui->mGlobals->mCoverColor.g = 1;
 		gui->mGlobals->mCoverColor.b = 1;
-		gui->mGlobals->mCoverColor.a = .8;
+		gui->mGlobals->mCoverColor.a = .4;
 
 		gui->mGlobals->mFrameColor.r = 0;
 		gui->mGlobals->mFrameColor.g = 0;
 		gui->mGlobals->mFrameColor.b = 0;
-		gui->mGlobals->mFrameColor.a = .25;
+		gui->mGlobals->mFrameColor.a = .3;
 		
 		gui->mGlobals->mTextColor.r = 0;
 		gui->mGlobals->mTextColor.g = 0;
 		gui->mGlobals->mTextColor.b = 0;
 		gui->mGlobals->mTextColor.a = 1;
 
-		gui->mGlobals->mButtonColor.r = 1;
-		gui->mGlobals->mButtonColor.g = 0;
-		gui->mGlobals->mButtonColor.b = 0;
-		gui->mGlobals->mButtonColor.a = .8;
+		gui->mGlobals->mButtonColor.r = 0;
+		gui->mGlobals->mButtonColor.g = .6;
+		gui->mGlobals->mButtonColor.b = 1;
+		gui->mGlobals->mButtonColor.a = .5;
 
 		gui->mGlobals->mHandleColor.r = 0;
 		gui->mGlobals->mHandleColor.g = 0;
@@ -156,48 +156,63 @@ void testApp::setup()
 
 
 
-		ofxGuiPanel* propPanel = gui->addPanel(propertiesPanel, "Source Properties", 730, 60, 12, OFXGUI_PANEL_SPACING);
-		propPanel->addButton(propertiesPanel_settings, "Camera Settings (v)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger);
-		propPanel->addButton(propertiesPanel_flipV, "Flip Vertical (v)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
-		propPanel->addButton(propertiesPanel_flipH, "Flip Horizontal (h)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
+		ofxGuiPanel* propPanel = gui->addPanel(propertiesPanel, "Source Properties", 735, 30, 12, OFXGUI_PANEL_SPACING);
+		propPanel->addButton(propertiesPanel_settings, "Camera Settings (v)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
+		propPanel->addButton(propertiesPanel_flipV, "Flip Vertical (v)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
+		propPanel->addButton(propertiesPanel_flipH, "Flip Horizontal (h)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		propPanel->mObjWidth = 200;
 
-		ofxGuiPanel* oPanel = gui->addPanel(optionPanel, "Tracking Options", 730, 163, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
-		oPanel->addButton(optionPanel_tuio, "Send TUIO (t)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
-		oPanel->addButton(optionPanel_draw, "Draw Windows (d)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
+		ofxGuiPanel* oPanel = gui->addPanel(optionPanel, "Tracking Options", 735, 137, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		oPanel->addButton(optionPanel_tuio, "Send TUIO (t)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
+		oPanel->addButton(optionPanel_draw, "Draw Windows (d)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		oPanel->mObjWidth = 200;
 
-		ofxGuiPanel* cPanel = gui->addPanel(calibrationPanel, "Calibration", 730, 263, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
-		cPanel->addButton(calibrationPanel_calibrate, "Enter Calibration (c)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger);
-		cPanel->addButton(calibrationPanel_warp, "Warp (w)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
+		ofxGuiPanel* cPanel = gui->addPanel(calibrationPanel, "Calibration", 735, 233, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		cPanel->addButton(calibrationPanel_calibrate, "Enter Calibration (c)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
+		cPanel->addButton(calibrationPanel_warp, "Warp (w)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		cPanel->mObjWidth = 200;
 
 
-		ofxGuiPanel* panel2 = gui->addPanel(savePanel, "files", 800, 380, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		ofxGuiPanel* panel2 = gui->addPanel(savePanel, "files", 735, 320, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
 		//savePanel->addFiles(kParameter_File, "files", 110, OFXGUI_FILES_HEIGHT, "", "", "xml");
-		panel2->addButton(kParameter_SaveXml, "saveToXml", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger);
+		panel2->addButton(kParameter_SaveXml, "saveToXml", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
+		panel2->mObjWidth = 200;
 
 		//Tracked Image
 		ofxGuiPanel* trackPanel = gui->addPanel(trackedPanel, "Tracked Image", 386, 270, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
-		trackPanel->addButton(trackedPanel_outlines, "Show Outlines (o)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
-		trackPanel->addButton(trackedPanel_ids, "Show IDs (i)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
+		trackPanel->addButton(trackedPanel_outlines, "Show Outlines (o)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
+		trackPanel->addButton(trackedPanel_ids, "Show IDs (i)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		trackPanel->addSlider(trackedPanel_threshold, "Threshold (a/z)", 300, 13, 0.0f, 255.0f, threshold, kofxGui_Display_Int, 0);
-		trackPanel->mObjHeight = 105;
+		trackPanel->mObjHeight = 85;
 		trackPanel->mObjWidth = 319;
+		trackPanel->mObjects[1]->mObjX = 130;
+		trackPanel->mObjects[1]->mObjY = 32;
+		trackPanel->mObjects[2]->mObjY = 52;
 
 		//Source Image
 		ofxGuiPanel* srcPanel = gui->addPanel(sourcePanel, "Source Image", 41, 270, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
-		srcPanel->addButton(sourcePanel_cam, "Use Camera", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
-		srcPanel->addButton(sourcePanel_previousCam, "Previous Camera", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger);
-		srcPanel->addButton(sourcePanel_nextCam, "Next Camera", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger);
-		srcPanel->addButton(sourcePanel_video, "Use Video", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch);
-		srcPanel->mObjHeight = 105;
+		srcPanel->addButton(sourcePanel_cam, "Use Camera", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
+		srcPanel->addButton(sourcePanel_previousCam, "Previous Camera", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
+		srcPanel->addButton(sourcePanel_nextCam, "Next Camera", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
+		srcPanel->addButton(sourcePanel_video, "Use Video", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
+		srcPanel->mObjHeight = 85;
 		srcPanel->mObjWidth = 319;
+		srcPanel->mObjects[1]->mObjX = 100;
+		srcPanel->mObjects[1]->mObjY = 32;
+		srcPanel->mObjects[2]->mObjX = 214;
+		srcPanel->mObjects[2]->mObjY = 32;
+		srcPanel->mObjects[3]->mObjY = 55;
+
+		//Background Image
+		ofxGuiPanel* bkPanel2 = gui->addPanel(backgroundPanel, "Background", 86, 487, 10, 7);
+		bkPanel2->mObjWidth = 127;
+		bkPanel2->mObjHeight = 60;
 
 		//Background Image
 		ofxGuiPanel* bkPanel = gui->addPanel(backgroundPanel, "Background", 236, 487, 10, 7);
-		bkPanel->addButton(backgroundPanel_remove, "Remove (b)\nBackground", 10, 10, kofxGui_Button_Off, kofxGui_Button_Trigger);
+		bkPanel->addButton(backgroundPanel_remove, "Remove (b)\nBackground", 10, 10, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
 		bkPanel->mObjWidth = 127;
+		bkPanel->mObjHeight = 60;
 
 		//Highpass Image
 		ofxGuiPanel* hpPanel = gui->addPanel(highpassPanel, "Highpass", 386, 487, OFXGUI_PANEL_BORDER, 7);
@@ -269,8 +284,6 @@ void testApp::update()
 			************************************************/
 			//Set Mirroring Horizontal/Vertical
 			sourceImg.mirror(bVerticalMirror, bHorizontalMirror);
-
-			//sourceImg.warpIntoMe(sourceImg, warp_box.fHandles, dstPts );
 
 			subtractBg = sourceImg;
 
@@ -394,7 +407,31 @@ void testApp::draw(){
 	{
 		ofSetColor(0xFFFFFF);	
 		//Draw Everything
-		//background.draw(0, 0);
+		background.draw(0, 0);
+
+		//Draw arrows
+		ofSetColor(187, 200, 203);
+		ofFill();
+		ofTriangle(680, 420, 680, 460, 700, 440);
+		ofTriangle(70, 420, 70, 460, 50, 440);
+		ofSetColor(255, 255, 0);
+		ofNoFill();
+		ofTriangle(70, 420, 70, 460, 50, 440);
+
+
+		
+		
+		ofSetColor(0xFFFFFF);
+		ofFill();
+		ofRect(40,270, 320, 25);
+
+		ofSetColor(0x000000);
+		ofNoFill();
+		ofRect(40,270, 320, 25);
+
+
+
+
 
 		if(bShowPressure)
 			pressureMap.draw(40, 30, 320, 240);
@@ -453,11 +490,13 @@ void testApp::draw(){
 		bShowInterface = true;
 
 		//Display applicaion and camera FPS in title 
-		string str = "Tbeta: ";
-		str+= ofToString(ofGetFrameRate(), 2)+"fps";	
-		string str2 = "    Camera: ";
+		string str = "Application: ";
+		str+= ofToString(ofGetFrameRate(), 2)+"fps \n";	
+		string str2 = "Camera:   ";
 		str2+= ofToString(fps, 1)+"fps";
-		ofSetWindowTitle(str + str2);
+
+		ofSetColor(0xFFFFFF);
+		verdana.drawString(str + str2, 740, 410);		
 	}
 	/*********************************
 	* IF DRAWING BLOB OUTLINES
@@ -504,6 +543,23 @@ void testApp::draw(){
 
 	if(!bCalibration)
 		gui->draw();
+
+/*	glPushMatrix();
+	glTranslatef(51, 323, 0.0f);	
+	ofSetColor(255, 255, 0);
+	ofFill();
+	ofTriangle(0, 0, 0, 10, 10, 5);
+	ofNoFill();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(50, 343, 0.0f);	
+	ofSetColor(255, 255, 0);
+	ofFill();
+	ofTriangle(10, 10, 10, 0, 0, 5);
+	ofNoFill();
+	glPopMatrix();
+*/
 }
 
 
@@ -700,30 +756,17 @@ void testApp::doCalibration(){
 	******************************/		
 	ofSetColor(0xFF00FF);	
 	ofSetWindowTitle("Calibration");		
-	char reportStr[1024];	
-	calibrationText.setLineHeight(20);
+	char reportStr[10240];	
+	calibrationText.setLineHeight(20.0f);
 	
 	if(calibrate.bCalibrating){
 		sprintf(reportStr, 
-		"CALIBRATING: \n\n\
-		-Touch current circle target and lift up to calibrate point \n\
-		-Press [b] to recapture background (if there's false blobs) \n\
-		-Press [r] to go back to previous point(s) \n");
+		"CALIBRATING: \n\n\-Touch current circle target and lift up to calibrate point \n\-Press [b] to recapture background (if there's false blobs) \n\-Press [r] to go back to previous point(s) \n");
 		calibrationText.drawString(reportStr, 33, 60);
 	}else
 	{
-		sprintf(reportStr, 
-		"CALIBRATION \n\n\
-		-Press [x] to start calibrating \n\
-		-Press [c] to return main screen \n\
-		-Press [b] to recapture background \n\n\
-		CHANGING GRID SIZE (number of points): \n\n\
-		-Current Grid Size is %i x %i \n\
-		-Press [+]/[-] to add/remove points on X axis \n\
-		-Press [shift][+]/[-] to add/remove points on Y axis \n\n\
-		ALINGING BOUNDING BOX TO PROJECTION SCREEN: \n\n\
-		-Use arrow keys to move bounding box\n\
-		-Press and hold [w],[a],[s],[d] (top, left, bottom, right) to adjust each side\n", calibrate.GRID_X + 1, calibrate.GRID_Y + 1);
+		sprintf(reportStr,  
+		"CALIBRATION \n\n\-Press [x] to start calibrating \n \-Press [c] to return main screen \n \-Press [b] to recapture background \n\n\CHANGING GRID SIZE (number of points): \n\n\-Current Grid Size is %i x %i \n\-Press [+]/[-] to add/remove points on X axis \n\-Press [shift][+]/[-] to add/remove points on Y axis \n\n\ALINGING BOUNDING BOX TO PROJECTION SCREEN: \n\n\-Use arrow keys to move bounding box\n\-Press and hold [w],[a],[s],[d] (top, left, bottom, right) to adjust each side\n", calibrate.GRID_X + 1, calibrate.GRID_Y + 1);
 		calibrationText.drawString(reportStr, 33, 60);
 	}
 
@@ -1181,6 +1224,17 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 						vidGrabber.initGrabber(camWidth,camHeight);
 						activeInput = true;
 						bLearnBakground = true;
+
+						sourceImg.allocate(camWidth, camHeight);    //Source Image
+						grayImg.allocate(camWidth, camHeight);		//Gray Image
+						grayBg.allocate(camWidth, camHeight);		//Background Image
+						subtractBg.allocate(camWidth, camHeight);   //Background After subtraction
+						grayDiff.allocate(camWidth, camHeight);		//Difference Image between Background and Source
+						highpassImg.allocate(camWidth, camHeight);  //Highpass Image
+						giWarped.allocate(camWidth, camHeight);     //Warped Image (used for warped calibration)
+						fiLearn.allocate(camWidth, camHeight);		//ofxFloatImage used for simple dynamic background subtracti
+						pressureMap.allocate(camWidth, camHeight);	//Pressure Map Image
+
 						//Turn off the video button;
 						bool setBool = false;
 						gui->update(sourcePanel_video, kofxGui_Set_Bool, &setBool, length);
@@ -1195,13 +1249,24 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 					{
 						activeInput = false;	
 						bcamera = false;						
-						vidPlayer.loadMovie("test_videos/FrontDI.m4v");
+				//		vidPlayer.loadMovie("test_videos/FrontDI.m4v");
 						//vidPlayer.loadMovie("test_videos/HCI_FTIR.mov");
-						//vidPlayer.loadMovie("test_videos/raw.mp4");
+						vidPlayer.loadMovie("test_videos/raw.mp4");
 						vidPlayer.play();	
 						printf("Video Mode\n");
 						camHeight = vidPlayer.height;
 						camWidth = vidPlayer.width;
+
+						sourceImg.allocate(camWidth, camHeight);    //Source Image
+						grayImg.allocate(camWidth, camHeight);		//Gray Image
+						grayBg.allocate(camWidth, camHeight);		//Background Image
+						subtractBg.allocate(camWidth, camHeight);   //Background After subtraction
+						grayDiff.allocate(camWidth, camHeight);		//Difference Image between Background and Source
+						highpassImg.allocate(camWidth, camHeight);  //Highpass Image
+						giWarped.allocate(camWidth, camHeight);     //Warped Image (used for warped calibration)
+						fiLearn.allocate(camWidth, camHeight);		//ofxFloatImage used for simple dynamic background subtracti
+						pressureMap.allocate(camWidth, camHeight);	//Pressure Map Image
+
 						activeInput = true;
 						bLearnBakground = true;
 						//Turn off the camera button;

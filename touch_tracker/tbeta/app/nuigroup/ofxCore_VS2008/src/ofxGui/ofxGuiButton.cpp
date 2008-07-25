@@ -20,7 +20,7 @@ ofxGuiButton::ofxGuiButton()
 
 //	----------------------------------------------------------------------------------------------------
 
-void ofxGuiButton::init(int id, string name, int x, int y, int width, int height, bool value, int mode)
+void ofxGuiButton::init(int id, string name, int x, int y, int width, int height, bool value, int mode, string image = "")
 {
 	int	textWidth	= (name == "") ? 0 : mGlobals->mButtonXText + roundInt(mGlobals->mHeadFont.stringWidth(name));
 
@@ -37,6 +37,8 @@ void ofxGuiButton::init(int id, string name, int x, int y, int width, int height
 	
 	setValue(value);
 	setControlRegion(0, 0, width, height);
+
+	logo.loadImage(image);
 }
 
 //	----------------------------------------------------------------------------------------------------
@@ -78,6 +80,8 @@ void ofxGuiButton::draw()
 		glColor4f(mGlobals->mCoverColor.r, mGlobals->mCoverColor.g, mGlobals->mCoverColor.b, mGlobals->mCoverColor.a);
 		ofRect(mCtrX, mCtrY, mCtrWidth, mCtrHeight);
 		
+		logo.draw(0,0, mCtrWidth, mCtrHeight);
+
 		if(mValue == 1)
 		{
 			//	handle
