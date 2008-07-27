@@ -190,6 +190,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\src\gui.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\main.cpp"
 				>
 			</File>
@@ -207,10 +211,6 @@
 			</File>
 			<File
 				RelativePath=".\src\Thingy.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\uiDefinition.h"
 				>
 			</File>
 			<Filter
