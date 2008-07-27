@@ -14,7 +14,7 @@
         <LIQUID>0</LIQUID>
     </WINDOW>
     <BOOLEAN>
-	<PRESSURE>0</PRESSURE>
+        <PRESSURE>0</PRESSURE>
         <LABELS>1</LABELS>
         <VIDEO>1</VIDEO>
         <SNAPSHOT>0</SNAPSHOT>
@@ -22,15 +22,15 @@
         <LEARNBG>0</LEARNBG>
         <TUIO>0</TUIO>
         <VMIRROR>1</VMIRROR>
-        <HMIRROR>1</HMIRROR>
-	<WARP>0</WARP>
+        <HMIRROR>0</HMIRROR>
+        <WARP>0</WARP>
     </BOOLEAN>
     <INT>
         <!--// THIS SHOULD BE CALLED FILTERS SETTERS OR SOME JIVE //-->
-        <THRESHOLD>30</THRESHOLD>
-        <HIGHPASSBLUR>40</HIGHPASSBLUR>
-        <HIGHPASSNOISE>9</HIGHPASSNOISE>
-        <HIGHPASSAMP>10</HIGHPASSAMP>
+        <THRESHOLD>130</THRESHOLD>
+        <HIGHPASSBLUR>36</HIGHPASSBLUR>
+        <HIGHPASSNOISE>1</HIGHPASSNOISE>
+        <HIGHPASSAMP>100</HIGHPASSAMP>
     </INT>
     <FLOAT>
         <NODE />
@@ -62,8 +62,9 @@
       
    //////////////////// START SENSORS & INPUT STUFF//-->
     <CAMERA_0>
-	<USECAMERA>1</USECAMERA> <!--// 1 = camera, 0 = video //-->
-	<DEVICE>0</DEVICE>
+        <USECAMERA>1</USECAMERA>
+        <!--// 1 = camera, 0 = video //-->
+        <DEVICE>0</DEVICE>
         <WIDTH>320</WIDTH>
         <HEIGHT>240</HEIGHT>
         <FRAMERATE>30</FRAMERATE>

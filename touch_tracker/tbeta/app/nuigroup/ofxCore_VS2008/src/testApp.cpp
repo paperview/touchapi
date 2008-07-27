@@ -26,6 +26,8 @@ void testApp::setup()
 	bS			= false;
 	bD			= false;
 
+	bFullscreen = false;
+
 	//Load Settings from config.xml file 
 	loadXMLSettings();
 	myTUIO.setup();
@@ -479,7 +481,6 @@ void testApp::loadXMLSettings(){
 	winHeight			= XML.getValue("CONFIG:WINDOW:HEIGHT",0);
 	minWidth			= XML.getValue("CONFIG:WINDOW:MINX",0);
 	minHeight			= XML.getValue("CONFIG:WINDOW:MINY",0);
-	bFullscreen			= XML.getValue("CONFIG:WINDOW:FULLSCREEN",0);
 
 	bcamera				= XML.getValue("CONFIG:CAMERA_0:USECAMERA",0);
 	deviceID			= XML.getValue("CONFIG:CAMERA_0:DEVICE",0);
@@ -673,18 +674,9 @@ void testApp::doCalibration(){
  *****************************************************************************/
 void testApp::keyPressed(int key)
 { 
-	// THIS IS FOR THE ~ toggle...
-	if(key==126 || key==96) 
-	{
-	}
-
 	switch(key)
 	{	
-/*		case 's':
-			XML.saveFile("config.xml");
-			message ="Settings Saved!";
-			break;	
-*/		case '1':
+		case '1':
 			if(bToggleHelp)
 			{	
 
@@ -830,6 +822,11 @@ void testApp::keyPressed(int key)
 			break;	
 		case 's': //Down
 			bS = true;
+			if(!bCalibration)
+			{
+				saveConfiguration();
+				//message ="Settings Saved!";
+			}
 			break;
 		case 'a': //Left
 			bA = true;
@@ -970,35 +967,27 @@ void testApp::keyReleased(int key){
 *****************************************************************************/
 void testApp::mouseMoved(int x, int y)
 {
-
 }	
 
 void testApp::mouseDragged(int x, int y, int button)
-{	
-	//-------------------------------- Warp Box
-	if(x < (40 + 320) && x > 40){
-
-		if(y < (30 + 240) && y > 30){
-	
-			//if(warp_box.findSelectionDistance(x, y) < 35){
-				
-			
-				warp_box.adjustHandle(x,y);
-			//}
-		}
-	}
-		
-
+{
+	//Warp Box
+	if(bWarpImg && x < (40 + 320) && x > 40)
+	{
+		if(y < (30 + 240) && y > 30)
+		  warp_box.adjustHandle(x,y);		
+	}		
+	//gui listener
 	gui->mouseDragged(x, y, button);
 }
 
 void testApp::mousePressed(int x, int y, int button)
-{
+{	//gui listener
 	gui->mousePressed(x, y, button);	
 }
 
 void testApp::mouseReleased()
-{	
+{	//guilistener
 	gui->mouseReleased(mouseX, mouseY, 0);	
 }
 
@@ -1008,24 +997,21 @@ void testApp::mouseReleased()
 *****************************************************************************/
 void testApp::blobOn( ofxCvBlob b)
 {
-	printf("Blob DOWN %i \n", b.id); 
+	//printf("Blob DOWN %i \n", b.id); 
 
-	if(bCalibration)
-	downColor = 0x2FB5FF; //change target color when a finger is down
+	if(bCalibration)//If calibrating change target color when a finger is down
+	downColor = 0x2FB5FF; 
 		
-	//If sending TUIO, add the blob to the map list
-	if(bTUIOMode)
+	if(bTUIOMode)//If sending TUIO, add the blob to the map list
 	{
 		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);
 		myTUIO.blobs[b.id] = b;
 	}
-
 }
 
 void testApp::blobMoved( ofxCvBlob b) 
-{
-	//If sending TUIO, update the move information for the blob
-	if(bTUIOMode)
+{	
+	if(bTUIOMode)//If sending TUIO, update the move information for the blob
 	{
 		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);
 		myTUIO.blobs[b.id] = b;
@@ -1034,22 +1020,20 @@ void testApp::blobMoved( ofxCvBlob b)
 
 void testApp::blobOff( ofxCvBlob b) 
 {
-	printf("Blob UP %i \n", b.id);
+	//printf("Blob UP %i \n", b.id);
 
 	if(bCalibration)
 	downColor = 0xFF0000;
-
-	//If Calibrating, register the calibration point on blobOff
-	if(calibrate.bCalibrating){			
-		
+	
+	if(calibrate.bCalibrating)//If Calibrating, register the calibration point on blobOff
+	{			
 		calibrate.cameraPoints[calibrate.calibrationStep] = vector2df(b.centroid.x, b.centroid.y);
 		calibrate.nextCalibrationStep();
 		
 		printf("%d (%f, %f)\n", calibrate.calibrationStep, b.centroid.x, b.centroid.y);
 	}
 
-	//If sending TUIO, Delete Blobs from map list
-	if(bTUIOMode)
+	if(bTUIOMode)//If sending TUIO, Delete Blobs from map list
 	{
 		std::map<int, ofxCvBlob>::iterator iter;
 		for(iter = myTUIO.blobs.begin(); iter != myTUIO.blobs.end();)
@@ -1074,9 +1058,40 @@ void testApp::exit()
 {
 	//TODO: SEND ESC KEY TO KEEP FROM CRASHING -  can we emulate a keyboard
 	//event to trick the app into closing properly?
-	printf("tBeta module has exited!\n");	
+	
 	
 	// -------------------------------- SAVE STATE ON EXIT
-	//saveSettngs();
+	saveConfiguration();
 	calibrate.saveCalibration();
+
+
+	printf("tBeta module has exited!\n");	
+}
+
+void testApp::saveConfiguration()
+{
+
+	XML.setValue("CONFIG:BOOLEAN:PRESSURE",bShowPressure);
+	XML.setValue("CONFIG:BOOLEAN:LABELS",bShowLabels);
+	XML.setValue("CONFIG:BOOLEAN:VIDEO",bDrawVideo);
+	XML.setValue("CONFIG:BOOLEAN:SNAPSHOT",bSnapshot);
+	XML.setValue("CONFIG:BOOLEAN:OUTLINES",bDrawOutlines);
+	XML.setValue("CONFIG:BOOLEAN:LEARNBG",bLearnBakground);
+	XML.setValue("CONFIG:BOOLEAN:TUIO",bTUIOMode);
+	XML.setValue("CONFIG:BOOLEAN:VMIRROR",bVerticalMirror);
+	XML.setValue("CONFIG:BOOLEAN:HMIRROR",bHorizontalMirror);
+	XML.setValue("CONFIG:BOOLEAN:WARP", bWarpImg);
+
+	XML.setValue("CONFIG:INT:THRESHOLD", threshold);
+	XML.setValue("CONFIG:INT:HIGHPASSBLUR", highpassBlur);
+	XML.setValue("CONFIG:INT:HIGHPASSNOISE",highpassNoise);
+	XML.setValue("CONFIG:INT:HIGHPASSAMP",highpassAmp);
+
+	XML.setValue("CONFIG:CAMERA_0:USECAMERA", bcamera);
+	XML.setValue("CONFIG:CAMERA_0:DEVICE", deviceID);
+	XML.setValue("CONFIG:CAMERA_0:WIDTH", camWidth);
+	XML.setValue("CONFIG:CAMERA_0:HEIGHT", camHeight);
+	XML.setValue("CONFIG:CAMERA_0:FRAMERATE", camRate);
+
+	XML.saveFile("config.xml");
 }
