@@ -254,7 +254,10 @@ public:
 		ofxOscSender		TUIOSocket; 
 
 		//---------------------------------------Images
+
 		ofxCvColorImage		sourceImg;
+		ofxCvGrayscaleImage processedImg;
+
         ofxCvGrayscaleImage grayImg;
 		ofxCvGrayscaleImage grayBg;
 		ofxCvGrayscaleImage subtractBg;

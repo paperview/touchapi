@@ -71,6 +71,9 @@ void testApp::setup()
 	/*****************************************************************************************************
 	* Allocate images (needed for drawing/processing images) ----Most of These won't be needed in the end
 	******************************************************************************************************/
+	processedImg.allocate(camWidth, camHeight); //main Image that'll be processed.
+
+	//These images are needed for drawing only
 	sourceImg.allocate(camWidth, camHeight);    //Source Image
 	grayImg.allocate(camWidth, camHeight);		//Gray Image
 	grayBg.allocate(camWidth, camHeight);		//Background Image
@@ -292,43 +295,49 @@ void testApp::update()
 			*				SET FILTERS HERE
 			************************************************/
 			//Set Mirroring Horizontal/Vertical
-			sourceImg.mirror(bVerticalMirror, bHorizontalMirror);
+			//sourceImg.mirror(bVerticalMirror, bHorizontalMirror);
 
-			subtractBg = sourceImg;
+			processedImg = sourceImg;
+
+			processedImg.mirror(bVerticalMirror, bHorizontalMirror);
+
+			subtractBg = processedImg;
+
 
 			if(bWarpImg){
-				giWarped.warpIntoMe(subtractBg, warp_box.fHandles, dstPts );
-				subtractBg = giWarped;
+				giWarped.warpIntoMe(processedImg, warp_box.fHandles, dstPts );
+				
+				processedImg = giWarped;
 			}
 	
 			//Dynamic background with learn rate
-			learnBackground( subtractBg, grayBg, fiLearn, fLearnRate);
+			learnBackground( processedImg, grayBg, fiLearn, fLearnRate);
 			
 			//Capture full background
 			if (bLearnBakground == true)
 			{
-				bgCapture( subtractBg );
+				bgCapture( processedImg );
 				bLearnBakground = false;
 			}
 
 			//Background Subtraction
-			subtractBg.absDiff(grayBg, subtractBg);
+			processedImg.absDiff(grayBg, processedImg);
+			subtractBg = processedImg;
 
 			//HighPass
-			highpassImg = subtractBg;
-			highpassImg.highpass(highpassBlur, highpassNoise);
+//			processedImg.highpass(highpassBlur, highpassNoise);
+//			highpassImg = processedImg; //for drawing
 
 			//Amplify
-			grayImg = highpassImg;		
-			grayImg.amplify(grayImg, highpassAmp);
+			processedImg.amplify(processedImg, highpassAmp);
+			grayImg = processedImg; //for drawing	
 			
-			grayDiff = grayImg;
-
 			//Set a threshold value
-			grayDiff.threshold(threshold);
+			processedImg.threshold(threshold);
+			grayDiff = processedImg; //for drawing
 
 			//Find contours/blobs
-			contourFinder.findContours(grayDiff, 1, (camWidth*camHeight)/25, 10, false);
+			contourFinder.findContours(processedImg, 1, (camWidth*camHeight)/25, 10, false);
 
 			//Track found contours/blobs
 			tracker.track(&contourFinder);
@@ -1225,6 +1234,7 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 						camHeight = vidGrabber.height;
 						vidGrabber.initGrabber(camWidth,camHeight);
 
+						processedImg.allocate(camWidth, camHeight); //Processed Image
 						sourceImg.allocate(camWidth, camHeight);    //Source Image
 						grayImg.allocate(camWidth, camHeight);		//Gray Image
 						grayBg.allocate(camWidth, camHeight);		//Background Image
@@ -1263,6 +1273,7 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 						camHeight = vidPlayer.height;
 						camWidth = vidPlayer.width;
 
+						processedImg.allocate(camWidth, camHeight); //Processed Image
 						sourceImg.allocate(camWidth, camHeight);    //Source Image
 						grayImg.allocate(camWidth, camHeight);		//Gray Image
 						grayBg.allocate(camWidth, camHeight);		//Background Image
