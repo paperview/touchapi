@@ -113,7 +113,7 @@ public:
 		void update();
 		void draw();
 		void exit();
-		void setupUI();
+		void setupGUI();
 
 		//Key events
 		void keyPressed(int key);
