@@ -2,7 +2,6 @@
 #define _TEST_APP
 
 #define OF_ADDON_USING_OFXXMLSETTINGS  // LOAD CONFIG.XML
-#define OF_ADDON_USING_OFXPARAMETERUI  // RENDER GUI (SLIDERS/BUTTONS).
 #define OF_ADDON_USING_OFXOPENCV	   // COMPUTER VISION STUFF
 #define OF_ADDON_USING_OFXOSC		   // OSC COMMUNICATION		
 
@@ -35,15 +34,13 @@
 #define HOST "localhost"
 #define PORT 3333
 
-//#define _USE_LIVE_VIDEO					// uncomment this to use a live camera
-
 
 
 class testApp : public ofSimpleApp, public ofCvBlobListener, public ofxGuiListener
 {
-	
-enum
-	{
+		
+	enum
+		{
 		propertiesPanel,
 		propertiesPanel_flipV,
 		propertiesPanel_flipH,
@@ -82,7 +79,7 @@ enum
 		savePanel,
 		kParameter_SaveXml,
 		kParameter_File,
-	};
+		};
 
 public:
 
@@ -137,6 +134,8 @@ public:
 							  ofxCvFloatImage & _fiLearn,
 							  float _fLearnRate );
 		void doCalibration();
+
+		void saveConfiguration();
 
 		
 		
@@ -232,7 +231,7 @@ public:
 
 
 		//---------------------------------------GUI
-		AParameterUI*		parameterUI;
+
 		bool				bSpaced;	
 
 

@@ -9,46 +9,48 @@ void testApp::setupGUI()
 {
 	appPtr = this;
 
-	if(!gui->buildFromXml(OFXGUI_XML))
-	{	
+	//if(!gui->buildFromXml(OFXGUI_XML))
+	//{	
+		//panel border color
 		gui->mGlobals->mBorderColor.r = 0;
 		gui->mGlobals->mBorderColor.g = 0;
 		gui->mGlobals->mBorderColor.b = 0;
 		gui->mGlobals->mBorderColor.a = .3;
-
+		//panel color
 		gui->mGlobals->mCoverColor.r = 1;
 		gui->mGlobals->mCoverColor.g = 1;
 		gui->mGlobals->mCoverColor.b = 1;
 		gui->mGlobals->mCoverColor.a = .4;
-
+		//control outline color
 		gui->mGlobals->mFrameColor.r = 0;
 		gui->mGlobals->mFrameColor.g = 0;
 		gui->mGlobals->mFrameColor.b = 0;
 		gui->mGlobals->mFrameColor.a = .3;
-		
+		//text color
 		gui->mGlobals->mTextColor.r = 0;
 		gui->mGlobals->mTextColor.g = 0;
 		gui->mGlobals->mTextColor.b = 0;
 		gui->mGlobals->mTextColor.a = 1;
-
+		//button color
 		gui->mGlobals->mButtonColor.r = 0;
 		gui->mGlobals->mButtonColor.g = .6;
 		gui->mGlobals->mButtonColor.b = 1;
 		gui->mGlobals->mButtonColor.a = .5;
-
+		//slider tip color
 		gui->mGlobals->mHandleColor.r = 0;
 		gui->mGlobals->mHandleColor.g = 0;
 		gui->mGlobals->mHandleColor.b = 0;
-
+		//slider color
 		gui->mGlobals->mSliderColor.r = 1;
 		gui->mGlobals->mSliderColor.g = 0;
 		gui->mGlobals->mSliderColor.b = 0;
 		gui->mGlobals->mSliderColor.a = .8;
 
-		gui->mGlobals->mPointSize = 100;
+		
+
 
 		ofxGuiPanel* propPanel = gui->addPanel(appPtr->propertiesPanel, "Source Properties", 735, 30, 12, OFXGUI_PANEL_SPACING);
-		propPanel->addButton(appPtr->propertiesPanel_settings, "Camera Settings (v)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
+		propPanel->addButton(appPtr->propertiesPanel_settings, "Camera Settings (s)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
 		propPanel->addButton(appPtr->propertiesPanel_flipV, "Flip Vertical (v)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		propPanel->addButton(appPtr->propertiesPanel_flipH, "Flip Horizontal (h)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		propPanel->mObjWidth = 200;
@@ -58,15 +60,15 @@ void testApp::setupGUI()
 		oPanel->addButton(appPtr->optionPanel_draw, "Draw Windows (d)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		oPanel->mObjWidth = 200;
 
-		ofxGuiPanel* cPanel = gui->addPanel(appPtr->calibrationPanel, "Calibration", 735, 233, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		ofxGuiPanel* cPanel = gui->addPanel(appPtr->calibrationPanel, "Calibration", 735, 220, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
 		cPanel->addButton(appPtr->calibrationPanel_calibrate, "Enter Calibration (c)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
 		cPanel->addButton(appPtr->calibrationPanel_warp, "Warp (w)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		cPanel->mObjWidth = 200;
 
 
-		ofxGuiPanel* panel2 = gui->addPanel(appPtr->savePanel, "files", 735, 320, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		ofxGuiPanel* panel2 = gui->addPanel(appPtr->savePanel, "files", 735, 303, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
 		//savePanel->addFiles(kParameter_File, "files", 110, OFXGUI_FILES_HEIGHT, "", "", "xml");
-		panel2->addButton(appPtr->kParameter_SaveXml, "saveToXml", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
+		panel2->addButton(appPtr->kParameter_SaveXml, "Save Settings", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
 		panel2->mObjWidth = 200;
 
 		//Tracked Image
@@ -93,6 +95,7 @@ void testApp::setupGUI()
 		srcPanel->mObjects[2]->mObjX = 214;
 		srcPanel->mObjects[2]->mObjY = 32;
 		srcPanel->mObjects[3]->mObjY = 55;
+		srcPanel->adjustToNewContent(100, 0);
 
 		//Background Image
 		ofxGuiPanel* bkPanel2 = gui->addPanel(appPtr->backgroundPanel, "Background", 86, 487, 10, 7);
@@ -119,17 +122,28 @@ void testApp::setupGUI()
 		//do update while inactive
 		gui->forceUpdate(false);	
 		gui->activate(true);
-
-	}
-
+	//} 
+		/****************************
+		* Set GUI values on startup
+		****************************/
 		gui->update(appPtr->propertiesPanel_flipV, kofxGui_Set_Bool, &appPtr->bVerticalMirror, sizeof(bool));
-		gui->update(appPtr->propertiesPanel_flipV, kofxGui_Set_Bool, &appPtr->bHorizontalMirror, sizeof(bool));
+		gui->update(appPtr->propertiesPanel_flipH, kofxGui_Set_Bool, &appPtr->bHorizontalMirror, sizeof(bool));
 		gui->update(appPtr->optionPanel_draw, kofxGui_Set_Bool, &appPtr->bDrawVideo, sizeof(bool));
 		gui->update(appPtr->trackedPanel_outlines, kofxGui_Set_Bool, &appPtr->bDrawOutlines, sizeof(bool));
 		gui->update(appPtr->trackedPanel_ids, kofxGui_Set_Bool, &appPtr->bShowLabels, sizeof(bool));
 		gui->update(appPtr->sourcePanel_cam, kofxGui_Set_Bool, &appPtr->bcamera, sizeof(bool));
+	
+		//Calibration
 		gui->update(appPtr->calibrationPanel_warp, kofxGui_Set_Bool, &appPtr->bWarpImg, sizeof(bool));
-		//gui->update(sourcePanel_cam, kofxGui_Set_Bool, &->appPtrbcamera, sizeof(bool));
+		gui->update(appPtr->calibrationPanel_calibrate, kofxGui_Set_Bool, &appPtr->bCalibration, sizeof(bool));
+
+		//Highpass
+		gui->update(appPtr->highpassPanel_blur, kofxGui_Set_Bool, &appPtr->highpassBlur, sizeof(float));
+		gui->update(appPtr->highpassPanel_noise, kofxGui_Set_Bool, &appPtr->highpassNoise, sizeof(float));
+		//Amplify
+		gui->update(appPtr->amplifyPanel_amp, kofxGui_Set_Bool, &appPtr->highpassAmp, sizeof(float));
+		//Threshold
+		gui->update(appPtr->trackedPanel_threshold, kofxGui_Set_Bool, &appPtr->threshold, sizeof(float));
 }
 
 void testApp::handleGui(int parameterId, int task, void* data, int length)
@@ -332,7 +346,11 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 				if(length == sizeof(bool))
 				{
 					if(*(bool*)data)
+					{
 						gui->saveToXml(OFXGUI_XML);
+						saveConfiguration();
+					}
+
 				}
 				break;
 			case kParameter_File:

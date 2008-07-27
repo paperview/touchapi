@@ -37,7 +37,7 @@
         <NAME>Source Properties</NAME>
         <LEFT>735.000000</LEFT>
         <TOP>30.000000</TOP>
-        <WIDTH>165.000000</WIDTH>
+        <WIDTH>164.000000</WIDTH>
         <HEIGHT>84.000000</HEIGHT>
         <MODE>0</MODE>
         <DISPLAY>2</DISPLAY>
@@ -47,7 +47,7 @@
         <OBJECT>
             <ID>3</ID>
             <TYPE>BUTTON</TYPE>
-            <NAME>Camera Settings (v)</NAME>
+            <NAME>Camera Settings (s)</NAME>
             <LEFT>12.000000</LEFT>
             <TOP>34.000000</TOP>
             <WIDTH>10.000000</WIDTH>
@@ -129,7 +129,7 @@
         <TYPE>PANEL</TYPE>
         <NAME>Calibration</NAME>
         <LEFT>735.000000</LEFT>
-        <TOP>233.000000</TOP>
+        <TOP>220.000000</TOP>
         <WIDTH>161.000000</WIDTH>
         <HEIGHT>62.000000</HEIGHT>
         <MODE>0</MODE>
@@ -169,8 +169,8 @@
         <TYPE>PANEL</TYPE>
         <NAME>files</NAME>
         <LEFT>735.000000</LEFT>
-        <TOP>320.000000</TOP>
-        <WIDTH>99.000000</WIDTH>
+        <TOP>303.000000</TOP>
+        <WIDTH>118.000000</WIDTH>
         <HEIGHT>42.000000</HEIGHT>
         <MODE>0</MODE>
         <DISPLAY>2</DISPLAY>
@@ -180,7 +180,7 @@
         <OBJECT>
             <ID>28</ID>
             <TYPE>BUTTON</TYPE>
-            <NAME>saveToXml</NAME>
+            <NAME>Save Settings</NAME>
             <LEFT>10.000000</LEFT>
             <TOP>32.000000</TOP>
             <WIDTH>10.000000</WIDTH>
@@ -243,7 +243,7 @@
             <STEPS>0</STEPS>
             <MIN>0.000000</MIN>
             <MAX>255.000000</MAX>
-            <VALUE>100.300003</VALUE>
+            <VALUE>130.050003</VALUE>
         </OBJECT>
     </OBJECT>
     <OBJECT>
@@ -270,7 +270,7 @@
             <MODE>2</MODE>
             <DISPLAY>2</DISPLAY>
             <STEPS>0</STEPS>
-            <VALUE>1</VALUE>
+            <VALUE>0</VALUE>
         </OBJECT>
         <OBJECT>
             <ID>14</ID>
@@ -309,7 +309,7 @@
             <MODE>2</MODE>
             <DISPLAY>2</DISPLAY>
             <STEPS>0</STEPS>
-            <VALUE>0</VALUE>
+            <VALUE>1</VALUE>
         </OBJECT>
     </OBJECT>
     <OBJECT>
@@ -379,7 +379,7 @@
             <STEPS>0</STEPS>
             <MIN>0.000000</MIN>
             <MAX>200.000000</MAX>
-            <VALUE>40.000000</VALUE>
+            <VALUE>47.272728</VALUE>
         </OBJECT>
         <OBJECT>
             <ID>22</ID>
@@ -394,7 +394,7 @@
             <STEPS>0</STEPS>
             <MIN>0.000000</MIN>
             <MAX>30.000000</MAX>
-            <VALUE>9.000000</VALUE>
+            <VALUE>3.545455</VALUE>
         </OBJECT>
     </OBJECT>
     <OBJECT>
@@ -423,7 +423,7 @@
             <STEPS>0</STEPS>
             <MIN>0.000000</MIN>
             <MAX>300.000000</MAX>
-            <VALUE>250.909088</VALUE>
+            <VALUE>35.454544</VALUE>
         </OBJECT>
     </OBJECT>
 </UI>
