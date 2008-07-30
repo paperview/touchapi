@@ -5,9 +5,6 @@
 #define OF_ADDON_USING_OFXOSC		   // OSC COMMUNICATION		
 #include "ofAddons.h"
 
-#define HOST "localhost"
-#define PORT 3333
-
 #include <map>
 
 class TUIOOSC {
@@ -30,9 +27,9 @@ public:
 
 	//---------------------------------------FOR NETWORK 
 	ofxOscSender		TUIOSocket; 
-	char				myLocalHost[255];
-	char				myRemoteHost[255];
-	int					myTUIOPort;	
+	const char*			localHost;
+	char				remoteHost[255];
+	int					TUIOPort;	
 
 	std::map<int, ofxCvBlob> blobs;
 };

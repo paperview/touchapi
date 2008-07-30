@@ -30,10 +30,6 @@
 #include "ofxGui\ofxGuiTypes.h"
 
 #include "Thingy.h"
-					
-#define HOST "localhost"
-#define PORT 3333
-
 
 
 class testApp : public ofSimpleApp, public ofCvBlobListener, public ofxGuiListener
@@ -49,7 +45,6 @@ class testApp : public ofSimpleApp, public ofCvBlobListener, public ofxGuiListen
 
 		optionPanel,
 		optionPanel_tuio,
-		optionPanel_draw,
 
 		calibrationPanel,
 		calibrationPanel_calibrate,
@@ -62,12 +57,15 @@ class testApp : public ofSimpleApp, public ofCvBlobListener, public ofxGuiListen
 		sourcePanel_video,
 
 		backgroundPanel,
+		backgroundPanel_use,
 		backgroundPanel_remove,
 
 		amplifyPanel,
+		amplifyPanel_use,
 		amplifyPanel_amp,
 
 		highpassPanel,
+		highpassPanel_use,
 		highpassPanel_blur,
 		highpassPanel_noise,
 
@@ -89,17 +87,6 @@ public:
 		void		handleGui(int parameterId, int task, void* data, int length);
 		
 		ofxGui*		gui;
-
-		float		rotation;
-		float		distance;
-		float		size;
-		ofxPoint2f	position;
-		float		edges;
-		float		ticks1, ticks2;
-		bool		animate;
-		float		speed1, speed2;
-		ofRGBA		color1, color2, color3;
-		int			matrix;
 
 		/****************************************************************
 		*						Public functions
@@ -194,6 +181,10 @@ public:
 
 		bool				bcamera;
 
+		//filters
+		bool				bHighpass;
+		bool				bAmplify;
+
 		/****************************************************
 		*End config.xml variables
 		*****************************************************/
@@ -249,9 +240,6 @@ public:
 		//---------------------------------------Blob Finder	
 		ofxCvContourFinder	contourFinder;
 
-		//---------------------------------------OSC
-		ofxOscSender		TUIOSocket; 
-
 		//---------------------------------------Images
 
 		ofxCvColorImage		sourceImg;
@@ -262,6 +250,7 @@ public:
 		ofxCvGrayscaleImage subtractBg;
 		ofxCvGrayscaleImage grayDiff;	
 		ofxCvGrayscaleImage highpassImg;
+		ofxCvGrayscaleImage ampImg;
 		ofxCvGrayscaleImage	giWarped;
 
 		//---------------------------------------Pressure Map
