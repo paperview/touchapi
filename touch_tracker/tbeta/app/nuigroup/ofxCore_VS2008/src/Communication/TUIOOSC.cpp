@@ -9,9 +9,16 @@ TUIOOSC::~TUIOOSC() {
 	printf("killed tuio: \n");
 }
 
-void TUIOOSC::setup() {
+void TUIOOSC::setup(const char* host, int port) {
 
 	printf("setup TUIO: \n");
+
+
+	localHost = host;
+	TUIOPort = port;
+
+	TUIOSocket.setup(localHost, TUIOPort); 
+	
 	frameseq = 0;
 }
 

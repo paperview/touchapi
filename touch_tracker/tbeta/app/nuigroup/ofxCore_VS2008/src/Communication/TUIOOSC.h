@@ -21,7 +21,7 @@ public:
 	~TUIOOSC();
 	
 	// methods
-	void setup();
+	void setup(const char* host, int port);
 	void update();
 	void sendOSC();
 

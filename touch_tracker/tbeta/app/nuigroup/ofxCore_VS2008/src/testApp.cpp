@@ -30,7 +30,6 @@ void testApp::setup()
 
 	//Load Settings from config.xml file 
 	loadXMLSettings();
-	myTUIO.setup();
 
 	//Load Calibration Settings from calibration.xml file
 	calibrate.setCamRes(camWidth, camHeight);
@@ -97,6 +96,7 @@ void testApp::setup()
 
 	//Fonts - Is there a way to dynamically change font size?
 	verdana.loadFont("verdana.ttf", 8, true, true);	   //Font used for small images
+	sidebarTXT.loadFont("verdana.ttf", 8, true, true);
 	calibrationText.loadFont("verdana.ttf", 11, true, true);
 	bigvideo.loadFont("verdana.ttf", 13, true, true);  //Font used for big images.
 	
@@ -341,35 +341,7 @@ void testApp::draw(){
 		//Warped Box
 		if(bWarpImg)
 		warp_box.draw( 0, 0);
-
-		//Draw PINK CIRCLE 'ON' LIGHT
-		ofSetColor(255, 0, 255);
-		ofFill();		
-		ofCircle(20, 10, 5);
-		ofNoFill();
 	} 
-	/*********************************
-	* IF SENDING TUIO (TUIO MODE)
-	*********************************/
-	if(bTUIOMode){
-
-		//Draw GREEN CIRCLE 'ON' LIGHT
-		ofSetColor(0x00FF00);
-		ofFill();		
-		ofCircle(35, 10, 5);
-		ofNoFill();
-
-	/*	if(bToggleHelp && bSpaced){
-
-			//---------------------------------
-			ofSetColor(0xffffff);
-			char buf[256];
-			sprintf(buf, "Sending OSC messages to %s : %d", HOST, PORT);
-			verdana.drawString(buf, 2*w+60, ofGetHeight()-63);
-			//	verdana.drawString( "move the mouse to send OSC message\
-			//						[/tuio/2Dcur <x> <y>] ", 20, 585 );
-	*///}
-	}
 	/*********************************
 	* IF NOT CALIBRATING
 	*********************************/
@@ -385,7 +357,27 @@ void testApp::draw(){
 		str2+= ofToString(fps, 1)+"fps";
 
 		ofSetColor(0xFFFFFF);
-		verdana.drawString(str + str2, 740, 410);		
+		sidebarTXT.drawString(str + str2, 740, 410);	
+		
+		//Draw PINK CIRCLE 'ON' LIGHT
+		ofSetColor(255, 0, 255);
+		ofFill();		
+		ofCircle(20, 10, 5);
+		ofNoFill();
+
+		if(bTUIOMode)
+		{	//Draw Port and IP to screen
+			ofSetColor(0xffffff);
+			char buf[256];
+			sprintf(buf, "Sending TUIO messages to:\nHost: %s\nPort: %i", myTUIO.localHost, myTUIO.TUIOPort);
+			sidebarTXT.drawString(buf, 740, 450);
+
+			//Draw GREEN CIRCLE 'ON' LIGHT
+			ofSetColor(0x00FF00);
+			ofFill();		
+			ofCircle(35, 10, 5);
+			ofNoFill();
+		}
 	}
 	/*********************************
 	* IF DRAWING BLOB OUTLINES
@@ -496,10 +488,9 @@ void testApp::loadXMLSettings(){
 	
 //--------------------------------------------------- TODO XML NETWORK SETTINGS	
 	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
-	string IP			= XML.getValue("CONFIG:NETWORK:LOCALHOST", "localhost");
-	myTUIO.TUIOPort		= XML.getValue("CONFIG:NETWORK:TUIO_PORT_OUT", 3333);
-	myTUIO.localHost	= IP.c_str();
-	myTUIO.TUIOSocket.setup(myTUIO.localHost, myTUIO.TUIOPort);
+	tmpLocalHost		= XML.getValue("CONFIG:NETWORK:LOCALHOST", "localhost");
+	tmpPort				= XML.getValue("CONFIG:NETWORK:TUIOPORT_OUT", 3333);
+	myTUIO.setup(tmpLocalHost.c_str(), tmpPort); //have to convert tmpLocalHost to a const char*
 //-------------------------------------------------------------- 
 //  END XML SETUP
 }
