@@ -1,18 +1,17 @@
 #include "TUIOOSC.h"
 
 TUIOOSC::TUIOOSC() {
-	printf("created TUIO: \n");
+	printf("TUIO created: \n");
 }
 
 TUIOOSC::~TUIOOSC() {
 	// this could be useful for whenever we get rid of an object
-	printf("killed tuio: \n");
+	printf("tuio killed: \n");
 }
 
 void TUIOOSC::setup(const char* host, int port) {
 
-	printf("setup TUIO: \n");
-
+	printf("TUIO setup: \n");
 
 	localHost = host;
 	TUIOPort = port;

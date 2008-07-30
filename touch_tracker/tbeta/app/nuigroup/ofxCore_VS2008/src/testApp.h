@@ -60,6 +60,10 @@ class testApp : public ofSimpleApp, public ofCvBlobListener, public ofxGuiListen
 		backgroundPanel_use,
 		backgroundPanel_remove,
 
+		smoothPanel,
+		smoothPanel_use,
+		smoothPanel_smooth,
+
 		amplifyPanel,
 		amplifyPanel_use,
 		amplifyPanel_amp,
@@ -70,6 +74,7 @@ class testApp : public ofSimpleApp, public ofCvBlobListener, public ofxGuiListen
 		highpassPanel_noise,
 
 		trackedPanel,
+		trackedPanel_use,
 		trackedPanel_threshold,
 		trackedPanel_outlines,
 		trackedPanel_ids,
@@ -158,6 +163,7 @@ public:
 		int					highpassBlur;
 		int					highpassNoise;
 		int					highpassAmp;
+		int					smooth;
 		
 		bool				bDrawVideo;
 		bool  				bFastMode;
@@ -169,7 +175,6 @@ public:
 		bool				bDrawOutlines;	
 		bool				bTUIOMode;
 		bool  				bFullscreen;
-		bool				bSmooth;	
 		bool 				bSnapshot;	
 		bool 				bCalibration;	
 		bool				bVerticalMirror;
@@ -184,6 +189,8 @@ public:
 		//filters
 		bool				bHighpass;
 		bool				bAmplify;
+		bool				bThreshold;
+		bool				bSmooth;
 
 		/****************************************************
 		*End config.xml variables
