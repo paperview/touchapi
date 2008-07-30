@@ -159,6 +159,8 @@ void testApp::setupGUI()
 		gui->update(appPtr->amplifyPanel_amp, kofxGui_Set_Bool, &appPtr->highpassAmp, sizeof(float));
 		//Threshold
 		gui->update(appPtr->trackedPanel_threshold, kofxGui_Set_Bool, &appPtr->threshold, sizeof(float));
+		//Send TUIO
+		gui->update(appPtr->optionPanel_tuio, kofxGui_Set_Bool, &appPtr->bTUIOMode, sizeof(bool));
 }
 
 void testApp::handleGui(int parameterId, int task, void* data, int length)

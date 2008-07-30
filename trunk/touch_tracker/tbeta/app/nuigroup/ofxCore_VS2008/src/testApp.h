@@ -212,6 +212,7 @@ public:
 		
 		//---------------------------------------Fonts
 		ofTrueTypeFont		verdana;
+		ofTrueTypeFont      sidebarTXT;
 		ofTrueTypeFont		calibrationText;
 		ofTrueTypeFont		bigvideo;
 		ofImage				logo;
@@ -231,6 +232,9 @@ public:
 
 		float				downColor;
 
+
+string				tmpLocalHost;
+int					tmpPort;
 
 	private:
 		
@@ -272,5 +276,6 @@ public:
 
 		//---------------------------------------FOR NETWORK 
 		TUIOOSC				myTUIO;
+		
 };
 #endif
