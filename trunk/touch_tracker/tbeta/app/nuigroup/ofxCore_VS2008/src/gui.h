@@ -64,7 +64,6 @@ void testApp::setupGUI()
 		cPanel->addButton(appPtr->calibrationPanel_warp, "Warp (w)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		cPanel->mObjWidth = 200;
 
-
 		ofxGuiPanel* panel2 = gui->addPanel(appPtr->savePanel, "files", 735, 303, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
 		//savePanel->addFiles(kParameter_File, "files", 110, OFXGUI_FILES_HEIGHT, "", "", "xml");
 		panel2->addButton(appPtr->kParameter_SaveXml, "Save Settings", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
@@ -103,19 +102,21 @@ void testApp::setupGUI()
 		bkPanel1->mObjHeight = 60;
 
 		//Background Image
-		ofxGuiPanel* bkPanel2 = gui->addPanel(appPtr->backgroundPanel, "Dynamic BG", 236, 487, 10, 7);
-		bkPanel2->addButton(backgroundPanel_use, "", 12, 12, kofxGui_Button_Off, kofxGui_Button_Switch, "");	
-		bkPanel2->mObjects[0]->mObjX = 102;
-		bkPanel2->mObjects[0]->mObjY = 10;		
-		bkPanel2->mObjWidth = 127;
-		bkPanel2->mObjHeight = 60;
+		ofxGuiPanel* sPanel = gui->addPanel(appPtr->smoothPanel, "Smooth", 236, 487, 10, 7);
+		sPanel->addButton(smoothPanel_use, "", 12, 12, kofxGui_Button_Off, kofxGui_Button_Switch, "");	
+		sPanel->addSlider(smoothPanel_smooth, "Smooth", 110, 13, 0.0f, 15.0f, smooth, kofxGui_Display_Int, 0);
+		sPanel->mObjects[0]->mObjX = 105;
+		sPanel->mObjects[0]->mObjY = 10;	
+		sPanel->mObjects[1]->mObjY = 30;
+		sPanel->mObjWidth = 127;
+		sPanel->mObjHeight = 65;
 
 		//Highpass Image
 		ofxGuiPanel* hpPanel = gui->addPanel(appPtr->highpassPanel, "Highpass", 386, 487, OFXGUI_PANEL_BORDER, 7);
 		hpPanel->addButton(highpassPanel_use, "", 12, 12, kofxGui_Button_Off, kofxGui_Button_Switch, "");	
 		hpPanel->addSlider(highpassPanel_blur, "Blur", 110, 13, 0.0f, 200.0f, highpassBlur, kofxGui_Display_Int, 0);
 		hpPanel->addSlider(highpassPanel_noise, "Noise", 110, 13, 0.0f, 30.0f, highpassNoise, kofxGui_Display_Int, 0);
-		hpPanel->mObjects[0]->mObjX = 80;
+		hpPanel->mObjects[0]->mObjX = 105;
 		hpPanel->mObjects[0]->mObjY = 10;
 		hpPanel->mObjects[1]->mObjY = 30;
 		hpPanel->mObjects[2]->mObjY = 60;
@@ -127,7 +128,7 @@ void testApp::setupGUI()
 		ofxGuiPanel* ampPanel = gui->addPanel(appPtr->amplifyPanel, "Amplify", 536, 487, OFXGUI_PANEL_BORDER, 7);
 		ampPanel->addButton(amplifyPanel_use, "", 12, 12, kofxGui_Button_Off, kofxGui_Button_Switch, "");	
 		ampPanel->addSlider(amplifyPanel_amp, "Amplify", 110, 13, 0.0f, 300.0f, highpassAmp, kofxGui_Display_Int, 0);
-		ampPanel->mObjects[0]->mObjX = 70;
+		ampPanel->mObjects[0]->mObjX = 105;
 		ampPanel->mObjects[0]->mObjY = 10;
 		ampPanel->mObjects[1]->mObjY = 30;	
 		ampPanel->mObjWidth = 127;
@@ -145,11 +146,12 @@ void testApp::setupGUI()
 		gui->update(appPtr->trackedPanel_outlines, kofxGui_Set_Bool, &appPtr->bDrawOutlines, sizeof(bool));
 		gui->update(appPtr->trackedPanel_ids, kofxGui_Set_Bool, &appPtr->bShowLabels, sizeof(bool));
 		gui->update(appPtr->sourcePanel_cam, kofxGui_Set_Bool, &appPtr->bcamera, sizeof(bool));
-	
 		//Calibration
 		gui->update(appPtr->calibrationPanel_warp, kofxGui_Set_Bool, &appPtr->bWarpImg, sizeof(bool));
 		gui->update(appPtr->calibrationPanel_calibrate, kofxGui_Set_Bool, &appPtr->bCalibration, sizeof(bool));
-
+		//Smooth
+		gui->update(appPtr->smoothPanel_use, kofxGui_Set_Bool, &appPtr->bSmooth, sizeof(bool));
+		gui->update(appPtr->smoothPanel_smooth, kofxGui_Set_Bool, &appPtr->smooth, sizeof(float));		
 		//Highpass
 		gui->update(appPtr->highpassPanel_use, kofxGui_Set_Bool, &appPtr->bHighpass, sizeof(bool));
 		gui->update(appPtr->highpassPanel_blur, kofxGui_Set_Bool, &appPtr->highpassBlur, sizeof(float));
@@ -381,9 +383,16 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 				if(length == sizeof(bool))
 					bShowLabels = *(bool*)data;
 				break;
-						
-									
-				
+			//smooth
+			case smoothPanel_smooth:
+				if(length == sizeof(float))
+					smooth = *(float*)data;
+				break;
+			case smoothPanel_use:
+				if(length == sizeof(bool))
+					bSmooth = *(bool*)data;
+				break;
+			//Save Settings	
 			case kParameter_SaveXml:
 				if(length == sizeof(bool))
 				{
@@ -392,7 +401,6 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 						gui->saveToXml(OFXGUI_XML);
 						saveConfiguration();
 					}
-
 				}
 				break;
 			case kParameter_File:

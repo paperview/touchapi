@@ -199,7 +199,11 @@ void testApp::update()
 
 			//Background Subtraction
 			processedImg.absDiff(grayBg, processedImg);
-			subtractBg = processedImg;
+
+			if(bSmooth){
+				processedImg.blur((smooth * 2) + 1); //needs to be an odd number
+				subtractBg = processedImg;
+			}
 
 			//HighPass
 			if(bHighpass){
@@ -477,14 +481,16 @@ void testApp::loadXMLSettings(){
 	bHorizontalMirror	= XML.getValue("CONFIG:BOOLEAN:HMIRROR",0);
 
 	//Filters
-	bHighpass			= XML.getValue("CONFIG:BOOLEAN:HIGHPASS",0);
-	bAmplify			= XML.getValue("CONFIG:BOOLEAN:AMPLIFY", 0);
+	bHighpass			= XML.getValue("CONFIG:BOOLEAN:HIGHPASS",1);
+	bAmplify			= XML.getValue("CONFIG:BOOLEAN:AMPLIFY", 1);
+	bSmooth				= XML.getValue("CONFIG:BOOLEAN:SMOOTH", 1);
 	
 	//Filter Settings
 	threshold			= XML.getValue("CONFIG:INT:THRESHOLD",0);
 	highpassBlur		= XML.getValue("CONFIG:INT:HIGHPASSBLUR",0);
 	highpassNoise		= XML.getValue("CONFIG:INT:HIGHPASSNOISE",0);
 	highpassAmp			= XML.getValue("CONFIG:INT:HIGHPASSAMP",0);
+	smooth				= XML.getValue("CONFIG:INT:SMOOTH",0);
 	
 //--------------------------------------------------- TODO XML NETWORK SETTINGS	
 	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
@@ -1060,11 +1066,13 @@ void testApp::saveConfiguration()
 
 	XML.setValue("CONFIG:BOOLEAN:HIGHPASS", bHighpass);
 	XML.setValue("CONFIG:BOOLEAN:AMPLIFY", bAmplify);
+	XML.setValue("CONFIG:BOOLEAN:SMOOTH", bSmooth);
 
 	XML.setValue("CONFIG:INT:THRESHOLD", threshold);
 	XML.setValue("CONFIG:INT:HIGHPASSBLUR", highpassBlur);
 	XML.setValue("CONFIG:INT:HIGHPASSNOISE",highpassNoise);
 	XML.setValue("CONFIG:INT:HIGHPASSAMP",highpassAmp);
+	XML.setValue("CONFIG:INT:SMOOTH", smooth);
 
 	XML.setValue("CONFIG:CAMERA_0:USECAMERA", bcamera);
 	XML.setValue("CONFIG:CAMERA_0:DEVICE", deviceID);
