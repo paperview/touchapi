@@ -16,25 +16,23 @@
     <BOOLEAN>
         <PRESSURE>0</PRESSURE>
         <LABELS>1</LABELS>
-        <VIDEO>1</VIDEO>
         <SNAPSHOT>0</SNAPSHOT>
         <OUTLINES>1</OUTLINES>
         <LEARNBG>0</LEARNBG>
         <TUIO>0</TUIO>
-        <VMIRROR>1</VMIRROR>
-        <HMIRROR>0</HMIRROR>
+        <VMIRROR>0</VMIRROR>
+        <HMIRROR>1</HMIRROR>
         <WARP>0</WARP>
+        <HIGHPASS>1</HIGHPASS>
+        <AMPLIFY>1</AMPLIFY>
     </BOOLEAN>
     <INT>
-        <!--// THIS SHOULD BE CALLED FILTERS SETTERS OR SOME JIVE //-->
-        <THRESHOLD>130</THRESHOLD>
-        <HIGHPASSBLUR>36</HIGHPASSBLUR>
-        <HIGHPASSNOISE>1</HIGHPASSNOISE>
-        <HIGHPASSAMP>100</HIGHPASSAMP>
+        <!--//FILTERS SETTERS//-->
+        <THRESHOLD>80</THRESHOLD>
+        <HIGHPASSBLUR>74</HIGHPASSBLUR>
+        <HIGHPASSNOISE>3</HIGHPASSNOISE>
+        <HIGHPASSAMP>5</HIGHPASSAMP>
     </INT>
-    <FLOAT>
-        <NODE />
-    </FLOAT>
     <!--// NETWORK SETTINGS //-->
     <NETWORK>
         <LOCALHOST>127.0.0.1</LOCALHOST>
@@ -63,11 +61,9 @@
    //////////////////// START SENSORS & INPUT STUFF//-->
     <CAMERA_0>
         <USECAMERA>1</USECAMERA>
-        <!--// 1 = camera, 0 = video //-->
         <DEVICE>0</DEVICE>
         <WIDTH>320</WIDTH>
         <HEIGHT>240</HEIGHT>
-        <FRAMERATE>30</FRAMERATE>
-        <SOURCE>PHILLIPS</SOURCE>
+        <FRAMERATE>150</FRAMERATE>
     </CAMERA_0>
 </CONFIG>

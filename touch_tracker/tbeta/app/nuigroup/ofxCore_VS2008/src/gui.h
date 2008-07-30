@@ -32,10 +32,10 @@ void testApp::setupGUI()
 		gui->mGlobals->mTextColor.b = 0;
 		gui->mGlobals->mTextColor.a = 1;
 		//button color
-		gui->mGlobals->mButtonColor.r = 0;
-		gui->mGlobals->mButtonColor.g = .6;
-		gui->mGlobals->mButtonColor.b = 1;
-		gui->mGlobals->mButtonColor.a = .5;
+		gui->mGlobals->mButtonColor.r = .9;
+		gui->mGlobals->mButtonColor.g = 1;
+		gui->mGlobals->mButtonColor.b = 0;
+		gui->mGlobals->mButtonColor.a = .8;
 		//slider tip color
 		gui->mGlobals->mHandleColor.r = 0;
 		gui->mGlobals->mHandleColor.g = 0;
@@ -55,9 +55,8 @@ void testApp::setupGUI()
 		propPanel->addButton(appPtr->propertiesPanel_flipH, "Flip Horizontal (h)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		propPanel->mObjWidth = 200;
 
-		ofxGuiPanel* oPanel = gui->addPanel(appPtr->optionPanel, "Tracking Options", 735, 137, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		ofxGuiPanel* oPanel = gui->addPanel(appPtr->optionPanel, "Communication", 735, 137, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
 		oPanel->addButton(appPtr->optionPanel_tuio, "Send TUIO (t)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
-		oPanel->addButton(appPtr->optionPanel_draw, "Draw Windows (d)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		oPanel->mObjWidth = 200;
 
 		ofxGuiPanel* cPanel = gui->addPanel(appPtr->calibrationPanel, "Calibration", 735, 220, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
@@ -98,26 +97,41 @@ void testApp::setupGUI()
 		srcPanel->adjustToNewContent(100, 0);
 
 		//Background Image
-		ofxGuiPanel* bkPanel2 = gui->addPanel(appPtr->backgroundPanel, "Background", 86, 487, 10, 7);
+		ofxGuiPanel* bkPanel1 = gui->addPanel(appPtr->backgroundPanel, "Background", 86, 487, 10, 7);
+		bkPanel1->addButton(backgroundPanel_remove, "Remove (b)\nBackground", 10, 10, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
+		bkPanel1->mObjWidth = 127;
+		bkPanel1->mObjHeight = 60;
+
+		//Background Image
+		ofxGuiPanel* bkPanel2 = gui->addPanel(appPtr->backgroundPanel, "Dynamic BG", 236, 487, 10, 7);
+		bkPanel2->addButton(backgroundPanel_use, "", 12, 12, kofxGui_Button_Off, kofxGui_Button_Switch, "");	
+		bkPanel2->mObjects[0]->mObjX = 102;
+		bkPanel2->mObjects[0]->mObjY = 10;		
 		bkPanel2->mObjWidth = 127;
 		bkPanel2->mObjHeight = 60;
 
-		//Background Image
-		ofxGuiPanel* bkPanel = gui->addPanel(appPtr->backgroundPanel, "Background", 236, 487, 10, 7);
-		bkPanel->addButton(backgroundPanel_remove, "Remove (b)\nBackground", 10, 10, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
-		bkPanel->mObjWidth = 127;
-		bkPanel->mObjHeight = 60;
-
 		//Highpass Image
 		ofxGuiPanel* hpPanel = gui->addPanel(appPtr->highpassPanel, "Highpass", 386, 487, OFXGUI_PANEL_BORDER, 7);
+		hpPanel->addButton(highpassPanel_use, "", 12, 12, kofxGui_Button_Off, kofxGui_Button_Switch, "");	
 		hpPanel->addSlider(highpassPanel_blur, "Blur", 110, 13, 0.0f, 200.0f, highpassBlur, kofxGui_Display_Int, 0);
 		hpPanel->addSlider(highpassPanel_noise, "Noise", 110, 13, 0.0f, 30.0f, highpassNoise, kofxGui_Display_Int, 0);
+		hpPanel->mObjects[0]->mObjX = 80;
+		hpPanel->mObjects[0]->mObjY = 10;
+		hpPanel->mObjects[1]->mObjY = 30;
+		hpPanel->mObjects[2]->mObjY = 60;
 		hpPanel->mObjWidth = 127;
+		hpPanel->mObjHeight = 95;
+
 
 		//Amplify Image
 		ofxGuiPanel* ampPanel = gui->addPanel(appPtr->amplifyPanel, "Amplify", 536, 487, OFXGUI_PANEL_BORDER, 7);
+		ampPanel->addButton(amplifyPanel_use, "", 12, 12, kofxGui_Button_Off, kofxGui_Button_Switch, "");	
 		ampPanel->addSlider(amplifyPanel_amp, "Amplify", 110, 13, 0.0f, 300.0f, highpassAmp, kofxGui_Display_Int, 0);
+		ampPanel->mObjects[0]->mObjX = 70;
+		ampPanel->mObjects[0]->mObjY = 10;
+		ampPanel->mObjects[1]->mObjY = 30;	
 		ampPanel->mObjWidth = 127;
+		ampPanel->mObjHeight = 65;
 
 		//do update while inactive
 		gui->forceUpdate(false);	
@@ -128,7 +142,6 @@ void testApp::setupGUI()
 		****************************/
 		gui->update(appPtr->propertiesPanel_flipV, kofxGui_Set_Bool, &appPtr->bVerticalMirror, sizeof(bool));
 		gui->update(appPtr->propertiesPanel_flipH, kofxGui_Set_Bool, &appPtr->bHorizontalMirror, sizeof(bool));
-		gui->update(appPtr->optionPanel_draw, kofxGui_Set_Bool, &appPtr->bDrawVideo, sizeof(bool));
 		gui->update(appPtr->trackedPanel_outlines, kofxGui_Set_Bool, &appPtr->bDrawOutlines, sizeof(bool));
 		gui->update(appPtr->trackedPanel_ids, kofxGui_Set_Bool, &appPtr->bShowLabels, sizeof(bool));
 		gui->update(appPtr->sourcePanel_cam, kofxGui_Set_Bool, &appPtr->bcamera, sizeof(bool));
@@ -138,9 +151,11 @@ void testApp::setupGUI()
 		gui->update(appPtr->calibrationPanel_calibrate, kofxGui_Set_Bool, &appPtr->bCalibration, sizeof(bool));
 
 		//Highpass
+		gui->update(appPtr->highpassPanel_use, kofxGui_Set_Bool, &appPtr->bHighpass, sizeof(bool));
 		gui->update(appPtr->highpassPanel_blur, kofxGui_Set_Bool, &appPtr->highpassBlur, sizeof(float));
 		gui->update(appPtr->highpassPanel_noise, kofxGui_Set_Bool, &appPtr->highpassNoise, sizeof(float));
 		//Amplify
+		gui->update(appPtr->amplifyPanel_use, kofxGui_Set_Bool, &appPtr->bAmplify, sizeof(bool));
 		gui->update(appPtr->amplifyPanel_amp, kofxGui_Set_Bool, &appPtr->highpassAmp, sizeof(float));
 		//Threshold
 		gui->update(appPtr->trackedPanel_threshold, kofxGui_Set_Bool, &appPtr->threshold, sizeof(float));
@@ -168,18 +183,30 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 							vidGrabber.initGrabber(camWidth,camHeight);
 
 							processedImg.allocate(camWidth, camHeight); //Processed Image
+							processedImg.setUseTexture(false);
 							sourceImg.allocate(camWidth, camHeight);    //Source Image
+							sourceImg.setUseTexture(false);
 							grayImg.allocate(camWidth, camHeight);		//Gray Image
 							grayBg.allocate(camWidth, camHeight);		//Background Image
 							subtractBg.allocate(camWidth, camHeight);   //Background After subtraction
 							grayDiff.allocate(camWidth, camHeight);		//Difference Image between Background and Source
 							highpassImg.allocate(camWidth, camHeight);  //Highpass Image
+							ampImg.allocate(camWidth, camHeight);		//Amplify Image
 							giWarped.allocate(camWidth, camHeight);     //Warped Image (used for warped calibration)
+							giWarped.setUseTexture(false);
 							fiLearn.allocate(camWidth, camHeight);		//ofxFloatImage used for simple dynamic background subtracti
 							pressureMap.allocate(camWidth, camHeight);	//Pressure Map Image
 							//reset warp box
 							warp_box.setup( 40, 30, camWidth, camHeight, camWidth/320, camHeight/240); 
-							
+							dstPts[0].x = 0.0f;
+							dstPts[0].y = camHeight;   
+							dstPts[1].x = camWidth;
+							dstPts[1].y = camHeight;   
+							dstPts[2].x = camWidth;
+							dstPts[2].y = 0.0f;   
+							dstPts[3].x = 0.0f;
+							dstPts[3].y = 0.0f;
+							//end warp reset
 							activeInput = true;		//set to active again
 							bLearnBakground = true; //recapture background
 							//Turn off the video button;
@@ -206,19 +233,30 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 							camWidth = vidPlayer.width;
 
 							processedImg.allocate(camWidth, camHeight); //Processed Image
+							processedImg.setUseTexture(false);
 							sourceImg.allocate(camWidth, camHeight);    //Source Image
+							sourceImg.setUseTexture(false);
 							grayImg.allocate(camWidth, camHeight);		//Gray Image
 							grayBg.allocate(camWidth, camHeight);		//Background Image
 							subtractBg.allocate(camWidth, camHeight);   //Background After subtraction
 							grayDiff.allocate(camWidth, camHeight);		//Difference Image between Background and Source
 							highpassImg.allocate(camWidth, camHeight);  //Highpass Image
+							ampImg.allocate(camWidth, camHeight);		//Amplify Image
 							giWarped.allocate(camWidth, camHeight);     //Warped Image (used for warped calibration)
+							giWarped.setUseTexture(false);
 							fiLearn.allocate(camWidth, camHeight);		//ofxFloatImage used for simple dynamic background subtracti
 							pressureMap.allocate(camWidth, camHeight);	//Pressure Map Image
-
 							//reset warp box
-							warp_box.setup( 40, 30, camWidth, camHeight, camWidth/320, camHeight/240); 
-					
+							warp_box.setup( 40, 30, camWidth, camHeight, camWidth/320, camHeight/240); 					
+							dstPts[0].x = 0.0f;
+							dstPts[0].y = camHeight;   
+							dstPts[1].x = camWidth;
+							dstPts[1].y = camHeight;   
+							dstPts[2].x = camWidth;
+							dstPts[2].y = 0.0f;   
+							dstPts[3].x = 0.0f;
+							dstPts[3].y = 0.0f;
+							//end warp reset
 							activeInput = true;
 							bLearnBakground = true;
 							//Turn off the camera button;
@@ -279,9 +317,8 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 					}					
 				}
 				break;
-
+			//Calibration
 			case calibrationPanel_calibrate:
-				//if(length == sizeof(bool))
 					bCalibration = true;
 					bFullscreen = true;
 				break;
@@ -289,9 +326,7 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 				if(length == sizeof(bool))
 					bWarpImg = *(bool*)data;
 				break;
-
-
-
+			//Source 
 			case propertiesPanel_flipH:
 				if(length == sizeof(bool))
 					bHorizontalMirror = *(bool*)data;
@@ -300,20 +335,20 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 				if(length == sizeof(bool))
 					bVerticalMirror = *(bool*)data;
 				break;
-
+			//Communication
 			case optionPanel_tuio:
 				if(length == sizeof(bool))
 					bTUIOMode = *(bool*)data;
 				break;
-			case optionPanel_draw:
-				if(length == sizeof(bool))
-					bDrawVideo = *(bool*)data;
-				break;
-				
-
+			//Background
 			case backgroundPanel_remove:
 				if(length == sizeof(bool))
 					bLearnBakground = *(bool*)data;
+				break;
+			//Highpass
+			case highpassPanel_use:
+				if(length == sizeof(bool))
+					bHighpass = *(bool*)data;
 				break;
 			case highpassPanel_blur:
 				if(length == sizeof(float))
@@ -322,6 +357,11 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 			case highpassPanel_noise:
 				if(length == sizeof(float))
 					highpassNoise = *(float*)data;
+				break;
+			//Amplify
+			case amplifyPanel_use:
+				if(length == sizeof(bool))
+					bAmplify = *(bool*)data;
 				break;
 			case amplifyPanel_amp:
 				if(length == sizeof(float))

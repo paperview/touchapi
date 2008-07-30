@@ -63,7 +63,8 @@ void testApp::setup()
 
         //vidPlayer.loadMovie("test_videos/FrontDI.m4v");
 		//vidPlayer.loadMovie("test_videos/HCI_FTIR.mov");
-		vidPlayer.loadMovie("test_videos/raw.mp4");
+		//vidPlayer.loadMovie("test_videos/raw.mp4");
+		vidPlayer.loadMovie("test_videos/5point.avi");
         vidPlayer.play();	
 		printf("Video Mode\n");
 		camHeight = vidPlayer.height;
@@ -74,20 +75,24 @@ void testApp::setup()
 	* Allocate images (needed for drawing/processing images) ----Most of These won't be needed in the end
 	******************************************************************************************************/
 	processedImg.allocate(camWidth, camHeight); //main Image that'll be processed.
-
-	//These images are needed for drawing only
+	processedImg.setUseTexture(false);
 	sourceImg.allocate(camWidth, camHeight);    //Source Image
+	sourceImg.setUseTexture(false);				//We don't need to draw this so don't create a texture
+
+	//These images are used for drawing only
 	grayImg.allocate(camWidth, camHeight);		//Gray Image
 	grayBg.allocate(camWidth, camHeight);		//Background Image
 	subtractBg.allocate(camWidth, camHeight);   //Background After subtraction
 	grayDiff.allocate(camWidth, camHeight);		//Difference Image between Background and Source
 	highpassImg.allocate(camWidth, camHeight);  //Highpass Image
-	giWarped.allocate(camWidth, camHeight);     //Warped Image (used for warped calibration)
-
+	ampImg.allocate(camWidth, camHeight);		//Amplied Image	
 	fiLearn.allocate(camWidth, camHeight);		//ofxFloatImage used for simple dynamic background subtracti
 //	fiLearn.setUseTexture(false);
-
 	pressureMap.allocate(camWidth, camHeight);	//Pressure Map Image
+	
+	//For camera warp
+	giWarped.allocate(camWidth, camHeight);     //Warped Image (used for warped calibration)
+	giWarped.setUseTexture(false);
 	/********************************************************************************************************/
 
 	//Fonts - Is there a way to dynamically change font size?
@@ -172,19 +177,14 @@ void testApp::update()
 			/************************************************
 			*				SET FILTERS HERE
 			************************************************/
-			//Set Mirroring Horizontal/Vertical
-			//sourceImg.mirror(bVerticalMirror, bHorizontalMirror);
-
 			processedImg = sourceImg;
-
+			//Set Mirroring Horizontal/Vertical
 			processedImg.mirror(bVerticalMirror, bHorizontalMirror);
-
-			subtractBg = processedImg;
-
+		
+			grayImg = processedImg;
 
 			if(bWarpImg){
-				giWarped.warpIntoMe(processedImg, warp_box.fHandles, dstPts );
-				
+				giWarped.warpIntoMe(processedImg, warp_box.fHandles, dstPts );				
 				processedImg = giWarped;
 			}
 	
@@ -192,8 +192,7 @@ void testApp::update()
 			learnBackground( processedImg, grayBg, fiLearn, fLearnRate);
 			
 			//Capture full background
-			if (bLearnBakground == true)
-			{
+			if (bLearnBakground == true){
 				bgCapture( processedImg );
 				bLearnBakground = false;
 			}
@@ -203,12 +202,16 @@ void testApp::update()
 			subtractBg = processedImg;
 
 			//HighPass
-			processedImg.highpass(highpassBlur, highpassNoise);
-			highpassImg = processedImg; //for drawing
+			if(bHighpass){
+				processedImg.highpass(highpassBlur, highpassNoise);
+				highpassImg = processedImg; //for drawing
+			}
 
 			//Amplify
-			processedImg.amplify(processedImg, highpassAmp);
-			grayImg = processedImg; //for drawing	
+			if(bAmplify){
+				processedImg.amplify(processedImg, highpassAmp);
+				ampImg = processedImg; //for drawing	
+			}
 			
 			//Set a threshold value
 			processedImg.threshold(threshold);
@@ -238,7 +241,12 @@ void testApp::update()
 			*****************************************************/
 			if(bShowPressure){
 
-				unsigned char * rgbaPixels = grayImg.getPixels();
+				//grayImg.invert();
+				//processedImg.absDiff(processedImg, subtractBg);
+				//processedImg += processedImg;
+				//processedImg -= subtractBg;
+
+				unsigned char * rgbaPixels = ampImg.getPixels();
 				unsigned char * colorRawPixels = new unsigned char[camWidth*camHeight*3]; 
 
 				//total rgb pixels
@@ -313,24 +321,18 @@ void testApp::draw(){
 		ofSetColor(255, 255, 0);
 		ofNoFill();
 		ofTriangle(70, 420, 70, 460, 50, 440);
-
-
-		
 		
 		ofSetColor(0xFFFFFF);
-
-
 		if(bShowPressure)
 			pressureMap.draw(40, 30, 320, 240);
 		else
-			sourceImg.draw(40, 30, 320, 240);
+			grayImg.draw(40, 30, 320, 240);
 
 		grayDiff.draw(385, 30, 320, 240);
-
 		fiLearn.draw(85, 392, 128, 96);
 		subtractBg.draw(235, 392, 128, 96);
 		highpassImg.draw(385, 392, 128, 96);
-		grayImg.draw(535, 392, 128, 96);
+		ampImg.draw(535, 392, 128, 96);
 
 		ofSetColor(0x000000);
 		if(bShowPressure){bigvideo.drawString("Pressure Map", 140, 20);}
@@ -412,6 +414,7 @@ void testApp::draw(){
 			
 			//Draw contours (outlines) on the tracked image
 			drawBlob.draw(385, 30);
+			//drawBlob.draw(40, 30);
 
 			//Show ID label;
 			if(bShowLabels)
@@ -430,25 +433,6 @@ void testApp::draw(){
 
 	if(!bCalibration)
 		gui->draw();
-
-
-
-/*	glPushMatrix();
-	glTranslatef(51, 323, 0.0f);	
-	ofSetColor(255, 255, 0);
-	ofFill();
-	ofTriangle(0, 0, 0, 10, 10, 5);
-	ofNoFill();
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(50, 343, 0.0f);	
-	ofSetColor(255, 255, 0);
-	ofFill();
-	ofTriangle(10, 10, 10, 0, 0, 5);
-	ofNoFill();
-	glPopMatrix();
-*/
 }
 
 
@@ -491,7 +475,6 @@ void testApp::loadXMLSettings(){
 	bShowPressure		= XML.getValue("CONFIG:BOOLEAN:PRESSURE",0);
 
 	bShowLabels			= XML.getValue("CONFIG:BOOLEAN:LABELS",0);
-	bDrawVideo			= XML.getValue("CONFIG:BOOLEAN:VIDEO",0);
 	bSnapshot			= XML.getValue("CONFIG:BOOLEAN:SNAPSHOT",0);
 	bFastMode			= XML.getValue("CONFIG:BOOLEAN:FAST",0);	
 	bDrawOutlines		= XML.getValue("CONFIG:BOOLEAN:OUTLINES",0);
@@ -499,19 +482,24 @@ void testApp::loadXMLSettings(){
 	bWarpImg			= XML.getValue("CONFIG:BOOLEAN:WARP",0);
 
 	bVerticalMirror		= XML.getValue("CONFIG:BOOLEAN:VMIRROR",0);
-	bHorizontalMirror	= XML.getValue("CONFIG:BOOLEAN:HMIRROR",0);	
+	bHorizontalMirror	= XML.getValue("CONFIG:BOOLEAN:HMIRROR",0);
+
+	//Filters
+	bHighpass			= XML.getValue("CONFIG:BOOLEAN:HIGHPASS",0);
+	bAmplify			= XML.getValue("CONFIG:BOOLEAN:AMPLIFY", 0);
 	
+	//Filter Settings
 	threshold			= XML.getValue("CONFIG:INT:THRESHOLD",0);
 	highpassBlur		= XML.getValue("CONFIG:INT:HIGHPASSBLUR",0);
 	highpassNoise		= XML.getValue("CONFIG:INT:HIGHPASSNOISE",0);
 	highpassAmp			= XML.getValue("CONFIG:INT:HIGHPASSAMP",0);
 	
 //--------------------------------------------------- TODO XML NETWORK SETTINGS	
-	bTUIOMode			  = XML.getValue("CONFIG:BOOLEAN:TUIO",0);
-	//myTUIO.myLocalHost  = XML.getValue("CONFIG:NETWORK:LOCALHOST",0);
-	//myTUIO.myRemoteHost = XML.getValue("CONFIG:NETWORK:HOSTA",0);
-	//myTUIO.myTUIOPort	  = XML.getValue("CONFIG:NETWORK:TUIO_PORT_OUT",0);
-	myTUIO.TUIOSocket.setup(HOST, PORT);
+	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
+	string IP			= XML.getValue("CONFIG:NETWORK:LOCALHOST", "localhost");
+	myTUIO.TUIOPort		= XML.getValue("CONFIG:NETWORK:TUIO_PORT_OUT", 3333);
+	myTUIO.localHost	= IP.c_str();
+	myTUIO.TUIOSocket.setup(myTUIO.localHost, myTUIO.TUIOPort);
 //-------------------------------------------------------------- 
 //  END XML SETUP
 }
@@ -724,8 +712,6 @@ void testApp::keyPressed(int key)
 			activeInput = true;
 			bLearnBakground = true;
 			break;
-
-
 		case '2':
 			if(bDrawVideo)
 				bDrawVideo = false;	
@@ -1073,7 +1059,6 @@ void testApp::saveConfiguration()
 
 	XML.setValue("CONFIG:BOOLEAN:PRESSURE",bShowPressure);
 	XML.setValue("CONFIG:BOOLEAN:LABELS",bShowLabels);
-	XML.setValue("CONFIG:BOOLEAN:VIDEO",bDrawVideo);
 	XML.setValue("CONFIG:BOOLEAN:SNAPSHOT",bSnapshot);
 	XML.setValue("CONFIG:BOOLEAN:OUTLINES",bDrawOutlines);
 	XML.setValue("CONFIG:BOOLEAN:LEARNBG",bLearnBakground);
@@ -1081,6 +1066,9 @@ void testApp::saveConfiguration()
 	XML.setValue("CONFIG:BOOLEAN:VMIRROR",bVerticalMirror);
 	XML.setValue("CONFIG:BOOLEAN:HMIRROR",bHorizontalMirror);
 	XML.setValue("CONFIG:BOOLEAN:WARP", bWarpImg);
+
+	XML.setValue("CONFIG:BOOLEAN:HIGHPASS", bHighpass);
+	XML.setValue("CONFIG:BOOLEAN:AMPLIFY", bAmplify);
 
 	XML.setValue("CONFIG:INT:THRESHOLD", threshold);
 	XML.setValue("CONFIG:INT:HIGHPASSBLUR", highpassBlur);
@@ -1092,6 +1080,9 @@ void testApp::saveConfiguration()
 	XML.setValue("CONFIG:CAMERA_0:WIDTH", camWidth);
 	XML.setValue("CONFIG:CAMERA_0:HEIGHT", camHeight);
 	XML.setValue("CONFIG:CAMERA_0:FRAMERATE", camRate);
+
+//	XML.setValue("CONFIG:NETWORK:LOCALHOST", *myTUIO.localHost);
+//	XML.setValue("CONFIG:NETWORK:TUIO_PORT_OUT",myTUIO.TUIOPort);
 
 	XML.saveFile("config.xml");
 }
