@@ -49,22 +49,26 @@ void testApp::setupGUI()
 		
 
 
-		ofxGuiPanel* propPanel = gui->addPanel(appPtr->propertiesPanel, "Source Properties", 735, 30, 12, OFXGUI_PANEL_SPACING);
+		ofxGuiPanel* propPanel = gui->addPanel(appPtr->propertiesPanel, "Source Properties", 735, 10, 12, OFXGUI_PANEL_SPACING);
 		propPanel->addButton(appPtr->propertiesPanel_settings, "Camera Settings (s)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
 		propPanel->addButton(appPtr->propertiesPanel_flipV, "Flip Vertical (v)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		propPanel->addButton(appPtr->propertiesPanel_flipH, "Flip Horizontal (h)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		propPanel->mObjWidth = 200;
 
-		ofxGuiPanel* oPanel = gui->addPanel(appPtr->optionPanel, "Communication", 735, 137, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		ofxGuiPanel* gPanel = gui->addPanel(appPtr->gpuPanel, "GPU Properties", 735, 114, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		gPanel->addButton(appPtr->gpuPanel_use, "GPU Mode (g)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
+		gPanel->mObjWidth = 200;
+
+		ofxGuiPanel* oPanel = gui->addPanel(appPtr->optionPanel, "Communication", 735, 177, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
 		oPanel->addButton(appPtr->optionPanel_tuio, "Send TUIO (t)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		oPanel->mObjWidth = 200;
 
-		ofxGuiPanel* cPanel = gui->addPanel(appPtr->calibrationPanel, "Calibration", 735, 220, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		ofxGuiPanel* cPanel = gui->addPanel(appPtr->calibrationPanel, "Calibration", 735, 240, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
 		cPanel->addButton(appPtr->calibrationPanel_calibrate, "Enter Calibration (c)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
 		cPanel->addButton(appPtr->calibrationPanel_warp, "Warp (w)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		cPanel->mObjWidth = 200;
 
-		ofxGuiPanel* panel2 = gui->addPanel(appPtr->savePanel, "files", 735, 303, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		ofxGuiPanel* panel2 = gui->addPanel(appPtr->savePanel, "files", 735, 323, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
 		//savePanel->addFiles(kParameter_File, "files", 110, OFXGUI_FILES_HEIGHT, "", "", "xml");
 		panel2->addButton(appPtr->kParameter_SaveXml, "Save Settings", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
 		panel2->mObjWidth = 200;
@@ -97,11 +101,12 @@ void testApp::setupGUI()
 
 		//Background Image
 		ofxGuiPanel* bkPanel1 = gui->addPanel(appPtr->backgroundPanel, "Background", 86, 487, 10, 7);
-		bkPanel1->addButton(backgroundPanel_remove, "Remove (b)\nBackground", 10, 10, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
+		bkPanel1->addButton(backgroundPanel_remove, "Remove BG (b)", 10, 10, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
+		bkPanel1->addButton(backgroundPanel_dynamic, "Dynamic Subtract", 10, 10, kofxGui_Button_Off, kofxGui_Button_Switch, "");	
 		bkPanel1->mObjWidth = 127;
-		bkPanel1->mObjHeight = 60;
+		bkPanel1->mObjHeight = 65;
 
-		//Background Image
+		//Smooth Image
 		ofxGuiPanel* sPanel = gui->addPanel(appPtr->smoothPanel, "Smooth", 236, 487, 10, 7);
 		sPanel->addButton(smoothPanel_use, "", 12, 12, kofxGui_Button_Off, kofxGui_Button_Switch, "");	
 		sPanel->addSlider(smoothPanel_smooth, "Smooth", 110, 13, 0.0f, 15.0f, smooth, kofxGui_Display_Int, 0);
@@ -149,6 +154,8 @@ void testApp::setupGUI()
 		//Calibration
 		gui->update(appPtr->calibrationPanel_warp, kofxGui_Set_Bool, &appPtr->bWarpImg, sizeof(bool));
 		gui->update(appPtr->calibrationPanel_calibrate, kofxGui_Set_Bool, &appPtr->bCalibration, sizeof(bool));
+		//Dynamic Background
+		gui->update(appPtr->backgroundPanel_dynamic, kofxGui_Set_Bool, &appPtr->bDynamicBG, sizeof(bool));
 		//Smooth
 		gui->update(appPtr->smoothPanel_use, kofxGui_Set_Bool, &appPtr->bSmooth, sizeof(bool));
 		gui->update(appPtr->smoothPanel_smooth, kofxGui_Set_Bool, &appPtr->smooth, sizeof(float));		
@@ -163,6 +170,8 @@ void testApp::setupGUI()
 		gui->update(appPtr->trackedPanel_threshold, kofxGui_Set_Bool, &appPtr->threshold, sizeof(float));
 		//Send TUIO
 		gui->update(appPtr->optionPanel_tuio, kofxGui_Set_Bool, &appPtr->bTUIOMode, sizeof(bool));
+		//GPU Mode
+		gui->update(appPtr->gpuPanel_use, kofxGui_Set_Bool, &appPtr->bGPUMode, sizeof(bool));
 }
 
 void testApp::handleGui(int parameterId, int task, void* data, int length)
@@ -339,12 +348,21 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 				if(length == sizeof(bool))
 					bVerticalMirror = *(bool*)data;
 				break;
+			//GPU
+			case gpuPanel_use:
+				if(length == sizeof(bool))
+					bGPUMode= *(bool*)data;
+				break;
 			//Communication
 			case optionPanel_tuio:
 				if(length == sizeof(bool))
 					bTUIOMode = *(bool*)data;
 				break;
 			//Background
+			case backgroundPanel_dynamic:
+				if(length == sizeof(bool))
+					bDynamicBG = *(bool*)data;
+				break;
 			case backgroundPanel_remove:
 				if(length == sizeof(bool))
 					bLearnBakground = *(bool*)data;
