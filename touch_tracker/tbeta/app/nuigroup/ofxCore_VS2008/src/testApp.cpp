@@ -107,6 +107,15 @@ void testApp::setup()
 	//Setup green warped box
 	warp_box.setup( 40, 30, camWidth, camHeight, camWidth/320, camHeight/240); 
 
+	warp_box.fHandles[0].x = handle1x;
+	warp_box.fHandles[0].y = handle1y;
+	warp_box.fHandles[1].x = handle2x;
+	warp_box.fHandles[1].y = handle2y;
+	warp_box.fHandles[2].x = handle3x;
+	warp_box.fHandles[2].y = handle3y;
+	warp_box.fHandles[3].x = handle4x;
+	warp_box.fHandles[3].y = handle4y;
+
 	//Warped points
 	dstPts[0].x = 0.0f;
     dstPts[0].y = camHeight;   
@@ -181,15 +190,17 @@ void testApp::update()
 			//Set Mirroring Horizontal/Vertical
 			processedImg.mirror(bVerticalMirror, bHorizontalMirror);
 		
-			grayImg = processedImg;
+			grayImg = processedImg; //for drawing
 
 			if(bWarpImg){
 				giWarped.warpIntoMe(processedImg, warp_box.fHandles, dstPts );				
 				processedImg = giWarped;
 			}
 	
-			//Dynamic background with learn rate
-			learnBackground( processedImg, grayBg, fiLearn, fLearnRate);
+			//Dynamic background with learn rate...eventually learnrate will have GUI sliders
+			if(bDynamicBG){
+				learnBackground( processedImg, grayBg, fiLearn, fLearnRate);
+			}
 			
 			//Capture full background
 			if (bLearnBakground == true){
@@ -202,7 +213,7 @@ void testApp::update()
 
 			if(bSmooth){
 				processedImg.blur((smooth * 2) + 1); //needs to be an odd number
-				subtractBg = processedImg;
+				subtractBg = processedImg; //for drawing
 			}
 
 			//HighPass
@@ -484,6 +495,10 @@ void testApp::loadXMLSettings(){
 	bHighpass			= XML.getValue("CONFIG:BOOLEAN:HIGHPASS",1);
 	bAmplify			= XML.getValue("CONFIG:BOOLEAN:AMPLIFY", 1);
 	bSmooth				= XML.getValue("CONFIG:BOOLEAN:SMOOTH", 1);
+	bDynamicBG			= XML.getValue("CONFIG:BOOLEAN:DYNAMICBG", 1);
+
+	//GPU
+	bGPUMode			= XML.getValue("CONFIG:BOOLEAN:GPU", 0);
 	
 	//Filter Settings
 	threshold			= XML.getValue("CONFIG:INT:THRESHOLD",0);
@@ -491,6 +506,16 @@ void testApp::loadXMLSettings(){
 	highpassNoise		= XML.getValue("CONFIG:INT:HIGHPASSNOISE",0);
 	highpassAmp			= XML.getValue("CONFIG:INT:HIGHPASSAMP",0);
 	smooth				= XML.getValue("CONFIG:INT:SMOOTH",0);
+
+	//Warp
+	handle1x			= XML.getValue("CONFIG:WARP:BOTTOMLEFT:X", 0);
+	handle1y			= XML.getValue("CONFIG:WARP:BOTTOMLEFT:Y", 0);
+	handle2x			= XML.getValue("CONFIG:WARP:BOTTOMRIGHT:X", 0);
+	handle2y			= XML.getValue("CONFIG:WARP:BOTTOMRIGHT:Y", 0);
+	handle3x			= XML.getValue("CONFIG:WARP:TOPRIGHT:X", 0);
+	handle3y			= XML.getValue("CONFIG:WARP:TOPRIGHT:Y", 0);
+	handle4x			= XML.getValue("CONFIG:WARP:TOPLEFT:X", 0);
+	handle4y			= XML.getValue("CONFIG:WARP:TOPLEFT:Y", 0);
 	
 //--------------------------------------------------- TODO XML NETWORK SETTINGS	
 	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
@@ -583,14 +608,19 @@ void testApp::doCalibration(){
 
 			calibrate.cameraToScreenSpace(drawBlob2.centroid.x, drawBlob2.centroid.y);
 
-		/*	ofSetColor(0xFF0099);
+			ofSetColor(0xFF0099);
 			//ofFill();
+			glLineWidth(3);
 			ofEllipse(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight(), 
 				      drawBlob2.boundingRect.width, drawBlob2.boundingRect.height);
-		*/
+			ofLine(drawBlob2.centroid.x * ofGetWidth() - (drawBlob2.boundingRect.width), drawBlob2.centroid.y * ofGetHeight(), 
+				   drawBlob2.centroid.x * ofGetWidth() + (drawBlob2.boundingRect.width), drawBlob2.centroid.y * ofGetHeight()); 
+			ofLine(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight() - (drawBlob2.boundingRect.height), 
+				   drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight()  + (drawBlob2.boundingRect.height));
 
 			//Displat Text of blob information
 			ofSetColor(0x00FF00);
+			glLineWidth(1);
 			char idStr[1024];	
 			sprintf(idStr, "id: %i \n x: %f \n y: %f",drawBlob2.id, ceil(drawBlob2.centroid.x * ofGetWidth()), 
 																	ceil(drawBlob2.centroid.y * ofGetHeight()));
@@ -601,7 +631,7 @@ void testApp::doCalibration(){
 			/*************************
 			* Fading Blobs
 			*************************/
-			thingies.push_back(Thingy(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight(), 
+/*			thingies.push_back(Thingy(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight(), 
 									  drawBlob2.boundingRect.width, drawBlob2.boundingRect.height));
 			                                   
 			vector<Thingy>::iterator this_thingy;
@@ -615,14 +645,14 @@ void testApp::doCalibration(){
 				else{
 					this_thingy++;
 				}
-			}
+*/			}
 		}	
 		//Draw fading blobs
-		for (int i=0; i < thingies.size(); i++) {
+/*		for (int i=0; i < thingies.size(); i++) {
 		
 			thingies[i].draw();
 		}//end fading blobs	
-
+/*
 	}//End Blob Drawing
 
 	/******************************
@@ -1067,6 +1097,9 @@ void testApp::saveConfiguration()
 	XML.setValue("CONFIG:BOOLEAN:HIGHPASS", bHighpass);
 	XML.setValue("CONFIG:BOOLEAN:AMPLIFY", bAmplify);
 	XML.setValue("CONFIG:BOOLEAN:SMOOTH", bSmooth);
+	XML.setValue("CONFIG:BOOLEAN:DYNAMICBG", bDynamicBG);
+	
+	XML.setValue("CONFIG:BOOLEAN:GPU", bGPUMode);
 
 	XML.setValue("CONFIG:INT:THRESHOLD", threshold);
 	XML.setValue("CONFIG:INT:HIGHPASSBLUR", highpassBlur);
@@ -1079,6 +1112,17 @@ void testApp::saveConfiguration()
 	XML.setValue("CONFIG:CAMERA_0:WIDTH", camWidth);
 	XML.setValue("CONFIG:CAMERA_0:HEIGHT", camHeight);
 	XML.setValue("CONFIG:CAMERA_0:FRAMERATE", camRate);
+
+	//WARP
+	XML.setValue("CONFIG:WARP:BOTTOMLEFT:X", warp_box.getBottomLeftX());
+	XML.setValue("CONFIG:WARP:BOTTOMLEFT:Y", warp_box.getBottomLeftY());
+	XML.setValue("CONFIG:WARP:BOTTOMRIGHT:X", warp_box.getBottomRightX());
+	XML.setValue("CONFIG:WARP:BOTTOMRIGHT:Y", warp_box.getBottomRightY());
+	XML.setValue("CONFIG:WARP:TOPRIGHT:X", warp_box.getTopRightX());
+	XML.setValue("CONFIG:WARP:TOPRIGHT:Y", warp_box.getTopRightY());
+	XML.setValue("CONFIG:WARP:TOPLEFT:X", warp_box.getTopLeftX());
+	XML.setValue("CONFIG:WARP:TOPLEFT:Y", warp_box.getTopLeftY());	
+	
 
 //	XML.setValue("CONFIG:NETWORK:LOCALHOST", *myTUIO.localHost);
 //	XML.setValue("CONFIG:NETWORK:TUIO_PORT_OUT",myTUIO.TUIOPort);

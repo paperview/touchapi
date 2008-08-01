@@ -43,6 +43,9 @@ class testApp : public ofSimpleApp, public ofCvBlobListener, public ofxGuiListen
 		propertiesPanel_settings,
 		propertiesPanel_pressure,
 
+		gpuPanel,
+		gpuPanel_use,
+
 		optionPanel,
 		optionPanel_tuio,
 
@@ -57,8 +60,8 @@ class testApp : public ofSimpleApp, public ofCvBlobListener, public ofxGuiListen
 		sourcePanel_video,
 
 		backgroundPanel,
-		backgroundPanel_use,
 		backgroundPanel_remove,
+		backgroundPanel_dynamic,
 
 		smoothPanel,
 		smoothPanel_use,
@@ -191,6 +194,10 @@ public:
 		bool				bAmplify;
 		bool				bThreshold;
 		bool				bSmooth;
+		bool				bDynamicBG;
+
+		//modes
+		bool				bGPUMode;
 
 		/****************************************************
 		*End config.xml variables
@@ -273,6 +280,15 @@ int					tmpPort;
 		//---------------------------------------Warping Box				
 		CBoxAligner			warp_box;
 		ofxPoint2f			dstPts[4];
+			//Warp
+		float					handle1x;
+		float					handle1y;
+		float					handle2x;			
+		float					handle2y;		
+		float					handle3x;		
+		float					handle3y;		
+		float					handle4x;		
+		float					handle4y;
 
 		//---------------------------------------XML Settings Vars (BLOATED)
 		ofxXmlSettings		XML;

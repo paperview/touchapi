@@ -19,21 +19,23 @@
         <SNAPSHOT>0</SNAPSHOT>
         <OUTLINES>1</OUTLINES>
         <LEARNBG>0</LEARNBG>
-        <TUIO>1</TUIO>
+        <TUIO>0</TUIO>
         <VMIRROR>1</VMIRROR>
         <HMIRROR>1</HMIRROR>
         <WARP>0</WARP>
-        <HIGHPASS>1</HIGHPASS>
+        <HIGHPASS>0</HIGHPASS>
         <AMPLIFY>0</AMPLIFY>
         <SMOOTH>1</SMOOTH>
+        <GPU>0</GPU>
+        <DYNAMICBG>0</DYNAMICBG>
     </BOOLEAN>
     <INT>
         <!--//FILTERS SETTERS//-->
-        <THRESHOLD>10</THRESHOLD>
-        <HIGHPASSBLUR>18</HIGHPASSBLUR>
-        <HIGHPASSNOISE>6</HIGHPASSNOISE>
-        <HIGHPASSAMP>5</HIGHPASSAMP>
-        <SMOOTH>3</SMOOTH>
+        <THRESHOLD>103</THRESHOLD>
+        <HIGHPASSBLUR>30</HIGHPASSBLUR>
+        <HIGHPASSNOISE>5</HIGHPASSNOISE>
+        <HIGHPASSAMP>65</HIGHPASSAMP>
+        <SMOOTH>2</SMOOTH>
     </INT>
     <!--// NETWORK SETTINGS //-->
     <NETWORK>
@@ -42,6 +44,24 @@
         <TUIOPORT_OUT>3333</TUIOPORT_OUT>
         <TUIOPORT_IN>3000</TUIOPORT_IN>
     </NETWORK>
+    <WARP>
+        <BOTTOMLEFT>
+            <X>0.000000</X>
+            <Y>0.000000</Y>
+        </BOTTOMLEFT>
+        <BOTTOMRIGHT>
+            <X>320.000000</X>
+            <Y>0.000000</Y>
+        </BOTTOMRIGHT>
+        <TOPRIGHT>
+            <X>320.000000</X>
+            <Y>240.000000</Y>
+        </TOPRIGHT>
+        <TOPLEFT>
+            <X>0.000000</X>
+            <Y>240.000000</Y>
+        </TOPLEFT>
+    </WARP>
     <!--////////////////////////////////////////
    
    Put Ideas Here!!!
