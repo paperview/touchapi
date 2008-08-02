@@ -19,23 +19,23 @@
         <SNAPSHOT>0</SNAPSHOT>
         <OUTLINES>1</OUTLINES>
         <LEARNBG>0</LEARNBG>
-        <TUIO>0</TUIO>
+        <TUIO>1</TUIO>
         <VMIRROR>1</VMIRROR>
         <HMIRROR>1</HMIRROR>
         <WARP>0</WARP>
-        <HIGHPASS>0</HIGHPASS>
-        <AMPLIFY>0</AMPLIFY>
+        <HIGHPASS>1</HIGHPASS>
+        <AMPLIFY>1</AMPLIFY>
         <SMOOTH>1</SMOOTH>
         <GPU>0</GPU>
-        <DYNAMICBG>0</DYNAMICBG>
+        <DYNAMICBG>1</DYNAMICBG>
     </BOOLEAN>
     <INT>
         <!--//FILTERS SETTERS//-->
-        <THRESHOLD>103</THRESHOLD>
+        <THRESHOLD>75</THRESHOLD>
         <HIGHPASSBLUR>30</HIGHPASSBLUR>
         <HIGHPASSNOISE>5</HIGHPASSNOISE>
-        <HIGHPASSAMP>65</HIGHPASSAMP>
-        <SMOOTH>2</SMOOTH>
+        <HIGHPASSAMP>226</HIGHPASSAMP>
+        <SMOOTH>1</SMOOTH>
     </INT>
     <!--// NETWORK SETTINGS //-->
     <NETWORK>
@@ -50,16 +50,16 @@
             <Y>0.000000</Y>
         </BOTTOMLEFT>
         <BOTTOMRIGHT>
-            <X>320.000000</X>
+            <X>640.000000</X>
             <Y>0.000000</Y>
         </BOTTOMRIGHT>
         <TOPRIGHT>
-            <X>320.000000</X>
-            <Y>240.000000</Y>
+            <X>640.000000</X>
+            <Y>480.000000</Y>
         </TOPRIGHT>
         <TOPLEFT>
             <X>0.000000</X>
-            <Y>240.000000</Y>
+            <Y>480.000000</Y>
         </TOPLEFT>
     </WARP>
     <!--////////////////////////////////////////
@@ -75,10 +75,10 @@
       
    //////////////////// START SENSORS & INPUT STUFF//-->
     <CAMERA_0>
-        <USECAMERA>1</USECAMERA>
+        <USECAMERA>0</USECAMERA>
         <DEVICE>0</DEVICE>
-        <WIDTH>320</WIDTH>
-        <HEIGHT>240</HEIGHT>
+        <WIDTH>640</WIDTH>
+        <HEIGHT>480</HEIGHT>
         <FRAMERATE>30</FRAMERATE>
     </CAMERA_0>
 </CONFIG>

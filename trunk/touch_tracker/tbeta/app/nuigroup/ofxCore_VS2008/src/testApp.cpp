@@ -62,8 +62,8 @@ void testApp::setup()
 
         //vidPlayer.loadMovie("test_videos/FrontDI.m4v");
 		//vidPlayer.loadMovie("test_videos/HCI_FTIR.mov");
-		//vidPlayer.loadMovie("test_videos/raw.mp4");
-		vidPlayer.loadMovie("test_videos/5point.avi");
+		vidPlayer.loadMovie("test_videos/raw.mp4");
+		//vidPlayer.loadMovie("test_videos/5point.avi");
         vidPlayer.play();	
 		printf("Video Mode\n");
 		camHeight = vidPlayer.height;
@@ -611,12 +611,22 @@ void testApp::doCalibration(){
 			ofSetColor(0xFF0099);
 			//ofFill();
 			glLineWidth(3);
-			ofEllipse(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight(), 
+			glPushMatrix();
+			glLoadIdentity();
+			glTranslatef(drawBlob2.centroid.x * ofGetWidth(), ((drawBlob2.centroid.y * ofGetHeight()) * -1) + ofGetHeight(), 0);		
+			glRotatef(-45, 0, 0, 1);
+			ofCircle(0,0, 35);
+			ofLine(0, -35, 0, 35); 
+			ofLine(-35, 0, 35, 0);				   
+			glPopMatrix();
+
+/*			ofEllipse(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight(), 
 				      drawBlob2.boundingRect.width, drawBlob2.boundingRect.height);
 			ofLine(drawBlob2.centroid.x * ofGetWidth() - (drawBlob2.boundingRect.width), drawBlob2.centroid.y * ofGetHeight(), 
 				   drawBlob2.centroid.x * ofGetWidth() + (drawBlob2.boundingRect.width), drawBlob2.centroid.y * ofGetHeight()); 
 			ofLine(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight() - (drawBlob2.boundingRect.height), 
 				   drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight()  + (drawBlob2.boundingRect.height));
+*/
 
 			//Displat Text of blob information
 			ofSetColor(0x00FF00);
@@ -772,7 +782,7 @@ void testApp::keyPressed(int key)
 			{	
 				bFastMode = false;	
 				//bToggleHelp = true;
-				ofSetWindowShape(900,600); //default size
+				ofSetWindowShape(950,600); //default size
 				ofSetWindowTitle("Configuration");
 			}
 			else
@@ -1049,14 +1059,13 @@ void testApp::blobOff( ofxCvBlob b)
 	if(bTUIOMode)//If sending TUIO, Delete Blobs from map list
 	{
 		std::map<int, ofxCvBlob>::iterator iter;
-		for(iter = myTUIO.blobs.begin(); iter != myTUIO.blobs.end();)
+		for(iter = myTUIO.blobs.begin(); iter != myTUIO.blobs.end(); iter++)
 		{
 			if(iter->second.id == b.id)
 			{
-				iter = myTUIO.blobs.erase(iter);
-			}
-			else{
-				iter++;
+				myTUIO.blobs.erase(iter);
+
+				break;
 			}
 		}
 	}
