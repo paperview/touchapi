@@ -357,6 +357,7 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 			case optionPanel_tuio:
 				if(length == sizeof(bool))
 					bTUIOMode = *(bool*)data;
+					myTUIO.blobs.clear();
 				break;
 			//Background
 			case backgroundPanel_dynamic:
@@ -438,5 +439,5 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 
 
 
-#endif //__UI_DEFINITION
+#endif //__GUI_DEFINITION
 
