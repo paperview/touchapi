@@ -94,6 +94,34 @@ void testApp::setup()
 	giWarped.setUseTexture(false);
 	/********************************************************************************************************/
 
+
+
+
+	/**********************************************************/
+	//GPU stuff initialization
+	/**********************************************************/
+	glGenTextures(1, &gpuSourceTex);
+	glGenTextures(1, &gpuBGTex);
+	grabFrameToGPU(gpuBGTex);
+
+	//so very inefficient..but only for now..until i fix the gpu blob detection and geoemtry shader for variable length output
+	gpuReadBackBuffer = new unsigned char[camWidth*camHeight*3]; 
+	gpuReadBackImage.allocate(camWidth, camHeight);
+	gpuReadBackImageGS.allocate(camWidth, camHeight);
+
+	subtractFilter = new ImageFilter("filters/absSubtract.xml", camWidth, camHeight);
+	subtractFilter2 = new ImageFilter("filters/subtract.xml", camWidth, camHeight);
+	contrastFilter = new ImageFilter("filters/contrast.xml", camWidth, camHeight);
+	gaussVFilter = new ImageFilter("filters/gaussV.xml", camWidth, camHeight);
+	gaussHFilter = new ImageFilter("filters/gauss.xml", camWidth, camHeight);
+	gaussVFilter2 = new ImageFilter("filters/gaussV2.xml", camWidth, camHeight);
+	gaussHFilter2 = new ImageFilter("filters/gauss2.xml", camWidth, camHeight);
+	threshFilter = new ImageFilter("filters/threshold.xml", camWidth, camHeight);
+	/**********************************************************/
+
+
+
+
 	//Fonts - Is there a way to dynamically change font size?
 	verdana.loadFont("verdana.ttf", 8, true, true);	   //Font used for small images
 	sidebarTXT.loadFont("verdana.ttf", 8, true, true);
@@ -137,6 +165,149 @@ void testApp::setup()
 }
 
 
+
+
+void testApp::grabFrameToGPU(GLuint target){
+	//grab the frame to a raw openGL texture
+	if(bcamera)
+	{
+		glEnable(GL_TEXTURE_2D);
+		//glPixelStorei(1);
+		glBindTexture(GL_TEXTURE_2D, target);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, camWidth, camHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, vidGrabber.getPixels());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glBindTexture(GL_TEXTURE_2D,0);
+
+
+	}
+	else{
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, target);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, camWidth, camHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, vidPlayer.getPixels());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glBindTexture(GL_TEXTURE_2D,0);
+	}
+}
+
+
+void testApp::grabFrame(){
+	//Set sourceImg as new camera/video frame
+	if(bcamera)
+		sourceImg.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight);
+	else
+		sourceImg.setFromPixels(vidPlayer.getPixels(), 	camWidth, camHeight);
+	
+	int totalPixels = camWidth*camHeight*3;
+	unsigned char * pixels = vidGrabber.getPixels();
+}
+
+
+void testApp::applyGPUImageFilters(){
+
+	if (bLearnBakground == true){
+		grabFrameToGPU(gpuBGTex);
+		bLearnBakground = false;
+	}
+	//GLuint tmp;
+	GLuint processedTex; 
+	
+	//tmp = contrastFilter->apply(gpuBGTex);
+	processedTex = subtractFilter->apply(gpuSourceTex, gpuBGTex);
+
+	//blur
+	if(bSmooth){
+		gaussHFilter->parameters["kernel_size"]->value = (float)smooth;
+		gaussVFilter->parameters["kernel_size"]->value = (float)smooth;
+		processedTex = gaussHFilter->apply(processedTex);
+		processedTex = gaussVFilter->apply(processedTex);
+	}
+
+	//highpass
+	if(bHighpass){
+		gaussHFilter2->parameters["kernel_size"]->value = (float)highpassBlur;
+		gaussVFilter2->parameters["kernel_size"]->value = (float)highpassBlur;
+		processedTex = gaussHFilter2->apply(processedTex);
+		processedTex = gaussVFilter2->apply(processedTex);
+		processedTex = subtractFilter2->apply(gaussVFilter->output_texture, processedTex);
+	}
+
+	//amplifys
+	if(bAmplify){
+
+	}
+
+	threshFilter->parameters["Threshold"]->value = (float)threshold / 255.0;
+	threshFilter->apply(processedTex);
+
+
+	//until the rest of the pipeline is fixed well just download the preprocessing result from the gpu and use that for the blob detection
+	//TODO: make this part not super slow ;)
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, threshFilter->output_buffer);
+	//glReadBuffer(gaussVFilter->output_buffer);
+	glReadPixels(0,0,camWidth, camHeight, GL_RGB, GL_UNSIGNED_BYTE, gpuReadBackBuffer);
+	gpuReadBackImage.setFromPixels(gpuReadBackBuffer, camWidth, camHeight);
+	gpuReadBackImageGS = gpuReadBackImage;
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+
+}
+
+
+void testApp::applyImageFilters(){
+	/************************************************
+	*				SET FILTERS HERE
+	************************************************/
+	processedImg = sourceImg;
+	//Set Mirroring Horizontal/Vertical
+	processedImg.mirror(bVerticalMirror, bHorizontalMirror);
+
+	grayImg = processedImg; //for drawing
+
+	if(bWarpImg){
+		giWarped.warpIntoMe(processedImg, warp_box.fHandles, dstPts );				
+		processedImg = giWarped;
+	}
+
+	//Dynamic background with learn rate...eventually learnrate will have GUI sliders
+	if(bDynamicBG){
+		learnBackground( processedImg, grayBg, fiLearn, fLearnRate);
+	}
+	
+	//Capture full background
+	if (bLearnBakground == true){
+		bgCapture( processedImg );
+		bLearnBakground = false;
+	}
+
+	//Background Subtraction
+	processedImg.absDiff(grayBg, processedImg);
+
+	if(bSmooth){
+		processedImg.blur((smooth * 2) + 1); //needs to be an odd number
+		subtractBg = processedImg; //for drawing
+	}
+
+	//HighPass
+	if(bHighpass){
+		processedImg.highpass(highpassBlur, highpassNoise);
+		highpassImg = processedImg; //for drawing
+	}
+
+	//Amplify
+	if(bAmplify){
+		processedImg.amplify(processedImg, highpassAmp);
+		ampImg = processedImg; //for drawing	
+	}
+	
+	//Set a threshold value
+	processedImg.threshold(threshold);
+	grayDiff = processedImg; //for drawing
+}
+
+
+
+
 /******************************************************************************
  * The update function runs continuously. Use it to update states and variables
  *****************************************************************************/
@@ -169,71 +340,22 @@ void testApp::update()
 				lastFPSlog = time;			
 			}//End calculation
 
-			//Set sourceImg as new camera/video frame
-			if(bcamera)
-			{
-			  sourceImg.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight);
-			  int totalPixels = camWidth*camHeight*3;
-			  unsigned char * pixels = vidGrabber.getPixels();
+
+				
+			
+			if(bGPUMode){
+				grabFrameToGPU(gpuSourceTex);
+				applyGPUImageFilters();
+				contourFinder.findContours(gpuReadBackImageGS, 1, (camWidth*camHeight)/25, 10, false);
 			}
 			else{
-				sourceImg.setFromPixels(vidPlayer.getPixels(), 
-										camWidth, camHeight);
-				int totalPixels = camWidth*camHeight*3;
-				unsigned char * pixels = vidPlayer.getPixels();
-			}
-				
-			/************************************************
-			*				SET FILTERS HERE
-			************************************************/
-			processedImg = sourceImg;
-			//Set Mirroring Horizontal/Vertical
-			processedImg.mirror(bVerticalMirror, bHorizontalMirror);
-		
-			grayImg = processedImg; //for drawing
-
-			if(bWarpImg){
-				giWarped.warpIntoMe(processedImg, warp_box.fHandles, dstPts );				
-				processedImg = giWarped;
-			}
-	
-			//Dynamic background with learn rate...eventually learnrate will have GUI sliders
-			if(bDynamicBG){
-				learnBackground( processedImg, grayBg, fiLearn, fLearnRate);
+				grabFrame();
+				applyImageFilters();
+				contourFinder.findContours(processedImg, 1, (camWidth*camHeight)/25, 10, false);
 			}
 			
-			//Capture full background
-			if (bLearnBakground == true){
-				bgCapture( processedImg );
-				bLearnBakground = false;
-			}
-
-			//Background Subtraction
-			processedImg.absDiff(grayBg, processedImg);
-
-			if(bSmooth){
-				processedImg.blur((smooth * 2) + 1); //needs to be an odd number
-				subtractBg = processedImg; //for drawing
-			}
-
-			//HighPass
-			if(bHighpass){
-				processedImg.highpass(highpassBlur, highpassNoise);
-				highpassImg = processedImg; //for drawing
-			}
-
-			//Amplify
-			if(bAmplify){
-				processedImg.amplify(processedImg, highpassAmp);
-				ampImg = processedImg; //for drawing	
-			}
-			
-			//Set a threshold value
-			processedImg.threshold(threshold);
-			grayDiff = processedImg; //for drawing
-
 			//Find contours/blobs
-			contourFinder.findContours(processedImg, 1, (camWidth*camHeight)/25, 10, false);
+			
 
 			//Track found contours/blobs
 			tracker.track(&contourFinder);
@@ -338,16 +460,29 @@ void testApp::draw(){
 		ofTriangle(70, 420, 70, 460, 50, 440);
 		
 		ofSetColor(0xFFFFFF);
-		if(bShowPressure)
-			pressureMap.draw(40, 30, 320, 240);
-		else
-			grayImg.draw(40, 30, 320, 240);
 
-		grayDiff.draw(385, 30, 320, 240);
-		fiLearn.draw(85, 392, 128, 96);
-		subtractBg.draw(235, 392, 128, 96);
-		highpassImg.draw(385, 392, 128, 96);
-		ampImg.draw(535, 392, 128, 96);
+		if(bGPUMode){
+			drawGLTexture(40, 30, 320, 240, gpuSourceTex);
+			//subtractFilter->drawOutputTexture(85, 392, 128, 96);
+			drawGLTexture(85, 392, 128, 96, gpuBGTex);
+			gaussVFilter->drawOutputTexture(235, 392, 128, 96); 
+			subtractFilter2->drawOutputTexture(385, 392, 128, 96); 
+			threshFilter->drawOutputTexture(535, 392, 128, 96);
+			gpuReadBackImageGS.draw(385, 30, 320, 240);
+		}
+		else{
+			if(bShowPressure)
+				pressureMap.draw(40, 30, 320, 240);
+			else
+				grayImg.draw(40, 30, 320, 240);
+
+			grayDiff.draw(385, 30, 320, 240);
+			fiLearn.draw(85, 392, 128, 96);
+			subtractBg.draw(235, 392, 128, 96);
+			highpassImg.draw(385, 392, 128, 96);
+			ampImg.draw(535, 392, 128, 96);
+		}
+
 
 		ofSetColor(0x000000);
 		if(bShowPressure){bigvideo.drawString("Pressure Map", 140, 20);}
@@ -402,7 +537,7 @@ void testApp::draw(){
 		//Find the blobs
 		for(int i=0; i<contourFinder.nBlobs; i++)
 		{
-			//temp blob to rescale and draw on screen
+			//temp blob to rescale and draw on screen  
 			ofxCvBlob drawBlob;
 			drawBlob = contourFinder.blobs[i];
 
