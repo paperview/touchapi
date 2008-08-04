@@ -14,25 +14,23 @@
 #include "ofAddons.h"
 
 //Used for tracking algo
-#include "Tracking\tracking.h"
+#include "Tracking/tracking.h"
 
 //GPU image filters
-#include "ImageFilter.h"
+#include "Filters/ImageFilter.h"
 
 //Used for warped image calibration
-#include "Calibration\boxAlign.h"
+#include "Calibration/boxAlign.h"
 
 //Used other calibration
-#include "Calibration\calibrationB.h"
+#include "Calibration/calibrationB.h"
 
 //Communications
-#include "Communication\TUIOOSC.h"
+#include "Communication/TUIOOSC.h"
 
 //GUI
-#include "ofxGui\ofxGui.h"
-#include "ofxGui\ofxGuiTypes.h"
-
-#include "Thingy.h"
+#include "ofxGui/ofxGui.h"
+#include "ofxGui/ofxGuiTypes.h"
 
 
 class testApp : public ofSimpleApp, public ofCvBlobListener, public ofxGuiListener
@@ -91,9 +89,6 @@ class testApp : public ofSimpleApp, public ofCvBlobListener, public ofxGuiListen
 		};
 
 public:
-
-		vector<Thingy> thingies;
-
 
 		void		handleGui(int parameterId, int task, void* data, int length);
 		
