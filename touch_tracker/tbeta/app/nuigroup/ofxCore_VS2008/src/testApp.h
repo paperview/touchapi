@@ -16,6 +16,9 @@
 //Used for tracking algo
 #include "Tracking\tracking.h"
 
+//GPU image filters
+#include "ImageFilter.h"
+
 //Used for warped image calibration
 #include "Calibration\boxAlign.h"
 
@@ -120,6 +123,14 @@ public:
 		void blobMoved(ofxCvBlob b);   
 		void blobOff(ofxCvBlob b);
 
+
+		//image processing stuff
+		void grabFrame();
+		void applyImageFilters();
+
+		void grabFrameToGPU(GLuint target);
+		void applyGPUImageFilters();
+		
 
 		//Other Methods
 		void loadXMLSettings();								  // Load Settings
@@ -299,6 +310,26 @@ int					tmpPort;
 
 		//---------------------------------------FOR NETWORK 
 		TUIOOSC				myTUIO;
+
+
+
+		//---------------------------------------FOR gpuTracker
+		GLuint			gpuSourceTex;
+		GLuint			gpuBGTex;
+
+		unsigned char * gpuReadBackBuffer;
+		ofxCvColorImage gpuReadBackImage;
+		ofxCvGrayscaleImage gpuReadBackImageGS;
+		
+		ImageFilter*	contrastFilter;
+		ImageFilter*	subtractFilter;
+		ImageFilter*	subtractFilter2; //we need 2 because we are showing the output of each
+		ImageFilter*	gaussVFilter;
+		ImageFilter*	gaussVFilter2;
+		ImageFilter*	gaussHFilter;
+		ImageFilter*	gaussHFilter2;
+		ImageFilter*	threshFilter;
+
 		
 };
 #endif

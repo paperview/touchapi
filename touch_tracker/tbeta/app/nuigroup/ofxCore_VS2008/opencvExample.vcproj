@@ -194,7 +194,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\ImageFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ImageFilter.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ShaderProgram.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ShaderProgram.h"
 				>
 			</File>
 			<File

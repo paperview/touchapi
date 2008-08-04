@@ -174,6 +174,7 @@ void testApp::setupGUI()
 		gui->update(appPtr->gpuPanel_use, kofxGui_Set_Bool, &appPtr->bGPUMode, sizeof(bool));
 }
 
+
 void testApp::handleGui(int parameterId, int task, void* data, int length)
 {
 	if(activeInput)
@@ -194,6 +195,24 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 							camWidth = vidGrabber.width;
 							camHeight = vidGrabber.height;
 							vidGrabber.initGrabber(camWidth,camHeight);
+
+
+							//reset gpu textures and filters
+							delete gpuReadBackBuffer;
+							gpuReadBackBuffer = new unsigned char[camWidth*camHeight*3]; 
+							gpuReadBackImage.allocate(camWidth, camHeight);
+							gpuReadBackImageGS.allocate(camWidth, camHeight);
+	subtractFilter = new ImageFilter("filters/absSubtract.xml", camWidth, camHeight);
+	subtractFilter2 = new ImageFilter("filters/subtract.xml", camWidth, camHeight);
+	contrastFilter = new ImageFilter("filters/contrast.xml", camWidth, camHeight);
+	gaussVFilter = new ImageFilter("filters/gaussV.xml", camWidth, camHeight);
+	gaussHFilter = new ImageFilter("filters/gauss.xml", camWidth, camHeight);
+	gaussVFilter2 = new ImageFilter("filters/gaussV2.xml", camWidth, camHeight);
+	gaussHFilter2 = new ImageFilter("filters/gauss2.xml", camWidth, camHeight);
+	threshFilter = new ImageFilter("filters/threshold.xml", camWidth, camHeight);
+
+
+
 
 							processedImg.allocate(camWidth, camHeight); //Processed Image
 							processedImg.setUseTexture(false);
@@ -244,6 +263,23 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 							printf("Video Mode\n");
 							camHeight = vidPlayer.height;
 							camWidth = vidPlayer.width;
+
+
+							//reset gpu textures and filters
+							delete gpuReadBackBuffer;
+							gpuReadBackBuffer = new unsigned char[camWidth*camHeight*3]; 
+							gpuReadBackImage.allocate(camWidth, camHeight);
+							gpuReadBackImageGS.allocate(camWidth, camHeight);
+
+	subtractFilter = new ImageFilter("filters/absSubtract.xml", camWidth, camHeight);
+	subtractFilter2 = new ImageFilter("filters/subtract.xml", camWidth, camHeight);
+	contrastFilter = new ImageFilter("filters/contrast.xml", camWidth, camHeight);
+	gaussVFilter = new ImageFilter("filters/gaussV.xml", camWidth, camHeight);
+	gaussHFilter = new ImageFilter("filters/gauss.xml", camWidth, camHeight);
+	gaussVFilter2 = new ImageFilter("filters/gaussV2.xml", camWidth, camHeight);
+	gaussHFilter2 = new ImageFilter("filters/gauss2.xml", camWidth, camHeight);
+	threshFilter = new ImageFilter("filters/threshold.xml", camWidth, camHeight);
+
 
 							processedImg.allocate(camWidth, camHeight); //Processed Image
 							processedImg.setUseTexture(false);
