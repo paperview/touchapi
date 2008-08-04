@@ -194,23 +194,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\ImageFilter.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ImageFilter.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\main.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ShaderProgram.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ShaderProgram.h"
 				>
 			</File>
 			<File
@@ -219,14 +203,6 @@
 			</File>
 			<File
 				RelativePath=".\src\testApp.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Thingy.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Thingy.h"
 				>
 			</File>
 			<Filter
@@ -390,6 +366,26 @@
 				</File>
 				<File
 					RelativePath=".\src\ofxGui\ofxGuiXyPad.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Filters"
+				>
+				<File
+					RelativePath=".\src\ImageFilter.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\ImageFilter.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\ShaderProgram.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\ShaderProgram.h"
 					>
 				</File>
 			</Filter>

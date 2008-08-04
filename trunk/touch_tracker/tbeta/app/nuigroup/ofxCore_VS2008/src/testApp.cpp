@@ -762,7 +762,6 @@ void testApp::doCalibration(){
 			ofLine(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight() - (drawBlob2.boundingRect.height), 
 				   drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight()  + (drawBlob2.boundingRect.height));
 */
-
 			//Displat Text of blob information
 			ofSetColor(0x00FF00);
 			glLineWidth(1);
@@ -771,34 +770,8 @@ void testApp::doCalibration(){
 																	ceil(drawBlob2.centroid.y * ofGetHeight()));
 			verdana.drawString(idStr, drawBlob2.centroid.x * ofGetWidth() + drawBlob2.boundingRect.width/2 + 20, 
 									  drawBlob2.centroid.y * ofGetHeight() + drawBlob2.boundingRect.height/2 + 20);
-		
-		
-			/*************************
-			* Fading Blobs
-			*************************/
-/*			thingies.push_back(Thingy(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight(), 
-									  drawBlob2.boundingRect.width, drawBlob2.boundingRect.height));
-			                                   
-			vector<Thingy>::iterator this_thingy;
-			// go through all the thingies
-			for(this_thingy = thingies.begin(); this_thingy != thingies.end();) {
-						
-				//Erasing this way makes it so the vector iterator is not invalidated
-				if(this_thingy->alpha <= 0){
-					this_thingy = thingies.erase(this_thingy);
-				}
-				else{
-					this_thingy++;
-				}
-*/			}
+			}
 		}	
-		//Draw fading blobs
-/*		for (int i=0; i < thingies.size(); i++) {
-		
-			thingies[i].draw();
-		}//end fading blobs	
-/*
-	}//End Blob Drawing
 
 	/******************************
 	* Calibration Instructions
@@ -817,15 +790,6 @@ void testApp::doCalibration(){
 		sprintf(reportStr,  
 		"CALIBRATION \n\n\-Press [x] to start calibrating \n \-Press [c] to return main screen \n \-Press [b] to recapture background \n\n\CHANGING GRID SIZE (number of points): \n\n\-Current Grid Size is %i x %i \n\-Press [+]/[-] to add/remove points on X axis \n\-Press [shift][+]/[-] to add/remove points on Y axis \n\n\ALINGING BOUNDING BOX TO PROJECTION SCREEN: \n\n\-Use arrow keys to move bounding box\n\-Press and hold [w],[a],[s],[d] (top, left, bottom, right) to adjust each side\n", calibrate.GRID_X + 1, calibrate.GRID_Y + 1);
 		calibrationText.drawString(reportStr, 33, 60);
-	}
-
-		//Update Demo Blobs
-	if(!calibrate.bCalibrating){
-
-		// go through all the thingies
-		for (int i=0; i < thingies.size(); i++) {
-			thingies[i].update();
-		}
 	}
 }
 
