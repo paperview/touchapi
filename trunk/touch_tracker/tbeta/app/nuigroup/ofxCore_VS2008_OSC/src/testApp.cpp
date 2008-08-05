@@ -37,10 +37,15 @@ void testApp::setup()
 	calibrate.loadXMLSettings();
 
 	//Setup Window Properties 
-	ofSetWindowShape(winWidth,winHeight);
+	ofSetWindowShape(200,110);
 	ofSetFrameRate(camRate);			//This will be based on camera fps in the future		
 	ofSetVerticalSync(false);	//Set vertical sync to false for better performance
 
+	
+	//Fonts - Is there a way to dynamically change font size?
+	//verdana.loadFont("verdana.ttf", 8, true, true);	   //Font used for small images
+	sidebarTXT.loadFont("verdana.ttf", 8, true, true);
+	
 
 	//Pick the Source - camera or video
 	if(bcamera){
@@ -116,18 +121,6 @@ void testApp::setup()
 	threshFilter = new ImageFilter("filters/threshold.xml", camWidth, camHeight);
 	/**********************************************************/
 
-
-
-
-	//Fonts - Is there a way to dynamically change font size?
-	verdana.loadFont("verdana.ttf", 8, true, true);	   //Font used for small images
-	sidebarTXT.loadFont("verdana.ttf", 8, true, true);
-	calibrationText.loadFont("verdana.ttf", 11, true, true);
-	bigvideo.loadFont("verdana.ttf", 13, true, true);  //Font used for big images.
-	
-	//Static Images
-	logo.loadImage("images/logo.jpg");
-	background.loadImage("images/background.jpg"); //Main (Temp?) Background
 
 	//Setup green warped box
 	warp_box.setup( 40, 30, camWidth, camHeight, camWidth/320, camHeight/240); 
@@ -375,47 +368,34 @@ void testApp::update()
  *****************************************************************************/
 void testApp::draw(){
 
-	ofSetFullscreen(bFullscreen);
+	//Display applicaion and camera FPS in title 
+	string str = "Application: ";
+	str+= ofToString(ofGetFrameRate(), 2)+"fps \n";	
+	string str2 = "Camera:   ";
+	str2+= ofToString(fps, 1)+"fps";
 
-	/*********************************
-	* IF NOT CALIBRATING
-	*********************************/
-	if(!bCalibration)
-	{
-		//Draw main interface
-		bShowInterface = true;
-
-		//Display applicaion and camera FPS in title 
-		string str = "Application: ";
-		str+= ofToString(ofGetFrameRate(), 2)+"fps \n";	
-		string str2 = "Camera:   ";
-		str2+= ofToString(fps, 1)+"fps";
-
-		ofSetColor(0xFFFFFF);
-		sidebarTXT.drawString(str + str2, 740, 410);	
-		
-		//Draw PINK CIRCLE 'ON' LIGHT
-		ofSetColor(255, 0, 255);
-		ofFill();		
-		ofCircle(20, 10, 5);
-		ofNoFill();
-
-		if(bTUIOMode)
-		{	//Draw Port and IP to screen
-			ofSetColor(0xffffff);
-			char buf[256];
-			sprintf(buf, "Sending TUIO messages to:\nHost: %s\nPort: %i", myTUIO.localHost, myTUIO.TUIOPort);
-			sidebarTXT.drawString(buf, 740, 450);
-
-			//Draw GREEN CIRCLE 'ON' LIGHT
-			ofSetColor(0x00FF00);
-			ofFill();		
-			ofCircle(35, 10, 5);
-			ofNoFill();
-		}
-	}
-		ofSetColor(0xFFFFFF);
+	ofSetColor(0xFFFFFF);
+	sidebarTXT.drawString(str + str2, 15, 35);	
 	
+	//Draw PINK CIRCLE 'ON' LIGHT
+	ofSetColor(255, 0, 255);
+	ofFill();		
+	ofCircle(20, 10, 5);
+	ofNoFill();
+
+	if(bTUIOMode)
+	{	//Draw Port and IP to screen
+		ofSetColor(0xffffff);
+		char buf[256];
+		sprintf(buf, "Sending TUIO messages to:\nHost: %s\nPort: %i", myTUIO.localHost, myTUIO.TUIOPort);
+		sidebarTXT.drawString(buf, 740, 450);
+
+		//Draw GREEN CIRCLE 'ON' LIGHT
+		ofSetColor(0x00FF00);
+		ofFill();		
+		ofCircle(35, 10, 5);
+		ofNoFill();
+	}
 }
 
 
