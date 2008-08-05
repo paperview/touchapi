@@ -104,6 +104,16 @@ void testApp::setup()
 	/**********************************************************/
 	glGenTextures(1, &gpuSourceTex);
 	glGenTextures(1, &gpuBGTex);
+
+	//initialize texture once with glTexImage2D so we can use gltexSubImage2D afetrwards (fastser)
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, gpuSourceTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8,  camWidth, camHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glBindTexture(GL_TEXTURE_2D, gpuBGTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8,  camWidth, camHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+
 	grabFrameToGPU(gpuBGTex);
 
 	//so very inefficient..but only for now..until i fix the gpu blob detection and geoemtry shader for variable length output
@@ -176,7 +186,8 @@ void testApp::grabFrameToGPU(GLuint target){
 		glEnable(GL_TEXTURE_2D);
 		//glPixelStorei(1);
 		glBindTexture(GL_TEXTURE_2D, target);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, camWidth, camHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, vidGrabber.getPixels());
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, camWidth, camHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, vidGrabber.getPixels());
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, camWidth, camHeight, GL_RGB, GL_UNSIGNED_BYTE, vidGrabber.getPixels());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glBindTexture(GL_TEXTURE_2D,0);
@@ -186,7 +197,8 @@ void testApp::grabFrameToGPU(GLuint target){
 	else{
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, target);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, camWidth, camHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, vidPlayer.getPixels());
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, camWidth, camHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, vidPlayer.getPixels());
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, camWidth, camHeight, GL_RGB, GL_UNSIGNED_BYTE, vidPlayer.getPixels());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glBindTexture(GL_TEXTURE_2D,0);
@@ -212,7 +224,9 @@ void testApp::applyGPUImageFilters(){
 		grabFrameToGPU(gpuBGTex);
 		bLearnBakground = false;
 	}
-	//GLuint tmp;
+
+
+
 	GLuint processedTex; 
 	
 	//tmp = contrastFilter->apply(gpuBGTex);

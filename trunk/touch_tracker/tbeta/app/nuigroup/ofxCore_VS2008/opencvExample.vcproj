@@ -373,19 +373,19 @@
 				Name="Filters"
 				>
 				<File
-					RelativePath=".\src\ImageFilter.cpp"
+					RelativePath=".\src\Filters\ImageFilter.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ImageFilter.h"
+					RelativePath=".\src\Filters\ImageFilter.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ShaderProgram.cpp"
+					RelativePath=".\src\Filters\ShaderProgram.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ShaderProgram.h"
+					RelativePath=".\src\Filters\ShaderProgram.h"
 					>
 				</File>
 			</Filter>

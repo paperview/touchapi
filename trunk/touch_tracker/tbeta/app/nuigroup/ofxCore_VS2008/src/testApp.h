@@ -125,6 +125,7 @@ public:
 
 		void grabFrameToGPU(GLuint target);
 		void applyGPUImageFilters();
+		void resetGPUTextures();
 		
 
 		//Other Methods
