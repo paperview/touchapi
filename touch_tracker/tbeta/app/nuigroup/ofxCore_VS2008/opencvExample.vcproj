@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="OF_Application"
+	Name="Configapp"
 	ProjectGUID="{7FD42DF7-442E-479A-BA76-D0022F99702A}"
 	RootNamespace="opencvExample"
 	Keyword="Win32Proj"

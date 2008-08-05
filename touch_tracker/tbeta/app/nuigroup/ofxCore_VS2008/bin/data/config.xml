@@ -19,23 +19,23 @@
         <SNAPSHOT>0</SNAPSHOT>
         <OUTLINES>1</OUTLINES>
         <LEARNBG>0</LEARNBG>
-        <TUIO>0</TUIO>
+        <TUIO>1</TUIO>
         <VMIRROR>0</VMIRROR>
         <HMIRROR>1</HMIRROR>
         <WARP>0</WARP>
         <HIGHPASS>1</HIGHPASS>
         <AMPLIFY>1</AMPLIFY>
         <SMOOTH>1</SMOOTH>
-        <GPU>0</GPU>
+        <GPU>1</GPU>
         <DYNAMICBG>1</DYNAMICBG>
     </BOOLEAN>
     <INT>
         <!--//FILTERS SETTERS//-->
-        <THRESHOLD>16</THRESHOLD>
-        <HIGHPASSBLUR>20</HIGHPASSBLUR>
+        <THRESHOLD>37</THRESHOLD>
+        <HIGHPASSBLUR>52</HIGHPASSBLUR>
         <HIGHPASSNOISE>6</HIGHPASSNOISE>
         <HIGHPASSAMP>38</HIGHPASSAMP>
-        <SMOOTH>3</SMOOTH>
+        <SMOOTH>2</SMOOTH>
     </INT>
     <!--// NETWORK SETTINGS //-->
     <NETWORK>

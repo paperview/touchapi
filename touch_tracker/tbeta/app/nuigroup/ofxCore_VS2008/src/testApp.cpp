@@ -26,6 +26,8 @@ void testApp::setup()
 	bS			= false;
 	bD			= false;
 
+	bDrawVideo = true;
+
 	bFullscreen = false;
 
 	//Load Settings from config.xml file 
