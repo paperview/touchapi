@@ -175,6 +175,36 @@ void testApp::setupGUI()
 }
 
 
+
+
+void testApp::resetGPUTextures(){
+
+	
+	delete gpuReadBackBuffer;
+	gpuReadBackBuffer = new unsigned char[camWidth*camHeight*3]; 
+	gpuReadBackImage.allocate(camWidth, camHeight);
+	gpuReadBackImageGS.allocate(camWidth, camHeight);
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, gpuSourceTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8,  camWidth, camHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glBindTexture(GL_TEXTURE_2D, gpuBGTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8,  camWidth, camHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+
+	subtractFilter = new ImageFilter("filters/absSubtract.xml", camWidth, camHeight);
+	subtractFilter2 = new ImageFilter("filters/subtract.xml", camWidth, camHeight);
+	contrastFilter = new ImageFilter("filters/contrast.xml", camWidth, camHeight);
+	gaussVFilter = new ImageFilter("filters/gaussV.xml", camWidth, camHeight);
+	gaussHFilter = new ImageFilter("filters/gauss.xml", camWidth, camHeight);
+	gaussVFilter2 = new ImageFilter("filters/gaussV2.xml", camWidth, camHeight);
+	gaussHFilter2 = new ImageFilter("filters/gauss2.xml", camWidth, camHeight);
+	threshFilter = new ImageFilter("filters/threshold.xml", camWidth, camHeight);
+
+}
+
+
 void testApp::handleGui(int parameterId, int task, void* data, int length)
 {
 	if(activeInput)
@@ -198,21 +228,7 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 
 
 							//reset gpu textures and filters
-							delete gpuReadBackBuffer;
-							gpuReadBackBuffer = new unsigned char[camWidth*camHeight*3]; 
-							gpuReadBackImage.allocate(camWidth, camHeight);
-							gpuReadBackImageGS.allocate(camWidth, camHeight);
-	subtractFilter = new ImageFilter("filters/absSubtract.xml", camWidth, camHeight);
-	subtractFilter2 = new ImageFilter("filters/subtract.xml", camWidth, camHeight);
-	contrastFilter = new ImageFilter("filters/contrast.xml", camWidth, camHeight);
-	gaussVFilter = new ImageFilter("filters/gaussV.xml", camWidth, camHeight);
-	gaussHFilter = new ImageFilter("filters/gauss.xml", camWidth, camHeight);
-	gaussVFilter2 = new ImageFilter("filters/gaussV2.xml", camWidth, camHeight);
-	gaussHFilter2 = new ImageFilter("filters/gauss2.xml", camWidth, camHeight);
-	threshFilter = new ImageFilter("filters/threshold.xml", camWidth, camHeight);
-
-
-
+							resetGPUTextures();
 
 							processedImg.allocate(camWidth, camHeight); //Processed Image
 							processedImg.setUseTexture(false);
@@ -266,19 +282,7 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 
 
 							//reset gpu textures and filters
-							delete gpuReadBackBuffer;
-							gpuReadBackBuffer = new unsigned char[camWidth*camHeight*3]; 
-							gpuReadBackImage.allocate(camWidth, camHeight);
-							gpuReadBackImageGS.allocate(camWidth, camHeight);
-
-	subtractFilter = new ImageFilter("filters/absSubtract.xml", camWidth, camHeight);
-	subtractFilter2 = new ImageFilter("filters/subtract.xml", camWidth, camHeight);
-	contrastFilter = new ImageFilter("filters/contrast.xml", camWidth, camHeight);
-	gaussVFilter = new ImageFilter("filters/gaussV.xml", camWidth, camHeight);
-	gaussHFilter = new ImageFilter("filters/gauss.xml", camWidth, camHeight);
-	gaussVFilter2 = new ImageFilter("filters/gaussV2.xml", camWidth, camHeight);
-	gaussHFilter2 = new ImageFilter("filters/gauss2.xml", camWidth, camHeight);
-	threshFilter = new ImageFilter("filters/threshold.xml", camWidth, camHeight);
+							resetGPUTextures();
 
 
 							processedImg.allocate(camWidth, camHeight); //Processed Image
