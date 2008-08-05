@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<CONFIG>
+    <GLOBALS />
+    <APPLICATION>
+        <TITLE>Terminator</TITLE>
+        <FRAMERATE>120</FRAMERATE>
+        <VERSION>0.0.0</VERSION>
+    </APPLICATION>
+    <WINDOW>
+        <WIDTH>950</WIDTH>
+        <HEIGHT>600</HEIGHT>
+        <MINX>800</MINX>
+        <MINY>426</MINY>
+        <LIQUID>0</LIQUID>
+    </WINDOW>
+    <BOOLEAN>
+        <PRESSURE>0</PRESSURE>
+        <LABELS>1</LABELS>
+        <SNAPSHOT>0</SNAPSHOT>
+        <OUTLINES>1</OUTLINES>
+        <LEARNBG>0</LEARNBG>
+        <TUIO>1</TUIO>
+        <VMIRROR>0</VMIRROR>
+        <HMIRROR>1</HMIRROR>
+        <WARP>0</WARP>
+        <HIGHPASS>0</HIGHPASS>
+        <AMPLIFY>0</AMPLIFY>
+        <SMOOTH>0</SMOOTH>
+        <GPU>1</GPU>
+        <DYNAMICBG>1</DYNAMICBG>
+    </BOOLEAN>
+    <INT>
+        <!--//FILTERS SETTERS//-->
+        <THRESHOLD>37</THRESHOLD>
+        <HIGHPASSBLUR>52</HIGHPASSBLUR>
+        <HIGHPASSNOISE>6</HIGHPASSNOISE>
+        <HIGHPASSAMP>38</HIGHPASSAMP>
+        <SMOOTH>2</SMOOTH>
+    </INT>
+    <!--// NETWORK SETTINGS //-->
+    <NETWORK>
+        <LOCALHOST>127.0.0.1</LOCALHOST>
+        <TUIO>0</TUIO>
+        <TUIOPORT_OUT>3333</TUIOPORT_OUT>
+        <TUIOPORT_IN>3000</TUIOPORT_IN>
+    </NETWORK>
+    <WARP>
+        <BOTTOMLEFT>
+            <X>0.000000</X>
+            <Y>0.000000</Y>
+        </BOTTOMLEFT>
+        <BOTTOMRIGHT>
+            <X>320.000000</X>
+            <Y>0.000000</Y>
+        </BOTTOMRIGHT>
+        <TOPRIGHT>
+            <X>320.000000</X>
+            <Y>240.000000</Y>
+        </TOPRIGHT>
+        <TOPLEFT>
+            <X>0.000000</X>
+            <Y>240.000000</Y>
+        </TOPLEFT>
+    </WARP>
+    <!--////////////////////////////////////////
+   
+   Put Ideas Here!!!
+   
+   ////////////////////////////////////////
+   
+   Ambient Light Sensors   
+   MIDI INPUT
+   Arduino 
+   Bluetooth/Wifi/USB/RFID/SERIAL/USB
+      
+   //////////////////// START SENSORS & INPUT STUFF//-->
+    <CAMERA_0>
+        <USECAMERA>1</USECAMERA>
+        <DEVICE>0</DEVICE>
+        <WIDTH>640</WIDTH>
+        <HEIGHT>480</HEIGHT>
+        <FRAMERATE>0</FRAMERATE>
+    </CAMERA_0>
+</CONFIG>
