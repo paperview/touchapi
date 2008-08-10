@@ -4,7 +4,6 @@
 	Version="9.00"
 	Name="Configapp"
 	ProjectGUID="{7FD42DF7-442E-479A-BA76-D0022F99702A}"
-	RootNamespace="opencvExample"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -190,70 +189,50 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\src\gui.h"
+				RelativePath="..\Configapp\src\gui.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\main.cpp"
+				RelativePath="..\Configapp\src\main.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\testApp.cpp"
+				RelativePath="..\Configapp\src\testApp.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\src\testApp.h"
+				RelativePath="..\Configapp\src\testApp.h"
 				>
 			</File>
 			<Filter
-				Name="Tracking"
+				Name="filters"
 				>
 				<File
-					RelativePath=".\src\Tracking\tracking.cpp"
+					RelativePath="..\Configapp\src\Filters\ImageFilter.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\Tracking\tracking.h"
+					RelativePath="..\Configapp\src\Filters\ImageFilter.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Configapp\src\Filters\ShaderProgram.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Configapp\src\Filters\ShaderProgram.h"
 					>
 				</File>
 			</Filter>
 			<Filter
-				Name="Calibration"
+				Name="tracking"
 				>
 				<File
-					RelativePath=".\src\Calibration\boxAlign.cpp"
+					RelativePath="..\Configapp\src\Tracking\tracking.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\Calibration\boxAlign.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\Calibration\calibrationB.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\Calibration\calibrationB.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\Calibration\rect2d.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\Calibration\vector2d.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Communication"
-				>
-				<File
-					RelativePath=".\src\Communication\TUIOOSC.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\Communication\TUIOOSC.h"
+					RelativePath="..\Configapp\src\Tracking\tracking.h"
 					>
 				</File>
 			</Filter>
@@ -261,131 +240,159 @@
 				Name="ofxGUI"
 				>
 				<File
-					RelativePath=".\src\ofxGui\ofxGui.cpp"
+					RelativePath="..\Configapp\src\ofxGui\ofxGui.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGui.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGui.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiButton.cpp"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiButton.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiButton.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiButton.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiColor.cpp"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiColor.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiColor.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiColor.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiFiles.cpp"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiFiles.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiFiles.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiFiles.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiGlobals.cpp"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiGlobals.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiGlobals.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiGlobals.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiKnob.cpp"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiKnob.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiKnob.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiKnob.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiMatrix.cpp"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiMatrix.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiMatrix.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiMatrix.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiObject.cpp"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiObject.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiObject.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiObject.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiPanel.cpp"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiPanel.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiPanel.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiPanel.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiPoints.cpp"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiPoints.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiPoints.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiPoints.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiScope.cpp"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiRadar.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiScope.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiRadar.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiSlider.cpp"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiScope.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiSlider.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiScope.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiTypes.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiSlider.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiXyPad.cpp"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiSlider.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ofxGui\ofxGuiXyPad.h"
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiTypes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiXyPad.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Configapp\src\ofxGui\ofxGuiXyPad.h"
 					>
 				</File>
 			</Filter>
 			<Filter
-				Name="Filters"
+				Name="calibration"
 				>
 				<File
-					RelativePath=".\src\ImageFilter.cpp"
+					RelativePath="..\Configapp\src\Calibration\boxAlign.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ImageFilter.h"
+					RelativePath="..\Configapp\src\Calibration\boxAlign.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ShaderProgram.cpp"
+					RelativePath="..\Configapp\src\Calibration\calibrationB.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\ShaderProgram.h"
+					RelativePath="..\Configapp\src\Calibration\calibrationB.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Configapp\src\Calibration\rect2d.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Configapp\src\Calibration\vector2d.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="communication"
+				>
+				<File
+					RelativePath="..\Configapp\src\Communication\TUIOOSC.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Configapp\src\Communication\TUIOOSC.h"
 					>
 				</File>
 			</Filter>
