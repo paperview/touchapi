@@ -233,11 +233,11 @@
 				Name="communiction"
 				>
 				<File
-					RelativePath="..\OSC\src\Communication\TUIOOSC.cpp"
+					RelativePath="..\Configapp\src\Communication\TUIOOSC.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\OSC\src\Communication\TUIOOSC.h"
+					RelativePath="..\Configapp\src\Communication\TUIOOSC.h"
 					>
 				</File>
 			</Filter>
@@ -537,6 +537,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\addons\ofxOsc\src\ofxOscBundle.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\addons\ofxOsc\src\ofxOscBundle.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\addons\ofxOsc\src\ofxOscMessage.cpp"
 					>
 				</File>
@@ -761,6 +769,10 @@
 					</File>
 				</Filter>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="ofxOsc"
+			>
 		</Filter>
 	</Files>
 	<Globals>
