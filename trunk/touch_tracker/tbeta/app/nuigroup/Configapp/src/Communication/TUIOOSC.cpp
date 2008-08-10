@@ -28,22 +28,24 @@ void TUIOOSC::update() {
 
 void TUIOOSC::sendOSC()
 {	
-	//If there are no blobs, send alive message and fseq
+	ofxOscBundle b;
+
 	if(blobs.size() == 0)
 	{
 		//Sends alive message - saying 'Hey, there's no alive blobs'
-		ofxOscMessage m1;
-		m1.setAddress("/tuio/2Dcur");		
-		m1.addStringArg("alive");
-		TUIOSocket.sendMessage(m1);
+		ofxOscMessage m;
+		m.setAddress("/tuio/2Dcur");		
+		m.addStringArg("alive");
+		b.addMessage( m ); //add message to bundle
 
 		//Send fseq message
 		//Commented out Since We're not using fseq right now
-		ofxOscMessage m2;
-		m2.setAddress( "/tuio/2Dcur" );		
-		m2.addStringArg( "fseq" );
-		m2.addIntArg(frameseq);
-		TUIOSocket.sendMessage( m2 );
+		m.clear();
+		m.setAddress( "/tuio/2Dcur" );		
+		m.addStringArg( "fseq" );
+		m.addIntArg(frameseq);
+		b.addMessage( m ); //add message to bundle
+		TUIOSocket.sendBundle( b ); //send bundle
 	}
 	else //actually send the blobs
 	{
@@ -51,38 +53,39 @@ void TUIOOSC::sendOSC()
 		for(this_blob = blobs.begin(); this_blob != blobs.end(); this_blob++) 
 		{		
 			//Set Message
-			ofxOscMessage m1;
-			m1.setAddress("/tuio/2Dcur");
-			m1.addStringArg("set");
-			m1.addIntArg(this_blob->second.id); //id
-			m1.addFloatArg(this_blob->second.centroid.x);  // x
-			m1.addFloatArg(this_blob->second.centroid.y); // y 
-			m1.addFloatArg(0); //X
-			m1.addFloatArg(0); //Y
-			m1.addFloatArg(this_blob->second.area); //m	
-			m1.addFloatArg(this_blob->second.boundingRect.width); // wd
-			m1.addFloatArg(this_blob->second.boundingRect.height);// ht
-			TUIOSocket.sendMessage(m1);
+			ofxOscMessage m;
+			m.setAddress("/tuio/2Dcur");
+			m.addStringArg("set");
+			m.addIntArg(this_blob->second.id); //id
+			m.addFloatArg(this_blob->second.centroid.x);  // x
+			m.addFloatArg(this_blob->second.centroid.y); // y 
+			m.addFloatArg(0); //X
+			m.addFloatArg(0); //Y
+			m.addFloatArg(this_blob->second.area); //m	
+			m.addFloatArg(this_blob->second.boundingRect.width); // wd
+			m.addFloatArg(this_blob->second.boundingRect.height);// ht
+			b.addMessage( m ); //add message to bundle
 
 			//Send alive message of all alive IDs
-			ofxOscMessage m2;
-			m2.setAddress("/tuio/2Dcur");		
-			m2.addStringArg("alive");
+			m.clear();
+			m.setAddress("/tuio/2Dcur");		
+			m.addStringArg("alive");
 
 			std::map<int, ofxCvBlob>::iterator this_blobID;
 			for(this_blobID = blobs.begin(); this_blobID != blobs.end(); this_blobID++)
 			{
-				m2.addIntArg(this_blobID->second.id); //Get list of ALL active IDs
+				m.addIntArg(this_blobID->second.id); //Get list of ALL active IDs
 			}
-			TUIOSocket.sendMessage(m2);//send them		
+			b.addMessage( m ); //add message to bundle	
 
 			//Send fseq message
 			//Commented out Since We're not using fseq right now
-			ofxOscMessage m3;
-			m3.setAddress( "/tuio/2Dcur" );		
-			m3.addStringArg( "fseq" );
-			m3.addIntArg(frameseq);
-			TUIOSocket.sendMessage( m3 );			
+			m.clear();
+			m.setAddress( "/tuio/2Dcur" );		
+			m.addStringArg( "fseq" );
+			m.addIntArg(frameseq);
+			b.addMessage( m ); //add message to bundle
+			TUIOSocket.sendBundle( b ); //send bundle			
 		}
 	}
 }

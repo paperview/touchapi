@@ -477,7 +477,7 @@ void testApp::loadXMLSettings(){
 	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
 	tmpLocalHost		= XML.getValue("CONFIG:NETWORK:LOCALHOST", "localhost");
 	tmpPort				= XML.getValue("CONFIG:NETWORK:TUIOPORT_OUT", 3333);
-	myTUIO.setup(tmpLocalHost.c_str(), tmpPort); //have to convert tmpLocalHost to a const char*
+	myTUIO.setup(tmpLocalHost, tmpPort); //have to convert tmpLocalHost to a const char*
 //-------------------------------------------------------------- 
 //  END XML SETUP
 }
