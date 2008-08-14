@@ -213,8 +213,13 @@ bool  ofVideoGrabber::isFrameNew(){
 
 //--------------------------------------------------------------------
 int ofVideoGrabber::getNumDevices(){
-
+	//---------------------------------
+	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
+	//---------------------------------
 	return VI.listDevices();
+	//---------------------------------
+	#endif
+	//---------------------------------	
 
 }
 

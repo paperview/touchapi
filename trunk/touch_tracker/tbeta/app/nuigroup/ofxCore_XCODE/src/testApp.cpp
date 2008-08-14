@@ -1,627 +1,1085 @@
 #include "testApp.h"
-//--------------------------------------------------------------
-void testApp::setup(){	 		
-	
-	snapCounter = 6;
-	frameseq = 0;
-	//ofSetCircleResolution(50);
-	//int screenW = ofGetScreenWidth();
-	//int screenH = ofGetScreenHeight();
-	//ofSetWindowPosition(screenW/2-300/2, screenH/2-300/2);
+#include "gui.h"
 
-	TUIOSocket.setup( HOST, PORT ); // Set in Header
 
-	frameRate = 120;
-	camWidth = 320;	
-	camHeight = 240;
-	threshold = 99;
-	wobbleThreshold = 5;
-	blurValue = 1;
-	blurGaussianValue = 1;
-	lowRange = 0;
-	highRange = 255;
-	
-	bSnapshot = 0;
-	bFastMode = 0;	
-	bFullscreen	= 0;
-	bDrawOutlines = 1;
-	bInvertVideo = 0;
-	bLearnBakground = 1;
-	bTUIOMode = 1;
-	bCalibration = 0;
-	bVerticalMirror = 0;
-	bHorizontalMirror = 0;
-	
-	ofSetFrameRate(frameRate);
-	
-	#ifdef _USE_LIVE_VIDEO
-        vidGrabber.setVerbose(true);
-        vidGrabber.initGrabber(camWidth,camHeight);
+/******************************************************************************
+ * The setup function is run once to perform initializations in the application
+ *****************************************************************************/
+void testApp::setup()
+{	
+	/********************
+	* Initalize Variables
+	*********************/
+
+	//For screengrab
+	snapCounter	= 6; 
+	//Background Subtraction Learning Rate
+	fLearnRate	= 0.0001f;
+	//Intialize FPS variables
+	frames		= 0;
+	fps			= 0;
+	lastFPSlog	= 0;
+	//Calibration Booleans
+	bCalibration= false;
+	bW			= false;
+	bA			= false;
+	bS			= false;
+	bD			= false;
+
+	bFullscreen = false;
+
+	//Load Settings from config.xml file 
+	loadXMLSettings();
+
+	//Load Calibration Settings from calibration.xml file
+	calibrate.setCamRes(camWidth, camHeight);
+	calibrate.loadXMLSettings();
+
+	//Setup Window Properties 
+	ofSetWindowShape(winWidth,winHeight);
+	ofSetFrameRate(camRate);			//This will be based on camera fps in the future		
+	ofSetVerticalSync(false);	//Set vertical sync to false for better performance
+
+
+	//Pick the Source - camera or video
+	if(bcamera){
+
+		activeInput = true;
+
+		vidGrabber.listDevices();
+		vidGrabber.setDeviceID(deviceID);
+		vidGrabber.setVerbose(true);		
+        vidGrabber.initGrabber(camWidth,camHeight);		
+
 		printf("Camera Mode\n");
-	#else
-	//---------------------------------------- CHOOSE VIDEO
-        vidPlayer.loadMovie("test_videos/RearDI.m4v");
-        vidPlayer.play();	
-		printf("File Mode\n");
-	#endif
-    
-	sourceImg.allocate(camWidth,camHeight);
-	grayImage.allocate(camWidth,camHeight);
-	grayBg.allocate(camWidth,camHeight);
-	grayDiff.allocate(camWidth,camHeight);
-	
-	videoInverted 	= new unsigned char[camWidth*camHeight*3];
-	videoInvertTexture.allocate(camWidth,camHeight, GL_RGB);	
-		
-	ofSetWindowTitle("Configuration");
-	printf("Touchlib application is setup!\n");
-
-	verdana.loadFont("verdana.ttf",8, false, true);		
-	logo.loadImage("images/logo.jpg");
-
-}
-//--------------------------------------------------------------
-void testApp::update(){
-	
-	ofBackground(0,0,0);
-    bool bNewFrame = false;
-		
-	#ifdef _USE_LIVE_VIDEO
-       vidGrabber.grabFrame();
-	   bNewFrame = vidGrabber.isFrameNew();
-    #else
-        vidPlayer.idleMovie();
-        bNewFrame = vidPlayer.isFrameNew();
-	#endif
-	
-	if (bNewFrame){
-		#ifdef _USE_LIVE_VIDEO
-		  sourceImg.setFromPixels(vidGrabber.getPixels(), camWidth,camHeight);	
-		  int totalPixels = camWidth*camHeight*3;
-		  unsigned char * pixels = vidGrabber.getPixels();
-		
-	    #else
-            sourceImg.setFromPixels(vidPlayer.getPixels(), camWidth,camHeight);  
-			int totalPixels = camWidth*camHeight*3;
-		    unsigned char * pixels = vidPlayer.getPixels();
-        #endif	
-			
-//---------------------------------------------------------------------------------------------------- SET FILTERS HERE
-		//INVERT TEXTURE
-		if (bInvertVideo){	
-		for (int i = 0; i < totalPixels; i++){
-			videoInverted[i] = 255 - pixels[i];
-		}
-		videoInvertTexture.loadData(videoInverted, camWidth,camHeight, GL_RGB);
-		}		
-		
-		//Set Mirroring Horizontal/Vertical
-		sourceImg.mirror(bHorizontalMirror, bVerticalMirror);
-
-		grayImage = sourceImg;
-			
-		//Blur Video
-		if(blurValue > 3){
-			grayImage.blur(blurValue);
-		}
-		//Blur Gaussian Video
-		if(blurGaussianValue > 3){
-			grayImage.blurGaussian(blurGaussianValue);
-		}		
-		//Invert Video
-		if(bInvertVideo){
-			grayImage.invert();
-		}
-		//Create Image Level Range 0 - 255		
-		grayImage.convertToRange(lowRange, highRange);
-		
-
-    	//sourceImg.erode();
-        
-
-		if (bLearnBakground == true){
-			grayBg = grayImage;	
-			bLearnBakground = false;
-		}
-	
-		grayDiff.absDiff(grayBg, grayImage);
-		grayDiff.threshold(threshold);
-		contourFinder.findContours(grayDiff, 20, (camWidth*camHeight)/3, 10, true);	
+		int grabW = vidGrabber.width;
+		int grabH = vidGrabber.height;
+		printf("Asked for %i by %i - actual size is %i by %i \n", 
+				camWidth, camHeight, grabW, grabH);
 	}
-	frameseq ++;
+	else{
+		activeInput = true;	
+
+        //vidPlayer.loadMovie("test_videos/FrontDI.m4v");
+		vidPlayer.loadMovie("test_videos/HCI_FTIR.mov");
+		//vidPlayer.loadMovie("test_videos/raw.mp4");
+		//vidPlayer.loadMovie("test_videos/5point.avi");
+        vidPlayer.play();	
+		printf("Video Mode\n");
+		camHeight = vidPlayer.height;
+		camWidth = vidPlayer.width;
+	}
+    
+	/*****************************************************************************************************
+	* Allocate images (needed for drawing/processing images) ----Most of These won't be needed in the end
+	******************************************************************************************************/
+	processedImg.allocate(camWidth, camHeight); //main Image that'll be processed.
+	processedImg.setUseTexture(false);
+	sourceImg.allocate(camWidth, camHeight);    //Source Image
+	sourceImg.setUseTexture(false);				//We don't need to draw this so don't create a texture
+
+	//These images are used for drawing only
+	grayImg.allocate(camWidth, camHeight);		//Gray Image
+	grayBg.allocate(camWidth, camHeight);		//Background Image
+	subtractBg.allocate(camWidth, camHeight);   //Background After subtraction
+	grayDiff.allocate(camWidth, camHeight);		//Difference Image between Background and Source
+	highpassImg.allocate(camWidth, camHeight);  //Highpass Image
+	ampImg.allocate(camWidth, camHeight);		//Amplied Image	
+	fiLearn.allocate(camWidth, camHeight);		//ofxFloatImage used for simple dynamic background subtracti
+//	fiLearn.setUseTexture(false);
+	pressureMap.allocate(camWidth, camHeight);	//Pressure Map Image
+	
+	//For camera warp
+	giWarped.allocate(camWidth, camHeight);     //Warped Image (used for warped calibration)
+	giWarped.setUseTexture(false);
+	/********************************************************************************************************/
+
+	//Fonts - Is there a way to dynamically change font size?
+	verdana.loadFont("verdana.ttf", 8, true, true);	   //Font used for small images
+	sidebarTXT.loadFont("verdana.ttf", 8, true, true);
+	calibrationText.loadFont("verdana.ttf", 11, true, true);
+	bigvideo.loadFont("verdana.ttf", 13, true, true);  //Font used for big images.
+	
+	//Static Images
+	logo.loadImage("images/logo.jpg");
+	background.loadImage("images/background.jpg"); //Main (Temp?) Background
+
+	//Setup green warped box
+	warp_box.setup( 40, 30, camWidth, camHeight, camWidth/320, camHeight/240); 
+
+	//Warped points
+	dstPts[0].x = 0.0f;
+    dstPts[0].y = camHeight;   
+    dstPts[1].x = camWidth;
+    dstPts[1].y = camHeight;   
+    dstPts[2].x = camWidth;
+    dstPts[2].y = 0.0f;   
+    dstPts[3].x = 0.0f;
+    dstPts[3].y = 0.0f;
+
+	//Setup testApp to listen for touch events
+	tracker.setListener(this); 
+
+	gui = ofxGui::Instance(this);
+	setupGUI();
+	
+
+	printf("Touchlib application is setup!\n");
 }
 
-//--------------------------------------------------------------
-void testApp::draw(){
+
+/******************************************************************************
+ * The update function runs continuously. Use it to update states and variables
+ *****************************************************************************/
+void testApp::update()
+{	
+	ofBackground(110, 110, 110);
+
+    bNewFrame = false;
+		
+	if(activeInput){
+
+		if(bcamera){
+		   vidGrabber.grabFrame();
+		   bNewFrame = vidGrabber.isFrameNew();
+		}
+		else{
+			vidPlayer.idleMovie();
+			bNewFrame = vidPlayer.isFrameNew();
+		}
+
+		
+		if (bNewFrame)
+		{
+			//Calculate FPS of Camera
+			frames++;
+			float time = ofGetElapsedTimeMillis();
+			if(time > (lastFPSlog + 1000)){		
+				fps = frames;
+				frames = 0;
+				lastFPSlog = time;			
+			}//End calculation
+
+			//Set sourceImg as new camera/video frame
+			if(bcamera)
+			{
+			  sourceImg.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight);
+			  int totalPixels = camWidth*camHeight*3;
+			  unsigned char * pixels = vidGrabber.getPixels();
+			}
+			else{
+				sourceImg.setFromPixels(vidPlayer.getPixels(), 
+										camWidth, camHeight);
+				int totalPixels = camWidth*camHeight*3;
+				unsigned char * pixels = vidPlayer.getPixels();
+			}
+				
+			/************************************************
+			*				SET FILTERS HERE
+			************************************************/
+			processedImg = sourceImg;
+			//Set Mirroring Horizontal/Vertical
+			processedImg.mirror(bVerticalMirror, bHorizontalMirror);
+		
+			grayImg = processedImg;
+
+			if(bWarpImg){
+				giWarped.warpIntoMe(processedImg, warp_box.fHandles, dstPts );				
+				processedImg = giWarped;
+			}
 	
-	
-	//ofSetupScreen();
+			//Dynamic background with learn rate
+			learnBackground( processedImg, grayBg, fiLearn, fLearnRate);
+			
+			//Capture full background
+			if (bLearnBakground == true){
+				bgCapture( processedImg );
+				bLearnBakground = false;
+			}
 
-	ofSetColor(0xffffff);	
-/*	if (bInvertVideo){	
-	videoInvertTexture.draw(20,40,camWidth,camHeight);
-	}else{	
-*/	sourceImg.draw(20,40);
+			//Background Subtraction
+			processedImg.absDiff(grayBg, processedImg);
 
-//}
-	grayImage.draw(360,40);
-	grayBg.draw(20,300);	
-	grayDiff.draw(360,300);
-    
-	if (bDrawOutlines){	
-	contourFinder.draw(20,40);
-    for (int i = 0; i < contourFinder.nBlobs; i++){
+			if(bSmooth){
+				processedImg.blur((smooth * 2) + 1); //needs to be an odd number
+				subtractBg = processedImg;
+			}
+
+			//HighPass
+			if(bHighpass){
+				processedImg.highpass(highpassBlur, highpassNoise);
+				highpassImg = processedImg; //for drawing
+			}
+
+			//Amplify
+			if(bAmplify){
+				processedImg.amplify(processedImg, highpassAmp);
+				ampImg = processedImg; //for drawing	
+			}
+			
+			//Set a threshold value
+			processedImg.threshold(threshold);
+			grayDiff = processedImg; //for drawing
+
+			//Find contours/blobs
+			contourFinder.findContours(processedImg, 1, (camWidth*camHeight)/25, 10, false);
+
+			//Track found contours/blobs
+			tracker.track(&contourFinder);
+
+			/**************************************************
+			* Background subtraction LearRate
+			* If there are no blobs, add the background faster.
+			* If there ARE blobs, add the background slower.
+			***************************************************/
+			fLearnRate = 0.01f;
+			
+			if(contourFinder.nBlobs > 0){
+
+				fLearnRate = 0.0008f;
+			}//End Background Learning rate
 
 
-//--------------------------------------------------------------OSC
-		
-		//Send Set message of ID, x, y, X, Y, m, weight, width
+			/*****************************************************
+			* Pressure Map	
+			*****************************************************/
+			if(bShowPressure){
 
-		newX = contourFinder.blobs[i].pts[0].x;
-		newY = contourFinder.blobs[i].pts[0].y;
-		
+				//grayImg.invert();
+				//processedImg.absDiff(processedImg, subtractBg);
+				//processedImg += processedImg;
+				//processedImg -= subtractBg;
 
+				unsigned char * rgbaPixels = ampImg.getPixels();
+				unsigned char * colorRawPixels = new unsigned char[camWidth*camHeight*3]; 
 
-		
-		ofxOscMessage m1;
-		m1.setAddress( "/tuio/2Dcur" );
-		m1.addStringArg( "set" );
-		m1.addIntArg( i + 1 ); //id (id can't be == 0)
-		m1.addFloatArg( newX/camWidth ); //  x/camWidth
-		m1.addFloatArg( newY/camHeight ); // y/camHeight 
-		m1.addFloatArg( 0 ); //X
-		m1.addFloatArg( 0 ); //Y
-		m1.addFloatArg( contourFinder.blobs[i].area ); //m	
-		m1.addFloatArg( contourFinder.blobs[i].boundingRect.width ); //  wd
-		m1.addFloatArg( contourFinder.blobs[i].boundingRect.height );// ht
-		TUIOSocket.sendMessage( m1 );
+				//total rgb pixels
+				int totalPixel = camWidth * camHeight;
 
-		//Send alive message of all alive IDs
-		ofxOscMessage m2;
-		m2.setAddress( "/tuio/2Dcur" );		
-		m2.addStringArg( "alive" );
+				int k = 0;
 
-		for (int i = 0; i < contourFinder.nBlobs; i++)	{
+				for(int i = 0; i < totalPixel; i++){
 
-			m2.addIntArg( i + 1 ); //Get list of ALL active IDs		
-		}		
-		TUIOSocket.sendMessage( m2 );//send them		
+				  //Get the 
+				  float red = rgbaPixels[i];
+				  float green = 0;
+				  float blue = 255 - rgbaPixels[i] + 40; // Add 60
 
-		
-		//Send fseq message
-/*		Commented out Since We're not using fseq right now
-		ofxOscMessage m3;
-		m3.setAddress( "/tuio/2Dcur" );		
-		m3.addStringArg( "fseq" );
-		m3.addIntArg(frameseq);
-		TUIOSocket.sendMessage( m3 );
-*/
+				  //Set some limitations	
+				  if(blue >= 255){blue = 0;}
+				  if(blue <= 50){blue = 0;}
 
-//--------------------------------------------------------------
-        contourFinder.blobs[i].draw(360,40);		
+				  //Set the RGB pixels to their colors
+				  colorRawPixels[k]     = red;
+				  colorRawPixels[k + 1] = green;
+				  colorRawPixels[k + 2] = blue;
 
-		//printf("Blobs: "+ofToString(contourFinder.getBlob(i).area, 2)+"\n");	
-		if(i < 1){
-			if(200 < contourFinder.blobs[i].area){	
-				ofSetColor(0xffffff);
-				char idStr[1024];		
-				sprintf(idStr, "id: %i\nx: %f\ny: %f\ncx: %f\ncy: %f\nwd: %f\nht: %f\na: %f\n", i,contourFinder.blobs[i].pts[0].x,contourFinder.blobs[i].pts[0].y,contourFinder.blobs[i].centroid.x,contourFinder.blobs[i].centroid.y,contourFinder.blobs[i].boundingRect.width,contourFinder.blobs[i].boundingRect.height,contourFinder.blobs[i].area);
-				verdana.drawString(idStr,contourFinder.blobs[i].pts[0].x+contourFinder.blobs[i].boundingRect.width+30,contourFinder.blobs[i].pts[0].y+contourFinder.blobs[i].boundingRect.height);		
+				  k +=3;
+				}	
+				pressureMap.setFromPixels(colorRawPixels, camWidth, camHeight);
+				delete colorRawPixels;//End Pressure Map
+			}
+
+			if(bTUIOMode){
+				//We're not using frameseq right now with OSC
+				//myTUIO.update();
+
+				//Start sending OSC
+				myTUIO.sendOSC();
 			}
 		}
-	  }
+	}
+}
 
-		oldX = newX;
-		oldY = newY;
+/******************************************************************************
+ * The draw function paints the textures onto the screen. It runs after update.
+ *****************************************************************************/
+void testApp::draw(){
+
+	ofSetFullscreen(bFullscreen);
+
+	/*********************************
+	* IF CALIBRATING
+	*********************************/
+	if(bCalibration)
+	{
+		//Don't draw main interface
+		bShowInterface = false;
+
+		doCalibration();
+	}
+	/********************************
+	* IF SHOWING MAIN INTERFACE STUFF
+	********************************/
+	if(bDrawVideo && bShowInterface && !bFastMode)
+	{
+		ofSetColor(0xFFFFFF);	
+		//Draw Everything
+		background.draw(0, 0);
+
+		//Draw arrows
+		ofSetColor(187, 200, 203);
+		ofFill();
+		ofTriangle(680, 420, 680, 460, 700, 440);
+		ofTriangle(70, 420, 70, 460, 50, 440);
+		ofSetColor(255, 255, 0);
+		ofNoFill();
+		ofTriangle(70, 420, 70, 460, 50, 440);
+		
+		ofSetColor(0xFFFFFF);
+		if(bShowPressure)
+			pressureMap.draw(40, 30, 320, 240);
+		else
+			grayImg.draw(40, 30, 320, 240);
+
+		grayDiff.draw(385, 30, 320, 240);
+		fiLearn.draw(85, 392, 128, 96);
+		subtractBg.draw(235, 392, 128, 96);
+		highpassImg.draw(385, 392, 128, 96);
+		ampImg.draw(535, 392, 128, 96);
+
+		ofSetColor(0x000000);
+		if(bShowPressure){bigvideo.drawString("Pressure Map", 140, 20);}
+		else             {bigvideo.drawString("Source Image", 140, 20);}		
+						  bigvideo.drawString("Tracked Image", 475, 20);	
+		//Warped Box
+		if(bWarpImg)
+		warp_box.draw( 0, 0);
 	} 
-//-------------------------------------------------------------- continue OSC
+	/*********************************
+	* IF NOT CALIBRATING
+	*********************************/
+	if(!bCalibration)
+	{
+		//Draw main interface
+		bShowInterface = true;
 
-	//If there are no blobs, send alive message and fseq
-	if(contourFinder.nBlobs == 0){
+		//Display applicaion and camera FPS in title 
+		string str = "Application: ";
+		str+= ofToString(ofGetFrameRate(), 2)+"fps \n";	
+		string str2 = "Camera:   ";
+		str2+= ofToString(fps, 1)+"fps";
+
+		ofSetColor(0xFFFFFF);
+		sidebarTXT.drawString(str + str2, 740, 410);	
 		
-		//Sends alive message - saying 'Hey, there's no alive blobs'
-		ofxOscMessage m1;
-		m1.setAddress( "/tuio/2Dcur" );		
-		m1.addStringArg( "alive" );
-		TUIOSocket.sendMessage( m1 );
+		//Draw PINK CIRCLE 'ON' LIGHT
+		ofSetColor(255, 0, 255);
+		ofFill();		
+		ofCircle(20, 10, 5);
+		ofNoFill();
 
-		//Send fseq message
-/*		Commented out Since We're not using fseq right now
-		ofxOscMessage m2;
-		m2.setAddress( "/tuio/2Dcur" );		
-		m2.addStringArg( "fseq" );
-		m2.addIntArg(frameseq);
-		TUIOSocket.sendMessage( m2 );
-*/
-	}	
+		if(bTUIOMode)
+		{	//Draw Port and IP to screen
+			ofSetColor(0xffffff);
+			char buf[256];
+			sprintf(buf, "Sending TUIO messages to:\nHost: %s\nPort: %i", myTUIO.localHost, myTUIO.TUIOPort);
+			sidebarTXT.drawString(buf, 740, 450);
 
-		
-//----------------------------------------------------------------------------------CURSORS
-
-//----------------------------------------------------------------------------------HELP
-
-	if (bToggleHelp){		
-	ofSetColor(0xffffff);	
-	logo.draw(ofGetWidth()-335,25);
-	char reportStr[1024];	
-  // sprintf(reportStr, "press '~' for help\npress ' ' for mini\npress 'f' for fullscreen\npress 't' for TUIO\npress 'o' for outlines\npress 'm' toggle DI or FTIR mode\n\npress 'c' to calibrate\npress 's' to camera setup\npress 'b' to capture bg\npress 'i' to invert\npress 'x' to set filter bg\n\npress 'a/z' to set threshold: %i\n\npress 'w/e' to set DisplacementThreshold: %i\npress 'n/m' to set Blur Amount: %i\n press 'h/v' to set Mirror Mode: None\n\nblobs found: %i\n\npress 'ESC' to exit (bug)\n", threshold, wobbleThreshold, blurhold, contourFinder.nBlobs);
-    sprintf(reportStr, "press '~' for help\npress ' ' for mini\npress 'f' for fullscreen\npress 't' for TUIO\npress 'o' for outlines\npress 'm' toggle DI or FTIR mode\n\npress 'c' to calibrate\npress 's' to camera setup\npress 'b' to capture bg\npress 'i' to invert\npress 'x' to set filter bg\n\npress 'a/z' to set threshold: %i\n\npress 'w/e' to set DisplacementThreshold: %i\npress 'n/m' to set Blur Amount: %i\n \npress 'j/k' to set Gaussian Blur Amount: %i\npress '-/=' to set Low Level: %i\npress '9/0' to set High Level: %i\npress 'h/v' to set Mirror Mode: None\n\nblobs found: %i\n\npress 'ESC' to exit (bug)\n", threshold, wobbleThreshold, blurValue,blurGaussianValue,lowRange,highRange, contourFinder.nBlobs);
-	verdana.drawString(reportStr, 700, 95);
-
-	verdana.drawString("Original", 33,60);
-    verdana.drawString("Grayscale", 375,60);
-    verdana.drawString("Background", 33,320);
-	verdana.drawString("Contour", 375,320);	
-	
-	string fpsStr = "FPS: "+ofToString(ofGetFrameRate(), 2)+"\nCamera FPS: 34.00\nPipeline Use: 2323\n";
-    verdana.drawString(fpsStr, 10,ofGetHeight()-35);	
-	//verdana.drawString(eventString,80,25);
-
-	//----------------------------------------------------------------------------------EVENTS
-
-	//sprintf (timeString, "Time: %0.2i:%0.2i:%0.2i \nElapsed time %i", ofGetHours(), ofGetMinutes(), ofGetSeconds(), ofGetElapsedTimeMillis());
-
-	//verdana.drawString(timeString, 98,98);
-	
-	//ofEnableAlphaBlending();
-	//ofSetColor(255,255,255,127);   // white, 50% transparent
-	//ofFill();		
-	//ofCircle(mouseX,mouseY,10);	
-	//ofNoFill();
-	//ofDisableAlphaBlending();
-	
-	if (bTUIOMode){			
-	ofSetColor(0xffffff);
-	char buf[256];
-	sprintf( buf, "Sending OSC messages to %s : %d", HOST, PORT );
-	verdana.drawString( buf, 25, 575 );
-//	verdana.drawString( "move the mouse to send OSC message [/tuio/2Dcur <x> <y>] ", 20, 585 );
-	}//END TUIO MODE
-	}	
-
-	//------------------------------------------------------------------OSC
-	// display instructions
-
-	
-	/*
-	if (bSmooth){
-		//ofEnableSmoothing();
-		//ofDisableSmoothing();
-	}
-	
-	if (bSnapshot == true){
-		// grab a rectangle at 200,200, width and height of 300,180
-		img.grabScreen(20,300,camWidth,camHeight);
-		char fileName[255];
-		sprintf(fileName, "snapshot_%0.3i.png", snapCounter);
-		img.saveImage(fileName);
-		//sprintf(snapString, "saved %s", fileName);
-		snapCounter++;
-		bSnapshot = false;
-	}
-	ofSetColor(0xFFFFFF);
-	img.draw(0,0,camWidth,camHeight);
-	*/ 	
-	if (bTUIOMode){		
-	ofSetColor(0,255,0); 
-	ofFill();		
-	ofCircle(10,15,5);
-	ofNoFill();
-	}//END TUIO MODE
-
-	if (bInvertVideo){		
-	ofSetColor(255,0,255);
-	ofFill();		
-	ofCircle(25,15,5);
-	ofNoFill();
-	}
-	if (bCalibration){		
-		int screenW = ofGetWidth();
-		int screenH = ofGetHeight();
-		ofSetColor(0x000000);	
-		ofFill();	
-		ofRect(0,0,screenW,screenH);	
-
-		//ofSetColor(0xFFFFFF);	
-		//videoInvertTexture.draw(0,0,screenW,screenH);
-		ofSetWindowTitle("Calibration");
-		verdana.drawString("Calibration", 33,60);	
-		char reportStr[1024];	
-		sprintf(reportStr, "press '] or [' resize grid\npress '2' to resize bounding box\nuse arrow keys to move bounding box");
-		verdana.drawString(reportStr, 700, 50);
-
-		ofSetColor(0x00FF00);	
-		int iCount = snapCounter;
-		int iWidth = screenW;
-		int iHeight = screenH;
-		for(int i = 1; i < iCount; i++){
+			//Draw GREEN CIRCLE 'ON' LIGHT
+			ofSetColor(0x00FF00);
+			ofFill();		
+			ofCircle(35, 10, 5);
 			ofNoFill();
-			ofRect(0,2,iWidth-2,iHeight-2);
-			ofLine(0, (iHeight/iCount) * i, iWidth, (iHeight/iCount) * i);
-			ofLine((iWidth/iCount) * i, 0, (iWidth/iCount) * i, iHeight);
 		}
-	}	
+	}
+	/*********************************
+	* IF DRAWING BLOB OUTLINES
+	*********************************/
+	if(bDrawOutlines && bShowInterface && !bFastMode)
+	{
+		//Find the blobs
+		for(int i=0; i<contourFinder.nBlobs; i++)
+		{
+			//temp blob to rescale and draw on screen
+			ofxCvBlob drawBlob;
+			drawBlob = contourFinder.blobs[i];
+
+			//Get the contour (points) so they can be drawn
+			for( int j=0; j<contourFinder.blobs[i].nPts; j++ )
+			{
+				drawBlob.pts[j].x = (320.0f/camWidth)  * (drawBlob.pts[j].x);
+				drawBlob.pts[j].y = (240.0f/camHeight) * (drawBlob.pts[j].y);
+			}
+	
+			//This adjusts the blob drawing for different cameras
+			drawBlob.boundingRect.width  *= (320.0f/camWidth);
+			drawBlob.boundingRect.height *= (240.0f/camHeight);
+			drawBlob.boundingRect.x		 *= (320.0f/camWidth);;
+			drawBlob.boundingRect.y		 *= (240.0f/camHeight);
+			
+			//Draw contours (outlines) on the tracked image
+			drawBlob.draw(385, 30);
+			//drawBlob.draw(40, 30);
+
+			//Show ID label;
+			if(bShowLabels)
+			{
+				float xpos = drawBlob.centroid.x * (320.0f/camWidth);
+				float ypos = drawBlob.centroid.y * (240.0f/camHeight);
+
+				ofSetColor(0xCCFFCC);
+				char idStr[1024];	
+				sprintf(idStr, "id: %i",drawBlob.id);
+				verdana.drawString(idStr, xpos + 365, ypos + drawBlob.boundingRect.height/2 + 45);			
+			}
+		}
+		ofSetColor(0xFFFFFF);
+	}
+
+	if(!bCalibration)
+		gui->draw();
+}
+
+
+/******************************************************************************
+ *							OTHER FUNCTIONS
+ *****************************************************************************/
+
+
+/**************************************************************** 
+*	Load Settings from the config.xml file 
+****************************************************************/ 
+void testApp::loadXMLSettings(){
+
+	// TODO: a seperate XML to map keyboard commands to action 
+	message = "Loading config.xml...";
+	// Can this load via http?
+	if( XML.loadFile("config.xml")){
+		message = "Settings Loaded!";
+	}else{		
+		//FAIL!
+		message = "No Settings Found...";
+	}
+
+	//-------------------------------------------------------------- 
+	//  START BINDING XML TO VARS
+	//-------------------------------------------------------------- 
+	//frameRate			= XML.getValue("CONFIG:APPLICATION:FRAMERATE",0);
+	
+	winWidth			= XML.getValue("CONFIG:WINDOW:WIDTH",0);
+	winHeight			= XML.getValue("CONFIG:WINDOW:HEIGHT",0);
+	minWidth			= XML.getValue("CONFIG:WINDOW:MINX",0);
+	minHeight			= XML.getValue("CONFIG:WINDOW:MINY",0);
+
+	bcamera				= XML.getValue("CONFIG:CAMERA_0:USECAMERA",0);
+	deviceID			= XML.getValue("CONFIG:CAMERA_0:DEVICE",0);
+	camWidth			= XML.getValue("CONFIG:CAMERA_0:WIDTH",0);
+	camHeight			= XML.getValue("CONFIG:CAMERA_0:HEIGHT",0);
+	camRate				= XML.getValue("CONFIG:CAMERA_0:FRAMERATE",0);
+
+	bShowPressure		= XML.getValue("CONFIG:BOOLEAN:PRESSURE",0);
+
+	bShowLabels			= XML.getValue("CONFIG:BOOLEAN:LABELS",0);
+	bSnapshot			= XML.getValue("CONFIG:BOOLEAN:SNAPSHOT",0);
+	bFastMode			= XML.getValue("CONFIG:BOOLEAN:FAST",0);	
+	bDrawOutlines		= XML.getValue("CONFIG:BOOLEAN:OUTLINES",0);
+	bLearnBakground		= XML.getValue("CONFIG:BOOLEAN:LEARNBG",0);
+	bWarpImg			= XML.getValue("CONFIG:BOOLEAN:WARP",0);
+
+	bVerticalMirror		= XML.getValue("CONFIG:BOOLEAN:VMIRROR",0);
+	bHorizontalMirror	= XML.getValue("CONFIG:BOOLEAN:HMIRROR",0);
+
+	//Filters
+	bHighpass			= XML.getValue("CONFIG:BOOLEAN:HIGHPASS",1);
+	bAmplify			= XML.getValue("CONFIG:BOOLEAN:AMPLIFY", 1);
+	bSmooth				= XML.getValue("CONFIG:BOOLEAN:SMOOTH", 1);
+	
+	//Filter Settings
+	threshold			= XML.getValue("CONFIG:INT:THRESHOLD",0);
+	highpassBlur		= XML.getValue("CONFIG:INT:HIGHPASSBLUR",0);
+	highpassNoise		= XML.getValue("CONFIG:INT:HIGHPASSNOISE",0);
+	highpassAmp			= XML.getValue("CONFIG:INT:HIGHPASSAMP",0);
+	smooth				= XML.getValue("CONFIG:INT:SMOOTH",0);
+	
+//--------------------------------------------------- TODO XML NETWORK SETTINGS	
+	bTUIOMode			= XML.getValue("CONFIG:BOOLEAN:TUIO",0);
+	tmpLocalHost		= XML.getValue("CONFIG:NETWORK:LOCALHOST", "localhost");
+	tmpPort				= XML.getValue("CONFIG:NETWORK:TUIOPORT_OUT", 3333);
+	myTUIO.setup(tmpLocalHost.c_str(), tmpPort); //have to convert tmpLocalHost to a const char*
+//-------------------------------------------------------------- 
+//  END XML SETUP
+}
+
+
+
+/******************************
+*	BACKGROUND SUBTRACTION						
+*******************************/
+void testApp::learnBackground( ofxCvGrayscaleImage & _giLive, ofxCvGrayscaleImage & _grayBg, ofxCvFloatImage & _fiLearn, float _fLearnRate )
+ {
+
+	_fiLearn.addWeighted( _giLive, _fLearnRate);
+    
+    _grayBg = _fiLearn;
 
 }
-//--------------------------------------------------------------
-void testApp::keyPressed  (int key){ 
-	sprintf(eventString, "keyPressed = (%i)", key);
-	//printf(int(key));
-	switch (key){
+void testApp::bgCapture( ofxCvGrayscaleImage & _giLive )
+{
+	learnBackground( _giLive, grayBg, fiLearn, 1.0f);       
+}
+//Background Subtraction
+
+
+/******************************
+*		  CALIBRATION						
+*******************************/
+void testApp::doCalibration(){
+
+	//ofSetFullscreen(bFullscreen);
+	
+
+	//Change the background color when a finger presses down/up		
+	ofSetColor(0x000000);
+	ofFill();	
+	ofRect(0, 0, ofGetWidth(), ofGetHeight());	
+
+	//Get the screen points so we can make a grid 
+	vector2df *screenpts = calibrate.getScreenPoints();
+
+	int i;
+
+	//For each grid point
+	for(i=0; i<calibrate.GRID_POINTS; i++)
+	{
+		//If calibrating, draw a red circle around the active point
+		if(calibrate.calibrationStep == i && calibrate.bCalibrating){
+		
+			glPushMatrix();
+			glTranslatef(screenpts[i].X * ofGetWidth(), screenpts[i].Y * ofGetHeight(), 0.0f);			
+			//draw Circle
+			ofFill();
+			ofSetColor(downColor);
+			ofCircle(0.f, 0.f, 40);
+			//Cutout Middle of circle
+			ofSetColor(0x000000);
+			ofCircle(0.f, 0.f, 25);			
+			glPopMatrix();		
+		}
+
+		//Make Plus Sign
+		ofSetColor(0x00FF00);
+		//Horizontal Plus
+		ofRect(screenpts[i].X * ofGetWidth() - 2, screenpts[i].Y * ofGetHeight() - 10, 4, 20);
+		//Vertical Plus
+		ofRect(screenpts[i].X * ofGetWidth() - 10, screenpts[i].Y * ofGetHeight() - 2, 20, 4);
+	}
+
+	ofSetColor(0xFFFFFF);
+	ofNoFill();
+	ofRect(calibrate.screenBB.upperLeftCorner.X * ofGetWidth(), calibrate.screenBB.upperLeftCorner.Y * ofGetHeight(), 
+		   calibrate.screenBB.getWidth() * ofGetWidth(), calibrate.screenBB.getHeight() * ofGetHeight());
+
+	
+	//Draw blobs in calibration to see where you are touching
+	if(!calibrate.bCalibrating){
+
+		//Find the blobs
+		for(int i=0; i<contourFinder.nBlobs; i++)
+		{
+			//temp blob to rescale and draw on screen
+			ofxCvBlob drawBlob2;
+			drawBlob2 = contourFinder.blobs[i];
+
+			calibrate.cameraToScreenSpace(drawBlob2.centroid.x, drawBlob2.centroid.y);
+
+		/*	ofSetColor(0xFF0099);
+			//ofFill();
+			ofEllipse(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight(), 
+				      drawBlob2.boundingRect.width, drawBlob2.boundingRect.height);
+		*/
+
+			//Displat Text of blob information
+			ofSetColor(0x00FF00);
+			char idStr[1024];	
+			sprintf(idStr, "id: %i \n x: %f \n y: %f",drawBlob2.id, ceil(drawBlob2.centroid.x * ofGetWidth()), 
+																	ceil(drawBlob2.centroid.y * ofGetHeight()));
+			verdana.drawString(idStr, drawBlob2.centroid.x * ofGetWidth() + drawBlob2.boundingRect.width/2 + 20, 
+									  drawBlob2.centroid.y * ofGetHeight() + drawBlob2.boundingRect.height/2 + 20);
+		
+		
+			/*************************
+			* Fading Blobs
+			*************************/
+			thingies.push_back(Thingy(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight(), 
+									  drawBlob2.boundingRect.width, drawBlob2.boundingRect.height));
+			                                   
+			vector<Thingy>::iterator this_thingy;
+			// go through all the thingies
+			for(this_thingy = thingies.begin(); this_thingy != thingies.end();) {
+						
+				//Erasing this way makes it so the vector iterator is not invalidated
+				if(this_thingy->alpha <= 0){
+					this_thingy = thingies.erase(this_thingy);
+				}
+				else{
+					this_thingy++;
+				}
+			}
+		}	
+		//Draw fading blobs
+		for (int i=0; i < thingies.size(); i++) {
+		
+			thingies[i].draw();
+		}//end fading blobs	
+
+	}//End Blob Drawing
+
+	/******************************
+	* Calibration Instructions
+	******************************/		
+	ofSetColor(0xFF00FF);	
+	ofSetWindowTitle("Calibration");		
+	char reportStr[10240];	
+	calibrationText.setLineHeight(20.0f);
+	
+	if(calibrate.bCalibrating){
+		sprintf(reportStr, 
+		"CALIBRATING: \n\n\-Touch current circle target and lift up to calibrate point \n\-Press [b] to recapture background (if there's false blobs) \n\-Press [r] to go back to previous point(s) \n");
+		calibrationText.drawString(reportStr, 33, 60);
+	}else
+	{
+		sprintf(reportStr,  
+		"CALIBRATION \n\n\-Press [x] to start calibrating \n \-Press [c] to return main screen \n \-Press [b] to recapture background \n\n\CHANGING GRID SIZE (number of points): \n\n\-Current Grid Size is %i x %i \n\-Press [+]/[-] to add/remove points on X axis \n\-Press [shift][+]/[-] to add/remove points on Y axis \n\n\ALINGING BOUNDING BOX TO PROJECTION SCREEN: \n\n\-Use arrow keys to move bounding box\n\-Press and hold [w],[a],[s],[d] (top, left, bottom, right) to adjust each side\n", calibrate.GRID_X + 1, calibrate.GRID_Y + 1);
+		calibrationText.drawString(reportStr, 33, 60);
+	}
+
+		//Update Demo Blobs
+	if(!calibrate.bCalibrating){
+
+		// go through all the thingies
+		for (int i=0; i < thingies.size(); i++) {
+			thingies[i].update();
+		}
+	}
+}
+
+/*****************************************************************************
+ * KEY EVENTS
+ *****************************************************************************/
+void testApp::keyPressed(int key)
+{ 
+	switch(key)
+	{	
+		case '1':
+			if(bToggleHelp)
+			{	
+
+				//bToggleHelp = false;	
+				//ofSetWindowShape((2.0/3.0)*(ofGetWidth()-80)+60,ofGetHeight());
+			}
+			else
+			{	
+				//bToggleHelp = true;
+				//ofSetWindowShape(max((3.0/2.0)*(ofGetWidth()-60)+80, minWidth), max(ofGetHeight(), minHeight));
+			}
+			break;
+		case '3':
+			activeInput = false;	
+
+			bcamera = false;
+			
+			//vidPlayer.loadMovie("test_videos/FrontDI.m4v");
+			vidPlayer.loadMovie("test_videos/HCI_FTIR.mov");
+			//vidPlayer.loadMovie("test_videos/raw.mp4");
+			vidPlayer.play();	
+			printf("Video Mode\n");
+			camHeight = vidPlayer.height;
+			camWidth = vidPlayer.width;
+
+			activeInput = true;
+			bLearnBakground = true;
+
+			break;
+
+		case '4':
+			activeInput = false;
+
+			bcamera = true;
+
+			vidGrabber.close();
+			vidGrabber.setDeviceID(deviceID);
+			vidGrabber.setVerbose(false);		
+
+			camWidth = vidGrabber.width;
+			camHeight = vidGrabber.height;
+
+			vidGrabber.initGrabber(camWidth,camHeight);
+			
+			activeInput = true;
+			bLearnBakground = true;
+			break;
+		case '2':
+			if(bDrawVideo)
+				bDrawVideo = false;	
+			else	
+				bDrawVideo = true;
+			break;
 		case 'b':
 			bLearnBakground = true;
 			break;		
 		case 'o':
-			if(bDrawOutlines){	
+			if(bDrawOutlines)
 				bDrawOutlines = false;	
-			}else{	
+			else
 				bDrawOutlines = true;
-			}
 			break;
 		case 't':
-			if(bTUIOMode){	
-				bTUIOMode = false;		
+			if(bTUIOMode)
+			{
+				bTUIOMode = false;	
+				myTUIO.blobs.clear();
 				//ofSetWindowShape(700,600);
-			}else{	
+			}
+			else
+			{	
 				bTUIOMode = true;	
 				//ofSetWindowShape(950,700);
 			}
 			break;	
-		case 'c':
-			if(bCalibration){	
-				bCalibration = false;		
-			}else{	
-				bCalibration = true;	
-			}
-			break;
-		case '~':
-			if(bToggleHelp){	
-				bToggleHelp = false;	
-				ofSetWindowShape(700,768);
-			}else{	
-				bToggleHelp = true;
-				ofSetWindowShape(1024,768);
-			}
-			break;
 		case ' ':
-			if(bFastMode){	
+			if(bFastMode)
+			{	
 				bFastMode = false;	
-				bToggleHelp = true;
-				ofSetWindowShape(1024,768);
+				//bToggleHelp = true;
+				ofSetWindowShape(900,600); //default size
 				ofSetWindowTitle("Configuration");
-			}else{	
+			}
+			else
+			{	
 				bFastMode = true;
-				bToggleHelp = false;
-				ofSetWindowShape(200,25);
-				ofSetWindowTitle("~Mini");
+				//bToggleHelp = false;
+				ofSetWindowShape(175,18); //minimized size
+				ofSetWindowTitle("Mini");
 			}
 			break;
-		case 'i':
-			if(bInvertVideo){	
-				bInvertVideo = false;
-			}else{	
-				bInvertVideo = true; 
-			}
-			break;	
-		case 'n':
-			blurValue +=  2;
-			if (blurValue > 255) blurValue = 255;
-			break;		
-		case 'm':
-			blurValue -= 2;
-			if (blurValue < 1) blurValue = 1;
-			break;
-		case 'j':
-			blurGaussianValue +=  2;
-			if (blurGaussianValue > 255) blurGaussianValue = 255;
-			break;		
-		case 'k':
-			blurGaussianValue -= 2;
-			if (blurGaussianValue < 1) blurGaussianValue = 1;
-			break;	
-		case 'a':
-			threshold ++;
-			if (threshold > 255) threshold = 255;
-			break;		
-		case 'z':
-			threshold --;
-			if (threshold < 10) threshold = 10;
-			//if (threshold < 0) threshold = 0;
-			break;	
-		case 'w':
-			wobbleThreshold ++;
-			if (wobbleThreshold > 255) wobbleThreshold = 255;
-			break;	
-		case 'e':
-			wobbleThreshold --;
-			if (wobbleThreshold < 0) wobbleThreshold = 0;
-			break;	
-		case '[':
-			snapCounter ++;
-			if (snapCounter > 16) snapCounter = 16;
-			break;	
-		case ']':
-			snapCounter --;
-			if (snapCounter < 2) snapCounter = 2;
-			break;	
 		case 'g':
 			bSnapshot = true;
 			break;
-		case 's':
-			//#ifdef _USE_LIVE_VIDEO
-			//vidGrabber.videoSettings();
-			break;	
-		case 'f':
-		bFullscreen = !bFullscreen;
-		if(!bFullscreen){
-			ofSetFullscreen(false);
-		} else if(bFullscreen == 1){
-			ofSetFullscreen(true);
-		}
 		case 'v':
-		if(bVerticalMirror){
-			bVerticalMirror = false;
-		}else{	
-			bVerticalMirror = true;
-		}
+			if(bcamera)
+				vidGrabber.videoSettings();
+			break;	
+		case 'l':
+			if(bShowLabels)
+				bShowLabels = false;
+			else	
+				bShowLabels = true;
 			break;
-		case 'h':
-		if(bHorizontalMirror){
-			bHorizontalMirror = false;
-		}else{	
-			bHorizontalMirror = true;
-		}
+		case 'i':
+			if(bShowInterface)
+				bShowInterface = false;
+			else	
+				bShowInterface = true;
+			break;
+		case 'p':
+			if(bShowPressure)
+				bShowPressure = false;
+			else	
+				bShowPressure = true;
+			break;
+		/***********************
+		* Keys for Calibration
+		***********************/
+		case 'c': //Enter/Exit Calibration
+			if(bCalibration){
+				bCalibration = false;
+				bFullscreen = false;
+			}else{	
+				bCalibration = true;
+				bFullscreen = true;
+			}
+			break;
+		case 'x': //Begin Calibrating
+			if(bCalibration && calibrate.bCalibrating)
+				calibrate.bCalibrating = false;
+			else if(bCalibration)
+				calibrate.beginCalibration();
+			else
+			    bCalibration = false;
+			break;
+		case 'r': //Revert Calibration
+			if(calibrate.bCalibrating)calibrate.revertCalibrationStep();
+		case 'w': //Up
+			bW = true;
+			break;	
+		case 's': //Down
+			bS = true;
+			if(!bCalibration)
+			{
+				saveConfiguration();
+				//message ="Settings Saved!";
+			}
+			break;
+		case 'a': //Left
+			bA = true;
+			break;
+		case 'd': //Right
+			bD = true;
+			break;
+		case OF_KEY_RIGHT: //Move bounding box right
+			if(bD){
+				calibrate.screenBB.lowerRightCorner.X += .001;
+				if(calibrate.screenBB.lowerRightCorner.X > 1) calibrate.screenBB.lowerRightCorner.X = 1;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else if(bA){
+				calibrate.screenBB.upperLeftCorner.X += .001;
+				if(calibrate.screenBB.upperLeftCorner.X > 1) calibrate.screenBB.upperLeftCorner.X = 1;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else{
+				calibrate.screenBB.lowerRightCorner.X += .001;
+				if(calibrate.screenBB.lowerRightCorner.X > 1) calibrate.screenBB.lowerRightCorner.X = 1;
+				calibrate.screenBB.upperLeftCorner.X += .001;
+				if(calibrate.screenBB.upperLeftCorner.X > 1) calibrate.screenBB.upperLeftCorner.X = 1;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}
+			break;
+		case OF_KEY_LEFT: //Move bounding box left
+			if(bD){
+				calibrate.screenBB.lowerRightCorner.X -= .001;
+				if(calibrate.screenBB.lowerRightCorner.X < 0) calibrate.screenBB.lowerRightCorner.X = 0;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else if(bA){
+				calibrate.screenBB.upperLeftCorner.X -= .001;
+				if(calibrate.screenBB.upperLeftCorner.X < 0) calibrate.screenBB.upperLeftCorner.X = 0;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else{
+				calibrate.screenBB.lowerRightCorner.X -= .001;
+				if(calibrate.screenBB.lowerRightCorner.X < 0) calibrate.screenBB.lowerRightCorner.X = 0;
+				calibrate.screenBB.upperLeftCorner.X -= .001;
+				if(calibrate.screenBB.upperLeftCorner.X < 0) calibrate.screenBB.upperLeftCorner.X = 0;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}
+			break;
+		case OF_KEY_DOWN: //Move bounding box down
+			if(bS){
+				calibrate.screenBB.lowerRightCorner.Y += .001;
+				if(calibrate.screenBB.lowerRightCorner.Y > 1) calibrate.screenBB.lowerRightCorner.Y = 1;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else if(bW){
+				calibrate.screenBB.upperLeftCorner.Y += .001;
+				if(calibrate.screenBB.upperLeftCorner.Y > 1) calibrate.screenBB.upperLeftCorner.Y = 1;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else{
+				calibrate.screenBB.lowerRightCorner.Y += .001;
+				if(calibrate.screenBB.lowerRightCorner.Y > 1) calibrate.screenBB.lowerRightCorner.Y = 1;
+				calibrate.screenBB.upperLeftCorner.Y += .001;
+				if(calibrate.screenBB.upperLeftCorner.Y > 1) calibrate.screenBB.upperLeftCorner.Y = 1;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}
+			break;
+		case OF_KEY_UP: //Move bounding box up
+			if(bS){
+				calibrate.screenBB.lowerRightCorner.Y -= .001;
+				if(calibrate.screenBB.lowerRightCorner.Y < 0) calibrate.screenBB.lowerRightCorner.Y = 0;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else if(bW){
+				calibrate.screenBB.upperLeftCorner.Y -= .001;
+				if(calibrate.screenBB.upperLeftCorner.Y < 0) calibrate.screenBB.upperLeftCorner.Y = 0;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}else{
+				calibrate.screenBB.lowerRightCorner.Y -= .001;
+				if(calibrate.screenBB.lowerRightCorner.Y < 0) calibrate.screenBB.lowerRightCorner.Y = 0;
+				calibrate.screenBB.upperLeftCorner.Y -= .001;
+				if(calibrate.screenBB.upperLeftCorner.Y < 0) calibrate.screenBB.upperLeftCorner.Y = 0;
+				calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+				calibrate.calibrationStep = 0;
+			}
+			break;
+		//Start Grid Point Changing
+		case '=':
+			if(bCalibration)
+			calibrate.GRID_X ++;
+			if(calibrate.GRID_X > 16) calibrate.GRID_X = 16; calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+			calibrate.calibrationStep = 0;
 			break;
 		case '-':
-			lowRange ++;
-			if (lowRange > 255) lowRange = 255;
-			break;	
-		case '=':
-			lowRange --;
-			if (lowRange < 0) lowRange = 0;
+			if(bCalibration)
+			calibrate.GRID_X --;
+			if(calibrate.GRID_X < 1) calibrate.GRID_X = 1; calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+			calibrate.calibrationStep = 0;
 			break;
-		case '9':
-			highRange ++;
-			if (highRange > 255) highRange = 255;
-			break;	
-		case '0':
-			highRange --;
-			if (highRange < 0) highRange = 0;
-			break;	
+		case '+':
+			if(bCalibration)
+			calibrate.GRID_Y ++;
+			if(calibrate.GRID_Y > 16) calibrate.GRID_Y = 16; calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+			calibrate.calibrationStep = 0;
+			break;
+		case '_':
+			if(bCalibration)
+			calibrate.GRID_Y --;
+			if(calibrate.GRID_Y < 1) calibrate.GRID_Y = 1; calibrate.setGrid(calibrate.GRID_X, calibrate.GRID_Y);
+			calibrate.calibrationStep = 0;
+			break;
 	}
 }
 
-//--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
-	sprintf(eventString, "mouseMoved = (%i,%i)", x, y);
+void testApp::keyReleased(int key){
+
+	switch(key)
+	{	
+		case 'w':
+			bW = false;
+			break;	
+		case 's':
+			bS = false;
+			break;
+		case 'a':
+			bA = false;
+			break;
+		case 'd':
+			bD = false;
+			break;
+	}
+}
+
+
+/*****************************************************************************
+*								MOUSE EVENTS
+*****************************************************************************/
+void testApp::mouseMoved(int x, int y)
+{
 }	
 
-//--------------------------------------------------------------
-void testApp::mouseDragged(int x, int y, int button){	
-	sprintf(eventString, "mouseDragged = (%i,%i - button %i)", x, y, button);
-}
-
-//--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button){
-	sprintf(eventString, "mousePressed = (%i,%i - button %i)", x, y, button);
-}
-
-//--------------------------------------------------------------
-void testApp::mouseReleased(){	
-	sprintf(eventString, "mouseReleased");
-}
-//--------------------------------------------------------------
-void testApp::fingerMoved(int x, int y ){
-}	
-
-//--------------------------------------------------------------
-void testApp::fingerDragged(int x, int y, int button){
-}
-
-//--------------------------------------------------------------
-void testApp::fingerPressed(int x, int y, int button){
-}
-
-//--------------------------------------------------------------
-void testApp::fingerReleased(){
-
-}
-//--------------------------------------------------------------
-void testApp::exit(){
-	printf("Touchlib application has exited!\n");	
-}
-
-
-/* -- FROM MTLIB
-void frame()
+void testApp::mouseDragged(int x, int y, int button)
+{
+	//Warp Box
+	if(bWarpImg && x < (40 + 320) && x > 40)
 	{
-		if(!transmitSocket)
-			return;
+		if(y < (30 + 240) && y > 30)
+		  warp_box.adjustHandle(x,y);		
+	}		
+	//gui listener
+	gui->mouseDragged(x, y, button);
+}
 
-		// send update messages..
+void testApp::mousePressed(int x, int y, int button)
+{	//gui listener
+	gui->mousePressed(x, y, button);	
+}
 
-		char buffer[OUTPUT_BUFFER_SIZE];
-		osc::OutboundPacketStream p( buffer, OUTPUT_BUFFER_SIZE );
+void testApp::mouseReleased()
+{	//guilistener
+	gui->mouseReleased(mouseX, mouseY, 0);	
+}
+
+
+/*****************************************************************************
+*								TOUCH EVENTS
+*****************************************************************************/
+void testApp::blobOn( ofxCvBlob b)
+{
+	//printf("Blob DOWN %i \n", b.id); 
+
+	if(bCalibration)//If calibrating change target color when a finger is down
+	downColor = 0x2FB5FF; 
 		
-		PointMap::iterator iter1, iter2, iter_last;	
-		if(m_Points.size() > 0)
-		{	    
-			//p << osc::BeginBundleImmediate;
-
-
-			int scount = 0, acount = 0;
-			iter1=m_Points.begin();
-			
-			bool done=false;
-
-			while(!done)
-			{
-				p.Clear();
-				p << osc::BeginBundle();
-
-				for(; iter1 != m_Points.end(); iter1++)
-				{					
-					Point d = (*iter1).second;
-					float m = sqrtf((d.dx*d.dx) + (d.dy*d.dy));
-					float area = 0;
-					if(!(d.x == 0 && d.y == 0)) {
-						p << osc::BeginMessage( "/tuio/2Dcur" ) << "set" << d.id << d.lx << d.ly << d.dx << d.dy << m << osc::EndMessage;
-
-						scount ++;
-						if(scount >= 10)
-						{
-							scount = 0;
-							break;
-						}
-					}
-				}
-
-				if(iter1 == m_Points.end())
-					done = true;
-
-
-				p << osc::BeginMessage( "/tuio/2Dcur" );
-				p << "alive";
-				for(iter2=m_Points.begin(); iter2 != m_Points.end(); iter2++)
-				{
-					Point d = (*iter2).second;
-					if(!(d.lx == 0 && d.ly == 0)) {
-						p << d.id;
-					}
-				}
-				p << osc::EndMessage;
-
-				p << osc::BeginMessage( "/tuio/2Dcur" ) << "fseq" << frameSeq << osc::EndMessage;
-				p << osc::EndBundle;
-
-				//printf("%d size. %d #fingers\n", p.Size(), fingerList.size());
-				frameSeq ++; 
-				if(p.IsReady())
-					transmitSocket->Send( p.Data(), p.Size() );
-			}
-
-
-		} else {
-			//p << osc::BeginBundleImmediate;
-			p.Clear();
-			p << osc::BeginBundle();
-
-			p << osc::BeginMessage( "/tuio/2Dcur" );
-			p << "alive";
-			p << osc::EndMessage;
-
-			p << osc::BeginMessage( "/tuio/2Dcur" ) << "fseq" << frameSeq << osc::EndMessage;
-
-			p << osc::EndBundle;
-
-			frameSeq ++;
-			//printf("%d size\n", p.Size());
-
-			if(p.IsReady())
-				transmitSocket->Send( p.Data(), p.Size() );
-
-
-		}
-
+	if(bTUIOMode)//If sending TUIO, add the blob to the map list
+	{
+		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);
+		myTUIO.blobs[b.id] = b;
 	}
-*/
+}
+
+void testApp::blobMoved( ofxCvBlob b) 
+{	
+	if(bTUIOMode)//If sending TUIO, update the move information for the blob
+	{
+		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);
+		myTUIO.blobs[b.id] = b;
+	}
+}  
+
+void testApp::blobOff( ofxCvBlob b) 
+{
+	//printf("Blob UP %i \n", b.id);
+
+	if(bCalibration)
+	downColor = 0xFF0000;
+	
+	if(calibrate.bCalibrating)//If Calibrating, register the calibration point on blobOff
+	{			
+		calibrate.cameraPoints[calibrate.calibrationStep] = vector2df(b.centroid.x, b.centroid.y);
+		calibrate.nextCalibrationStep();
+		
+		printf("%d (%f, %f)\n", calibrate.calibrationStep, b.centroid.x, b.centroid.y);
+	}
+
+	if(bTUIOMode)//If sending TUIO, Delete Blobs from map list
+	{
+        std::map<int, ofxCvBlob>::iterator iter;
+        for(iter=myTUIO.blobs.begin(); iter!=myTUIO.blobs.end(); iter++)
+        {
+            if(iter->second.id == b.id)
+            {
+                myTUIO.blobs.erase(iter);
+                break;
+            }
+        }
+	}
+}
+
+
+
+/*****************************************************************************
+* ON EXIT
+*****************************************************************************/
+void testApp::exit()
+{
+	//TODO: SEND ESC KEY TO KEEP FROM CRASHING -  can we emulate a keyboard
+	//event to trick the app into closing properly?
+	
+	
+	// -------------------------------- SAVE STATE ON EXIT
+	saveConfiguration();
+	calibrate.saveCalibration();
+
+
+	printf("tBeta module has exited!\n");	
+}
+
+void testApp::saveConfiguration()
+{
+
+	XML.setValue("CONFIG:BOOLEAN:PRESSURE",bShowPressure);
+	XML.setValue("CONFIG:BOOLEAN:LABELS",bShowLabels);
+	XML.setValue("CONFIG:BOOLEAN:SNAPSHOT",bSnapshot);
+	XML.setValue("CONFIG:BOOLEAN:OUTLINES",bDrawOutlines);
+	XML.setValue("CONFIG:BOOLEAN:LEARNBG",bLearnBakground);
+	XML.setValue("CONFIG:BOOLEAN:TUIO",bTUIOMode);
+	XML.setValue("CONFIG:BOOLEAN:VMIRROR",bVerticalMirror);
+	XML.setValue("CONFIG:BOOLEAN:HMIRROR",bHorizontalMirror);
+	XML.setValue("CONFIG:BOOLEAN:WARP", bWarpImg);
+
+	XML.setValue("CONFIG:BOOLEAN:HIGHPASS", bHighpass);
+	XML.setValue("CONFIG:BOOLEAN:AMPLIFY", bAmplify);
+	XML.setValue("CONFIG:BOOLEAN:SMOOTH", bSmooth);
+
+	XML.setValue("CONFIG:INT:THRESHOLD", threshold);
+	XML.setValue("CONFIG:INT:HIGHPASSBLUR", highpassBlur);
+	XML.setValue("CONFIG:INT:HIGHPASSNOISE",highpassNoise);
+	XML.setValue("CONFIG:INT:HIGHPASSAMP",highpassAmp);
+	XML.setValue("CONFIG:INT:SMOOTH", smooth);
+
+	XML.setValue("CONFIG:CAMERA_0:USECAMERA", bcamera);
+	XML.setValue("CONFIG:CAMERA_0:DEVICE", deviceID);
+	XML.setValue("CONFIG:CAMERA_0:WIDTH", camWidth);
+	XML.setValue("CONFIG:CAMERA_0:HEIGHT", camHeight);
+	XML.setValue("CONFIG:CAMERA_0:FRAMERATE", camRate);
+
+//	XML.setValue("CONFIG:NETWORK:LOCALHOST", *myTUIO.localHost);
+//	XML.setValue("CONFIG:NETWORK:TUIO_PORT_OUT",myTUIO.TUIOPort);
+
+	XML.saveFile("config.xml");
+}

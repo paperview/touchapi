@@ -1,5 +1,14 @@
-#include "tracking.h"
+/*
+ *  tracking.cpp
+ *  tbeta
+ *
+ *  Created by Ramsin Khoshabeh on 5/4/08.
+ *  Copyright 2008 UCSD. All rights reserved.
+ *
+ * Changelog:
+ */
 
+#include "tracking.h"
 
 BlobTracker::BlobTracker()
 {
@@ -100,7 +109,7 @@ void BlobTracker::track(ofxCvContourFinder* newBlobs)
 		}
 	}
 
-	//remove every tracked labeled as dead (ID='-1')
+	//remove every track labeled as dead (ID='-1')
 	for(int i=0; i<trackedBlobs.size(); i++)
 	{
 		if(trackedBlobs[i].id==-1)
@@ -149,8 +158,8 @@ int BlobTracker::trackKnn(ofxCvContourFinder *newBlobs, ofxCvBlob *track, int k,
 		thresh *= thresh;
 
 	//list of neighbor point index and respective distances
-	std::list<std::pair<int,double>> nbors;
-	std::list<std::pair<int,double>>::iterator iter;
+	std::list<std::pair<int,double> > nbors;
+	std::list<std::pair<int,double> >::iterator iter;
 
 	//find 'k' closest neighbors of testpoint
 	double x, y, xT, yT, dist;
@@ -193,7 +202,7 @@ int BlobTracker::trackKnn(ofxCvContourFinder *newBlobs, ofxCvBlob *track, int k,
 	*********************************************************************/
 	
 	// a mapping from labels (IDs) to count/distance
-	std::map<int, std::pair<int, double>> votes;
+	std::map<int, std::pair<int, double> > votes;
 
 	//remember:
 	//iter->first = index of newBlob

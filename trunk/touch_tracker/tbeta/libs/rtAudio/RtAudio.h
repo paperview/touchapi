@@ -37,8 +37,6 @@
 */
 /************************************************************************/
 
-#define __WINDOWS_DS__
-#define _CRT_SECURE_NO_WARNINGS
 // RtAudio: Version 3.0.3 (18 November 2005)
 
 #ifndef __RTAUDIO_H

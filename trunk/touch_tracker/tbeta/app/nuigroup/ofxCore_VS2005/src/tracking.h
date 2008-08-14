@@ -1,3 +1,12 @@
+/*
+ *  tracking.h
+ *  tbeta
+ *
+ *  Created by Ramsin Khoshabeh on 5/4/08.
+ *  Copyright 2008 UCSD. All rights reserved.
+ *
+ * Changelog:
+ */
 #ifndef __TRACKING
 #define __TRACKING
 
