@@ -33,6 +33,7 @@
 #include "ofxGui/ofxGuiTypes.h"
 
 
+
 class testApp : public ofSimpleApp, public ofCvBlobListener, public ofxGuiListener
 {
 		
@@ -93,6 +94,10 @@ public:
 		void		handleGui(int parameterId, int task, void* data, int length);
 		
 		ofxGui*		gui;
+
+		ofImage fuzzy;
+
+		std::map<int, int> blobcolor;
 
 		/****************************************************************
 		*						Public functions
