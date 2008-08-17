@@ -47,8 +47,6 @@ class ofVideoGrabber{
 		void 			draw(float x, float y);
 		int 			width, height;
 
-		int				getNumDevices();
-
 	protected:
 
 		bool					bChooseDevice;
