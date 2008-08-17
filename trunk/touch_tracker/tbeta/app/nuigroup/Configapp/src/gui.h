@@ -327,14 +327,12 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 					{
 						activeInput = false; //this stops the app from doing everything when changing source
 
-						if(deviceID < vidGrabber.getNumDevices() - 2)
-						{
-							deviceID += 1;
-							vidGrabber.close();
-							vidGrabber.setDeviceID(deviceID);
-							vidGrabber.setVerbose(false);		
-							vidGrabber.initGrabber(camWidth,camHeight);
-						}
+						deviceID += 1;
+						vidGrabber.close();
+						vidGrabber.setDeviceID(deviceID);
+						vidGrabber.setVerbose(false);		
+						vidGrabber.initGrabber(camWidth,camHeight);
+					
 						activeInput = true;
 						bLearnBakground = true;
 					}					
@@ -347,14 +345,12 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 					{
 						activeInput = false; //this stops the app from doing everything when changing source
 
-						if(deviceID > 0)
-						{
-							deviceID -= 1;
-							vidGrabber.close();
-							vidGrabber.setDeviceID(deviceID);
-							vidGrabber.setVerbose(false);		
-							vidGrabber.initGrabber(camWidth,camHeight);
-						}
+						deviceID -= 1;
+						vidGrabber.close();
+						vidGrabber.setDeviceID(deviceID);
+						vidGrabber.setVerbose(false);		
+						vidGrabber.initGrabber(camWidth,camHeight);
+					
 						activeInput = true;
 						bLearnBakground = true;
 					}					

@@ -1,7 +1,6 @@
 #include "testApp.h"
 #include "gui.h"
 
-
 /******************************************************************************
  * The setup function is run once to perform initializations in the application
  *****************************************************************************/
@@ -10,6 +9,12 @@ void testApp::setup()
 	/********************
 	* Initalize Variables
 	*********************/
+	fuzzy.loadImage("particle.png");
+	fuzzy.setUseTexture(true);
+
+	ofImage blah;
+	blah.clone(fuzzy);
+	
 
 	//For screengrab
 	snapCounter	= 6; 
@@ -26,11 +31,10 @@ void testApp::setup()
 	bS			= false;
 	bD			= false;
 
-	ofToDataPath("/data/jkhjh");
-
 	bDrawVideo = true;
-
 	bFullscreen = false;
+
+	ofSetBackgroundAuto(false);
 
 	//Load Settings from config.xml file 
 	loadXMLSettings();
@@ -139,7 +143,7 @@ void testApp::setup()
 	//Fonts - Is there a way to dynamically change font size?
 	verdana.loadFont("verdana.ttf", 8, true, true);	   //Font used for small images
 	sidebarTXT.loadFont("verdana.ttf", 8, true, true);
-	calibrationText.loadFont("verdana.ttf", 11, true, true);
+	calibrationText.loadFont("verdana.ttf", 10, true, true);
 	bigvideo.loadFont("verdana.ttf", 13, true, true);  //Font used for big images.
 	
 	//Static Images
@@ -174,7 +178,6 @@ void testApp::setup()
 	gui = ofxGui::Instance(this);
 	setupGUI();
 	
-
 	printf("Touchlib application is setup!\n");
 }
 
@@ -301,6 +304,9 @@ void testApp::applyImageFilters(){
 	//Background Subtraction
 	processedImg.absDiff(grayBg, processedImg);
 
+//	if(contourFinder.blobs.size() > 0)
+//	processedImg.contrastStretch();
+
 	if(bSmooth){
 		processedImg.blur((smooth * 2) + 1); //needs to be an odd number
 		subtractBg = processedImg; //for drawing
@@ -321,6 +327,8 @@ void testApp::applyImageFilters(){
 	//Set a threshold value
 	processedImg.threshold(threshold);
 	grayDiff = processedImg; //for drawing
+
+	//fidTrack.findFiducials(processedImg);
 }
 
 
@@ -331,8 +339,6 @@ void testApp::applyImageFilters(){
  *****************************************************************************/
 void testApp::update()
 {	
-	ofBackground(110, 110, 110);
-
     bNewFrame = false;
 		
 	if(activeInput){
@@ -349,18 +355,29 @@ void testApp::update()
 		
 		if (bNewFrame)
 		{
+//			ofBackground(110, 110, 110);
+
 			//Calculate FPS of Camera
 			frames++;
 			float time = ofGetElapsedTimeMillis();
-			if(time > (lastFPSlog + 1000)){		
-				fps = frames;
+
+			float diffTime = (time - lastFPSlog)/1000;
+			
+			if(diffTime > 2){		
+				fps = floor((frames / diffTime) + 0.5f);
 				frames = 0;
 				lastFPSlog = time;			
 			}//End calculation
 
+		
+/*			if(time > (lastFPSlog + 1000)){		
+				fps = frames;
+				frames = 0;
+				lastFPSlog = time;			
+			}//End calculation
+*/
 
-				
-			
+		
 			if(bGPUMode){
 				grabFrameToGPU(gpuSourceTex);
 				applyGPUImageFilters();
@@ -387,49 +404,9 @@ void testApp::update()
 			
 			if(contourFinder.nBlobs > 0){
 
-				fLearnRate = 0.0008f;
+				fLearnRate = 0.00001f;
 			}//End Background Learning rate
 
-
-			/*****************************************************
-			* Pressure Map	
-			*****************************************************/
-			if(bShowPressure){
-
-				//grayImg.invert();
-				//processedImg.absDiff(processedImg, subtractBg);
-				//processedImg += processedImg;
-				//processedImg -= subtractBg;
-
-				unsigned char * rgbaPixels = ampImg.getPixels();
-				unsigned char * colorRawPixels = new unsigned char[camWidth*camHeight*3]; 
-
-				//total rgb pixels
-				int totalPixel = camWidth * camHeight;
-
-				int k = 0;
-
-				for(int i = 0; i < totalPixel; i++){
-
-				  //Get the 
-				  float red = rgbaPixels[i];
-				  float green = 0;
-				  float blue = 255 - rgbaPixels[i] + 40; // Add 60
-
-				  //Set some limitations	
-				  if(blue >= 255){blue = 0;}
-				  if(blue <= 50){blue = 0;}
-
-				  //Set the RGB pixels to their colors
-				  colorRawPixels[k]     = red;
-				  colorRawPixels[k + 1] = green;
-				  colorRawPixels[k + 2] = blue;
-
-				  k +=3;
-				}	
-				pressureMap.setFromPixels(colorRawPixels, camWidth, camHeight);
-				delete colorRawPixels;//End Pressure Map
-			}
 
 			if(bTUIOMode){
 				//We're not using frameseq right now with OSC
@@ -439,7 +416,7 @@ void testApp::update()
 				myTUIO.sendOSC();
 			}
 		}
-	}
+	} 
 }
 
 /******************************************************************************
@@ -449,150 +426,152 @@ void testApp::draw(){
 
 	ofSetFullscreen(bFullscreen);
 
-	/*********************************
-	* IF CALIBRATING
-	*********************************/
-	if(bCalibration)
-	{
-		//Don't draw main interface
-		bShowInterface = false;
+    if (bNewFrame){
 
-		doCalibration();
-	}
-	/********************************
-	* IF SHOWING MAIN INTERFACE STUFF
-	********************************/
-	if(bDrawVideo && bShowInterface && !bFastMode)
-	{
-		ofSetColor(0xFFFFFF);	
-		//Draw Everything
-		background.draw(0, 0);
-
-		//Draw arrows
-		ofSetColor(187, 200, 203);
-		ofFill();
-		ofTriangle(680, 420, 680, 460, 700, 440);
-		ofTriangle(70, 420, 70, 460, 50, 440);
-		ofSetColor(255, 255, 0);
-		ofNoFill();
-		ofTriangle(70, 420, 70, 460, 50, 440);
-		
-		ofSetColor(0xFFFFFF);
-
-		if(bGPUMode){
-			drawGLTexture(40, 30, 320, 240, gpuSourceTex);
-			//subtractFilter->drawOutputTexture(85, 392, 128, 96);
-			drawGLTexture(85, 392, 128, 96, gpuBGTex);
-			gaussVFilter->drawOutputTexture(235, 392, 128, 96); 
-			subtractFilter2->drawOutputTexture(385, 392, 128, 96); 
-			threshFilter->drawOutputTexture(535, 392, 128, 96);
-			gpuReadBackImageGS.draw(385, 30, 320, 240);
-		}
-		else{
-			if(bShowPressure)
-				pressureMap.draw(40, 30, 320, 240);
-			else
-				grayImg.draw(40, 30, 320, 240);
-
-			grayDiff.draw(385, 30, 320, 240);
-			fiLearn.draw(85, 392, 128, 96);
-			subtractBg.draw(235, 392, 128, 96);
-			highpassImg.draw(385, 392, 128, 96);
-			ampImg.draw(535, 392, 128, 96);
-		}
-
-
-		ofSetColor(0x000000);
-		if(bShowPressure){bigvideo.drawString("Pressure Map", 140, 20);}
-		else             {bigvideo.drawString("Source Image", 140, 20);}		
-						  bigvideo.drawString("Tracked Image", 475, 20);	
-		//Warped Box
-		if(bWarpImg)
-		warp_box.draw( 0, 0);
-	} 
-	/*********************************
-	* IF NOT CALIBRATING
-	*********************************/
-	if(!bCalibration)
-	{
-		//Draw main interface
-		bShowInterface = true;
-
-		//Display applicaion and camera FPS in title 
-		string str = "Application: ";
-		str+= ofToString(ofGetFrameRate(), 2)+"fps \n";	
-		string str2 = "Camera:   ";
-		str2+= ofToString(fps, 1)+"fps";
-
-		ofSetColor(0xFFFFFF);
-		sidebarTXT.drawString(str + str2, 740, 410);	
-		
-		//Draw PINK CIRCLE 'ON' LIGHT
-		ofSetColor(255, 0, 255);
-		ofFill();		
-		ofCircle(20, 10, 5);
-		ofNoFill();
-
-		if(bTUIOMode)
-		{	//Draw Port and IP to screen
-			ofSetColor(0xffffff);
-			char buf[256];
-			sprintf(buf, "Sending TUIO messages to:\nHost: %s\nPort: %i", myTUIO.localHost, myTUIO.TUIOPort);
-			sidebarTXT.drawString(buf, 740, 450);
-
-			//Draw GREEN CIRCLE 'ON' LIGHT
-			ofSetColor(0x00FF00);
-			ofFill();		
-			ofCircle(35, 10, 5);
-			ofNoFill();
-		}
-	}
-	/*********************************
-	* IF DRAWING BLOB OUTLINES
-	*********************************/
-	if(bDrawOutlines && bShowInterface && !bFastMode)
-	{
-		//Find the blobs
-		for(int i=0; i<contourFinder.nBlobs; i++)
+		/*********************************
+		* IF CALIBRATING
+		*********************************/
+		if(bCalibration)
 		{
-			//temp blob to rescale and draw on screen  
-			ofxCvBlob drawBlob;
-			drawBlob = contourFinder.blobs[i];
+			//Don't draw main interface
+			bShowInterface = false;
 
-			//Get the contour (points) so they can be drawn
-			for( int j=0; j<contourFinder.blobs[i].nPts; j++ )
-			{
-				drawBlob.pts[j].x = (320.0f/camWidth)  * (drawBlob.pts[j].x);
-				drawBlob.pts[j].y = (240.0f/camHeight) * (drawBlob.pts[j].y);
-			}
-	
-			//This adjusts the blob drawing for different cameras
-			drawBlob.boundingRect.width  *= (320.0f/camWidth);
-			drawBlob.boundingRect.height *= (240.0f/camHeight);
-			drawBlob.boundingRect.x		 *= (320.0f/camWidth);;
-			drawBlob.boundingRect.y		 *= (240.0f/camHeight);
+			doCalibration();
+		}
+		/********************************
+		* IF SHOWING MAIN INTERFACE STUFF
+		********************************/
+		if(bDrawVideo && bShowInterface && !bFastMode)
+		{
+			ofSetColor(0xFFFFFF);	
+			//Draw Everything
+			background.draw(0, 0);
+
+			//Draw arrows
+			ofSetColor(187, 200, 203);
+			ofFill();
+			ofTriangle(680, 420, 680, 460, 700, 440);
+			ofTriangle(70, 420, 70, 460, 50, 440);
+			ofSetColor(255, 255, 0);
+			ofNoFill();
+			ofTriangle(70, 420, 70, 460, 50, 440);
 			
-			//Draw contours (outlines) on the tracked image
-			drawBlob.draw(385, 30);
-			//drawBlob.draw(40, 30);
+			ofSetColor(0xFFFFFF);
 
-			//Show ID label;
-			if(bShowLabels)
-			{
-				float xpos = drawBlob.centroid.x * (320.0f/camWidth);
-				float ypos = drawBlob.centroid.y * (240.0f/camHeight);
+			if(bGPUMode){
+				drawGLTexture(40, 30, 320, 240, gpuSourceTex);
+				//subtractFilter->drawOutputTexture(85, 392, 128, 96);
+				drawGLTexture(85, 392, 128, 96, gpuBGTex);
+				gaussVFilter->drawOutputTexture(235, 392, 128, 96); 
+				subtractFilter2->drawOutputTexture(385, 392, 128, 96); 
+				threshFilter->drawOutputTexture(535, 392, 128, 96);
+				gpuReadBackImageGS.draw(385, 30, 320, 240);
+			}
+			else{
+				if(bShowPressure)
+					pressureMap.draw(40, 30, 320, 240);
+				else
+					grayImg.draw(40, 30, 320, 240);
 
-				ofSetColor(0xCCFFCC);
-				char idStr[1024];	
-				sprintf(idStr, "id: %i",drawBlob.id);
-				verdana.drawString(idStr, xpos + 365, ypos + drawBlob.boundingRect.height/2 + 45);			
+				grayDiff.draw(385, 30, 320, 240);
+				fiLearn.draw(85, 392, 128, 96);
+				subtractBg.draw(235, 392, 128, 96);
+				highpassImg.draw(385, 392, 128, 96);
+				ampImg.draw(535, 392, 128, 96);
+			}
+
+			ofSetColor(0x000000);
+			if(bShowPressure){bigvideo.drawString("Pressure Map", 140, 20);}
+			else             {bigvideo.drawString("Source Image", 140, 20);}		
+							  bigvideo.drawString("Tracked Image", 475, 20);	
+			//Warped Box
+			if(bWarpImg)
+			warp_box.draw( 0, 0);
+		} 
+		/*********************************
+		* IF NOT CALIBRATING
+		*********************************/
+		if(!bCalibration)
+		{
+			//Draw main interface
+			bShowInterface = true;
+
+			//Display applicaion and camera FPS in title 
+			string str = "Application: ";
+			str+= ofToString(ofGetFrameRate(), 2)+"fps \n";	
+			string str2 = "Camera:   ";
+			str2+= ofToString(fps, 1)+"fps";
+
+			ofSetColor(0xFFFFFF);
+			sidebarTXT.drawString(str + str2, 740, 410);	
+			
+			//Draw PINK CIRCLE 'ON' LIGHT
+			ofSetColor(255, 0, 255);
+			ofFill();		
+			ofCircle(20, 10, 5);
+			ofNoFill();
+
+			if(bTUIOMode)
+			{	//Draw Port and IP to screen
+				ofSetColor(0xffffff);
+				char buf[256];
+				sprintf(buf, "Sending TUIO messages to:\nHost: %s\nPort: %i", myTUIO.localHost, myTUIO.TUIOPort);
+				sidebarTXT.drawString(buf, 740, 450);
+
+				//Draw GREEN CIRCLE 'ON' LIGHT
+				ofSetColor(0x00FF00);
+				ofFill();		
+				ofCircle(35, 10, 5);
+				ofNoFill();
 			}
 		}
-		ofSetColor(0xFFFFFF);
-	}
+		/*********************************
+		* IF DRAWING BLOB OUTLINES
+		*********************************/
+		if(bDrawOutlines && bShowInterface && !bFastMode)
+		{
+			//Find the blobs
+			for(int i=0; i<contourFinder.nBlobs; i++)
+			{
+				//temp blob to rescale and draw on screen  
+				ofxCvBlob drawBlob;
+				drawBlob = contourFinder.blobs[i];
 
-	if(!bCalibration)
-		gui->draw();
+				//Get the contour (points) so they can be drawn
+				for( int j=0; j<contourFinder.blobs[i].nPts; j++ )
+				{
+					drawBlob.pts[j].x = (320.0f/camWidth)  * (drawBlob.pts[j].x);
+					drawBlob.pts[j].y = (240.0f/camHeight) * (drawBlob.pts[j].y);
+				}
+		
+				//This adjusts the blob drawing for different cameras
+				drawBlob.boundingRect.width  *= (320.0f/camWidth);
+				drawBlob.boundingRect.height *= (240.0f/camHeight);
+				drawBlob.boundingRect.x		 *= (320.0f/camWidth);;
+				drawBlob.boundingRect.y		 *= (240.0f/camHeight);
+				
+				//Draw contours (outlines) on the tracked image
+				//drawBlob.draw(385, 30);
+				drawBlob.draw(40, 30);
+
+				//Show ID label;
+				if(bShowLabels)
+				{
+					float xpos = drawBlob.centroid.x * (320.0f/camWidth);
+					float ypos = drawBlob.centroid.y * (240.0f/camHeight);
+
+					ofSetColor(0xCCFFCC);
+					char idStr[1024];	
+					sprintf(idStr, "id: %i",drawBlob.id);
+					verdana.drawString(idStr, xpos + 365, ypos + drawBlob.boundingRect.height/2 + 45);			
+				}
+			}
+			ofSetColor(0xFFFFFF);
+		}
+
+		if(!bCalibration)
+			gui->draw();
+	}
 }
 
 
@@ -761,27 +740,41 @@ void testApp::doCalibration(){
 
 			calibrate.cameraToScreenSpace(drawBlob2.centroid.x, drawBlob2.centroid.y);
 
-			ofSetColor(0xFF0099);
-			//ofFill();
+			//Get a random color for each blob
+			if(blobcolor[drawBlob2.id] == 0)
+			{
+				int r = ofRandom(0, 255);
+				int g = ofRandom(0, 255);
+				int b = ofRandom(0, 255);
+				//Convert to hex
+				int rgbNum = ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
+				//Set hex into map position
+				blobcolor[drawBlob2.id] = rgbNum;
+			}
+
+			//Draw Fuzzy Circles
+			ofEnableAlphaBlending();
+			ofImage tempFuzzy;
+			tempFuzzy.clone(fuzzy);
+			ofSetColor(blobcolor[drawBlob2.id]);
+			tempFuzzy.draw(drawBlob2.centroid.x * ofGetWidth() - drawBlob2.boundingRect.width - 20, drawBlob2.centroid.y * ofGetHeight() - drawBlob2.boundingRect.height - 20, 
+						   drawBlob2.boundingRect.width * 2 + 40, drawBlob2.boundingRect.height * 2 + 40);
+			ofDisableAlphaBlending();
+
+			//Draw Targets
+			ofSetColor(0xFFFFFF);
 			glLineWidth(3);
 			glPushMatrix();
 			glLoadIdentity();
 			glTranslatef(drawBlob2.centroid.x * ofGetWidth(), ((drawBlob2.centroid.y * ofGetHeight()) * -1) + ofGetHeight(), 0);		
-			glRotatef(-45, 0, 0, 1);
-			ofCircle(0,0, 35);
-			ofLine(0, -35, 0, 35); 
-			ofLine(-35, 0, 35, 0);				   
+			ofEllipse(0, 0, drawBlob2.boundingRect.width, drawBlob2.boundingRect.height);
+//			glRotatef(-45, 0, 0, 1);
+			ofLine(0, -drawBlob2.boundingRect.height, 0, drawBlob2.boundingRect.height); 
+			ofLine(-drawBlob2.boundingRect.width, 0, drawBlob2.boundingRect.width, 0);				   
 			glPopMatrix();
 
-/*			ofEllipse(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight(), 
-				      drawBlob2.boundingRect.width, drawBlob2.boundingRect.height);
-			ofLine(drawBlob2.centroid.x * ofGetWidth() - (drawBlob2.boundingRect.width), drawBlob2.centroid.y * ofGetHeight(), 
-				   drawBlob2.centroid.x * ofGetWidth() + (drawBlob2.boundingRect.width), drawBlob2.centroid.y * ofGetHeight()); 
-			ofLine(drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight() - (drawBlob2.boundingRect.height), 
-				   drawBlob2.centroid.x * ofGetWidth(), drawBlob2.centroid.y * ofGetHeight()  + (drawBlob2.boundingRect.height));
-*/
 			//Displat Text of blob information
-			ofSetColor(0x00FF00);
+			ofSetColor(0xFFFF00);
 			glLineWidth(1);
 			char idStr[1024];	
 			sprintf(idStr, "id: %i \n x: %f \n y: %f",drawBlob2.id, ceil(drawBlob2.centroid.x * ofGetWidth()), 
@@ -802,12 +795,12 @@ void testApp::doCalibration(){
 	if(calibrate.bCalibrating){
 		sprintf(reportStr, 
 		"CALIBRATING: \n\n\-Touch current circle target and lift up to calibrate point \n\-Press [b] to recapture background (if there's false blobs) \n\-Press [r] to go back to previous point(s) \n");
-		calibrationText.drawString(reportStr, 33, 60);
+		calibrationText.drawString(reportStr, ofGetWidth()/2 - calibrationText.stringWidth(reportStr)/2, ofGetHeight()/2 - calibrationText.stringHeight(reportStr)/2);
 	}else
 	{
 		sprintf(reportStr,  
-		"CALIBRATION \n\n\-Press [x] to start calibrating \n \-Press [c] to return main screen \n \-Press [b] to recapture background \n\n\CHANGING GRID SIZE (number of points): \n\n\-Current Grid Size is %i x %i \n\-Press [+]/[-] to add/remove points on X axis \n\-Press [shift][+]/[-] to add/remove points on Y axis \n\n\ALINGING BOUNDING BOX TO PROJECTION SCREEN: \n\n\-Use arrow keys to move bounding box\n\-Press and hold [w],[a],[s],[d] (top, left, bottom, right) to adjust each side\n", calibrate.GRID_X + 1, calibrate.GRID_Y + 1);
-		calibrationText.drawString(reportStr, 33, 60);
+		"CALIBRATION \n\n\-Press [x] to start calibrating \n-Press [c] to return main screen \n-Press [b] to recapture background \n\n\CHANGING GRID SIZE (number of points): \n\n\-Current Grid Size is %i x %i \n\-Press [+]/[-] to add/remove points on X axis \n\-Press [shift][+]/[-] to add/remove points on Y axis \n\n\ALINGING BOUNDING BOX TO PROJECTION SCREEN: \n\n\-Use arrow keys to move bounding box\n\-Press and hold [w],[a],[s],[d] (top, left, bottom, right) and arrow keys to adjust each side\n", calibrate.GRID_X + 1, calibrate.GRID_Y + 1);
+		calibrationText.drawString(reportStr, ofGetWidth()/2 - calibrationText.stringWidth(reportStr)/2, ofGetHeight()/2 - calibrationText.stringHeight(reportStr)/2);
 	}
 }
 
@@ -1139,7 +1132,7 @@ void testApp::blobOn( ofxCvBlob b)
 {
 	//printf("Blob DOWN %i \n", b.id); 
 
-	if(bCalibration)//If calibrating change target color when a finger is down
+	if(bCalibration && contourFinder.nBlobs == 1)//If calibrating change target color when a finger is down
 	downColor = 0x2FB5FF; 
 		
 	if(bTUIOMode)//If sending TUIO, add the blob to the map list
@@ -1162,11 +1155,10 @@ void testApp::blobOff( ofxCvBlob b)
 {
 	//printf("Blob UP %i \n", b.id);
 
-	if(bCalibration)
-	downColor = 0xFF0000;
-	
-	if(calibrate.bCalibrating)//If Calibrating, register the calibration point on blobOff
-	{			
+	if(calibrate.bCalibrating && contourFinder.nBlobs == 0)//If Calibrating, register the calibration point on blobOff
+	{	
+		downColor = 0xFF0000;
+
 		calibrate.cameraPoints[calibrate.calibrationStep] = vector2df(b.centroid.x, b.centroid.y);
 		calibrate.nextCalibrationStep();
 		

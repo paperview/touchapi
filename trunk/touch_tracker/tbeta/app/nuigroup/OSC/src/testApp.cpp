@@ -26,8 +26,9 @@ void testApp::setup()
 	bD			= false;
 
 	bDrawVideo = true;
-
 	bFullscreen = false;
+
+	ofSetBackgroundAuto(false);
 
 	//Load Settings from config.xml file 
 	loadXMLSettings();
@@ -293,9 +294,7 @@ void testApp::applyImageFilters(){
  *****************************************************************************/
 void testApp::update()
 {	
-	ofBackground(110, 110, 110);
-
-    bNewFrame = false;
+	bNewFrame = false;
 		
 	if(activeInput){
 
@@ -311,13 +310,15 @@ void testApp::update()
 		
 		if (bNewFrame)
 		{
+			ofBackground(110, 110, 110);
+
 			//Calculate FPS of Camera
 			frames++;
 			float time = ofGetElapsedTimeMillis();
 			if(time > (lastFPSlog + 1000)){		
-				fps = frames;
-				frames = 0;
-				lastFPSlog = time;			
+			fps = frames;
+			frames = 0;
+			lastFPSlog = time;			
 			}//End calculation
 
 			//Find contours/blobs
@@ -368,33 +369,36 @@ void testApp::update()
  *****************************************************************************/
 void testApp::draw(){
 
-	//Display applicaion and camera FPS in title 
-	string str = "Application: ";
-	str+= ofToString(ofGetFrameRate(), 2)+"fps \n";	
-	string str2 = "Camera:   ";
-	str2+= ofToString(fps, 1)+"fps";
+	if (bNewFrame){
 
-	ofSetColor(0xFFFFFF);
-	sidebarTXT.drawString(str + str2, 15, 35);	
-	
-	//Draw PINK CIRCLE 'ON' LIGHT
-	ofSetColor(255, 0, 255);
-	ofFill();		
-	ofCircle(20, 10, 5);
-	ofNoFill();
+		//Display applicaion and camera FPS in title 
+		string str = "Application: ";
+		str+= ofToString(ofGetFrameRate(), 2)+"fps \n";	
+		string str2 = "Camera:   ";
+		str2+= ofToString(fps, 1)+"fps";
 
-	if(bTUIOMode)
-	{	//Draw Port and IP to screen
-		ofSetColor(0xffffff);
-		char buf[256];
-		sprintf(buf, "Sending TUIO messages to:\nHost: %s\nPort: %i", myTUIO.localHost, myTUIO.TUIOPort);
-		sidebarTXT.drawString(buf, 740, 450);
-
-		//Draw GREEN CIRCLE 'ON' LIGHT
-		ofSetColor(0x00FF00);
+		ofSetColor(0xFFFFFF);
+		sidebarTXT.drawString(str + str2, 15, 35);	
+		
+		//Draw PINK CIRCLE 'ON' LIGHT
+		ofSetColor(255, 0, 255);
 		ofFill();		
-		ofCircle(35, 10, 5);
+		ofCircle(20, 10, 5);
 		ofNoFill();
+
+		if(bTUIOMode)
+		{	//Draw Port and IP to screen
+			ofSetColor(0xffffff);
+			char buf[256];
+			sprintf(buf, "Sending TUIO messages to:\nHost: %s\nPort: %i", myTUIO.localHost, myTUIO.TUIOPort);
+			sidebarTXT.drawString(buf, 740, 450);
+
+			//Draw GREEN CIRCLE 'ON' LIGHT
+			ofSetColor(0x00FF00);
+			ofFill();		
+			ofCircle(35, 10, 5);
+			ofNoFill();
+		}
 	}
 }
 
