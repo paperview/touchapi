@@ -26,10 +26,13 @@ void testApp::setup()
 	lastFPSlog	= 0;
 	//Calibration Booleans
 	bCalibration= false;
+	bShowTargets = true;
 	bW			= false;
 	bA			= false;
 	bS			= false;
 	bD			= false;
+
+	downColor = 0xFF0000;
 
 	bDrawVideo = true;
 	bFullscreen = false;
@@ -360,38 +363,24 @@ void testApp::update()
 			//Calculate FPS of Camera
 			frames++;
 			float time = ofGetElapsedTimeMillis();
-
-			float diffTime = (time - lastFPSlog)/1000;
-			
-			if(diffTime > 2){		
-				fps = floor((frames / diffTime) + 0.5f);
-				frames = 0;
-				lastFPSlog = time;			
-			}//End calculation
-
-		
-/*			if(time > (lastFPSlog + 1000)){		
+			if(time > (lastFPSlog + 1000)){		
 				fps = frames;
 				frames = 0;
 				lastFPSlog = time;			
 			}//End calculation
-*/
 
 		
 			if(bGPUMode){
 				grabFrameToGPU(gpuSourceTex);
 				applyGPUImageFilters();
-				contourFinder.findContours(gpuReadBackImageGS, 1, (camWidth*camHeight)/25, 10, false);
+				contourFinder.findContours(gpuReadBackImageGS, 1, (camWidth*camHeight)/25, 20, false);
 			}
 			else{
 				grabFrame();
 				applyImageFilters();
-				contourFinder.findContours(processedImg, 1, (camWidth*camHeight)/25, 10, false);
+				contourFinder.findContours(processedImg, 1, (camWidth*camHeight)/25, 20, false);
 			}
 			
-			//Find contours/blobs
-			
-
 			//Track found contours/blobs
 			tracker.track(&contourFinder);
 
@@ -496,15 +485,30 @@ void testApp::draw(){
 			//Draw main interface
 			bShowInterface = true;
 
-			//Display applicaion and camera FPS in title 
-			string str = "Application: ";
-			str+= ofToString(ofGetFrameRate(), 2)+"fps \n";	
-			string str2 = "Camera:   ";
-			str2+= ofToString(fps, 1)+"fps";
+			//Display Application information in bottom right
+			string str = "Tracker FPS:     ";
+			str+= ofToString(ofGetFrameRate(), 0)+"\n\n";	
 
-			ofSetColor(0xFFFFFF);
-			sidebarTXT.drawString(str + str2, 740, 410);	
-			
+			if(bcamera)
+			{
+				string str2 = "Camera Res:     ";
+				str2+= ofToString(vidGrabber.width, 0) + " x " + ofToString(vidGrabber.height, 0)  + "\n";
+				string str4 = "Camera FPS:     ";
+				str4+= ofToString(fps, 0)+"\n";
+				ofSetColor(0xFFFFFF);
+				sidebarTXT.drawString(str + str2 + str4, 740, 410);
+			}
+			else
+			{
+				string str2 = "Video Res:       ";
+				str2+= ofToString(vidPlayer.width, 0) + " x " + ofToString(vidPlayer.height, 0)  + "\n";
+				string str4 = "Video FPS:       ";
+				str4+= ofToString(fps, 0)+"\n";
+				ofSetColor(0xFFFFFF);
+				sidebarTXT.drawString(str + str2 + str4, 740, 410);
+			}
+
+
 			//Draw PINK CIRCLE 'ON' LIGHT
 			ofSetColor(255, 0, 255);
 			ofFill();		
@@ -516,7 +520,7 @@ void testApp::draw(){
 				ofSetColor(0xffffff);
 				char buf[256];
 				sprintf(buf, "Sending TUIO messages to:\nHost: %s\nPort: %i", myTUIO.localHost, myTUIO.TUIOPort);
-				sidebarTXT.drawString(buf, 740, 450);
+				sidebarTXT.drawString(buf, 740, 480);
 
 				//Draw GREEN CIRCLE 'ON' LIGHT
 				ofSetColor(0x00FF00);
@@ -685,7 +689,6 @@ void testApp::doCalibration(){
 
 	//ofSetFullscreen(bFullscreen);
 	
-
 	//Change the background color when a finger presses down/up		
 	ofSetColor(0x000000);
 	ofFill();	
@@ -693,9 +696,8 @@ void testApp::doCalibration(){
 
 	//Get the screen points so we can make a grid 
 	vector2df *screenpts = calibrate.getScreenPoints();
-
+	
 	int i;
-
 	//For each grid point
 	for(i=0; i<calibrate.GRID_POINTS; i++)
 	{
@@ -762,17 +764,20 @@ void testApp::doCalibration(){
 			ofDisableAlphaBlending();
 
 			//Draw Targets
-			ofSetColor(0xFFFFFF);
-			glLineWidth(3);
-			glPushMatrix();
-			glLoadIdentity();
-			glTranslatef(drawBlob2.centroid.x * ofGetWidth(), ((drawBlob2.centroid.y * ofGetHeight()) * -1) + ofGetHeight(), 0);		
-			ofEllipse(0, 0, drawBlob2.boundingRect.width, drawBlob2.boundingRect.height);
-//			glRotatef(-45, 0, 0, 1);
-			ofLine(0, -drawBlob2.boundingRect.height, 0, drawBlob2.boundingRect.height); 
-			ofLine(-drawBlob2.boundingRect.width, 0, drawBlob2.boundingRect.width, 0);				   
-			glPopMatrix();
 
+			if(bShowTargets)
+			{
+				ofSetColor(0xFFFFFF);
+				glLineWidth(3);
+				glPushMatrix();
+				glLoadIdentity();
+				glTranslatef(drawBlob2.centroid.x * ofGetWidth(), ((drawBlob2.centroid.y * ofGetHeight()) * -1) + ofGetHeight(), 0);		
+				ofEllipse(0, 0, drawBlob2.boundingRect.width, drawBlob2.boundingRect.height);
+	//			glRotatef(-45, 0, 0, 1);
+				ofLine(0, -drawBlob2.boundingRect.height, 0, drawBlob2.boundingRect.height); 
+				ofLine(-drawBlob2.boundingRect.width, 0, drawBlob2.boundingRect.width, 0);				   
+				glPopMatrix();
+			}
 			//Displat Text of blob information
 			ofSetColor(0xFFFF00);
 			glLineWidth(1);
@@ -799,7 +804,7 @@ void testApp::doCalibration(){
 	}else
 	{
 		sprintf(reportStr,  
-		"CALIBRATION \n\n\-Press [x] to start calibrating \n-Press [c] to return main screen \n-Press [b] to recapture background \n\n\CHANGING GRID SIZE (number of points): \n\n\-Current Grid Size is %i x %i \n\-Press [+]/[-] to add/remove points on X axis \n\-Press [shift][+]/[-] to add/remove points on Y axis \n\n\ALINGING BOUNDING BOX TO PROJECTION SCREEN: \n\n\-Use arrow keys to move bounding box\n\-Press and hold [w],[a],[s],[d] (top, left, bottom, right) and arrow keys to adjust each side\n", calibrate.GRID_X + 1, calibrate.GRID_Y + 1);
+		"CALIBRATION \n\n\-Press [c] to start calibrating \n-Press [x] to return main screen \n-Press [b] to recapture background \n-Press [t] to toggle blob targets \n\n\CHANGING GRID SIZE (number of points): \n\n\-Current Grid Size is %i x %i \n\-Press [+]/[-] to add/remove points on X axis \n\-Press [shift][+]/[-] to add/remove points on Y axis \n\n\ALINGING BOUNDING BOX TO PROJECTION SCREEN: \n\n\-Use arrow keys to move bounding box\n\-Press and hold [w],[a],[s],[d] (top, left, bottom, right) and arrow keys to adjust each side\n", calibrate.GRID_X + 1, calibrate.GRID_Y + 1);
 		calibrationText.drawString(reportStr, ofGetWidth()/2 - calibrationText.stringWidth(reportStr)/2, ofGetHeight()/2 - calibrationText.stringHeight(reportStr)/2);
 	}
 }
@@ -811,71 +816,14 @@ void testApp::keyPressed(int key)
 { 
 	switch(key)
 	{	
-		case '1':
-			if(bToggleHelp)
-			{	
-
-				//bToggleHelp = false;	
-				//ofSetWindowShape((2.0/3.0)*(ofGetWidth()-80)+60,ofGetHeight());
-			}
-			else
-			{	
-				//bToggleHelp = true;
-				//ofSetWindowShape(max((3.0/2.0)*(ofGetWidth()-60)+80, minWidth), max(ofGetHeight(), minHeight));
-			}
-			break;
-		case '3':
-			activeInput = false;	
-
-			bcamera = false;
-			
-			//vidPlayer.loadMovie("test_videos/FrontDI.m4v");
-			vidPlayer.loadMovie("test_videos/HCI_FTIR.mov");
-			//vidPlayer.loadMovie("test_videos/raw.mp4");
-			vidPlayer.play();	
-			printf("Video Mode\n");
-			camHeight = vidPlayer.height;
-			camWidth = vidPlayer.width;
-
-			activeInput = true;
-			bLearnBakground = true;
-
-			break;
-
-		case '4':
-			activeInput = false;
-
-			bcamera = true;
-
-			vidGrabber.close();
-			vidGrabber.setDeviceID(deviceID);
-			vidGrabber.setVerbose(false);		
-
-			camWidth = vidGrabber.width;
-			camHeight = vidGrabber.height;
-
-			vidGrabber.initGrabber(camWidth,camHeight);
-			
-			activeInput = true;
-			bLearnBakground = true;
-			break;
-		case '2':
-			if(bDrawVideo)
-				bDrawVideo = false;	
-			else	
-				bDrawVideo = true;
-			break;
 		case 'b':
 			bLearnBakground = true;
 			break;		
 		case 'o':
-			if(bDrawOutlines)
-				bDrawOutlines = false;	
-			else
-				bDrawOutlines = true;
+			bDrawOutlines ? bDrawOutlines = false : bDrawOutlines = true;
 			break;
 		case 't':
-			if(bTUIOMode)
+			if(!bCalibration && bTUIOMode)
 			{
 				bTUIOMode = false;	
 				myTUIO.blobs.clear();
@@ -886,6 +834,8 @@ void testApp::keyPressed(int key)
 				bTUIOMode = true;	
 				//ofSetWindowShape(950,700);
 			}
+			bCalibration && bShowTargets ? bShowTargets = false : bShowTargets = true;
+
 			break;	
 		case ' ':
 			if(bFastMode)
@@ -911,43 +861,32 @@ void testApp::keyPressed(int key)
 				vidGrabber.videoSettings();
 			break;	
 		case 'l':
-			if(bShowLabels)
-				bShowLabels = false;
-			else	
-				bShowLabels = true;
+			bShowLabels ? bShowLabels = false : bShowLabels = true;
 			break;
 		case 'i':
-			if(bShowInterface)
-				bShowInterface = false;
-			else	
-				bShowInterface = true;
+			bShowInterface ? bShowInterface = false : bShowInterface = true;
 			break;
 		case 'p':
-			if(bShowPressure)
-				bShowPressure = false;
-			else	
-				bShowPressure = true;
+			bShowPressure ? bShowPressure = false : bShowPressure = true;
 			break;
 		/***********************
 		* Keys for Calibration
 		***********************/
 		case 'c': //Enter/Exit Calibration
-			if(bCalibration){
-				bCalibration = false;
-				bFullscreen = false;
-			}else{	
+			if(!bCalibration){
 				bCalibration = true;
 				bFullscreen = true;
 			}
-			break;
-		case 'x': //Begin Calibrating
-			if(bCalibration && calibrate.bCalibrating)
+			else if(bCalibration && calibrate.bCalibrating)
 				calibrate.bCalibrating = false;
 			else if(bCalibration)
 				calibrate.beginCalibration();
-			else
-			    bCalibration = false;
 			break;
+		case 'x': //Begin Calibrating
+			if(bCalibration){
+				bCalibration = false;
+				bFullscreen = false;
+			}
 		case 'r': //Revert Calibration
 			if(calibrate.bCalibrating)calibrate.revertCalibrationStep();
 		case 'w': //Up
@@ -955,11 +894,7 @@ void testApp::keyPressed(int key)
 			break;	
 		case 's': //Down
 			bS = true;
-			if(!bCalibration)
-			{
-				saveConfiguration();
-				//message ="Settings Saved!";
-			}
+			if(!bCalibration) saveConfiguration();
 			break;
 		case 'a': //Left
 			bA = true;
@@ -1137,16 +1072,20 @@ void testApp::blobOn( ofxCvBlob b)
 		
 	if(bTUIOMode)//If sending TUIO, add the blob to the map list
 	{
-		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);
+		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);		
+		//if blob is not otuside calibration mesh
+		if(b.centroid.x != -1)
 		myTUIO.blobs[b.id] = b;
 	}
 }
 
 void testApp::blobMoved( ofxCvBlob b) 
 {	
-	if(bTUIOMode)//If sending TUIO, update the move information for the blob
+	if(bTUIOMode)//If sending TUIO, add the blob to the map list
 	{
-		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);
+		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);		
+		//if blob is not otuside calibration mesh
+		if(b.centroid.x != -1)
 		myTUIO.blobs[b.id] = b;
 	}
 }  
@@ -1154,18 +1093,18 @@ void testApp::blobMoved( ofxCvBlob b)
 void testApp::blobOff( ofxCvBlob b) 
 {
 	//printf("Blob UP %i \n", b.id);
+	if(bCalibration)
+	downColor = 0xFF0000;
 
 	if(calibrate.bCalibrating && contourFinder.nBlobs == 0)//If Calibrating, register the calibration point on blobOff
 	{	
-		downColor = 0xFF0000;
-
 		calibrate.cameraPoints[calibrate.calibrationStep] = vector2df(b.centroid.x, b.centroid.y);
 		calibrate.nextCalibrationStep();
 		
 		printf("%d (%f, %f)\n", calibrate.calibrationStep, b.centroid.x, b.centroid.y);
 	}
 
-	if(bTUIOMode)//If sending TUIO, Delete Blobs from map list
+	if(bTUIOMode)//If sending TUIO and blob is not outside calibration mesh, Delete Blobs from map list
 	{
 		std::map<int, ofxCvBlob>::iterator iter;
 		for(iter = myTUIO.blobs.begin(); iter != myTUIO.blobs.end(); iter++)

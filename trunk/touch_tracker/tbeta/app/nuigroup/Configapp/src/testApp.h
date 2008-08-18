@@ -97,6 +97,8 @@ public:
 
 		ofImage fuzzy;
 
+		bool	bShowTargets;
+
 		std::map<int, int> blobcolor;
 
 		/****************************************************************
