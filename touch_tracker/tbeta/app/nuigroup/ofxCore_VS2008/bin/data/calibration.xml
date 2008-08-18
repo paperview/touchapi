@@ -1,45 +1,29 @@
 <SCREEN>
     <GRIDMESH>
-        <GRIDX>3</GRIDX>
+        <GRIDX>1</GRIDX>
         <GRIDY>1</GRIDY>
     </GRIDMESH>
     <BOUNDINGBOX>
-        <ulx>0.001000</ulx>
+        <ulx>0.000000</ulx>
         <uly>0.000000</uly>
-        <lrx>0.999000</lrx>
+        <lrx>1.000000</lrx>
         <lry>1.000000</lry>
     </BOUNDINGBOX>
     <POINT>
-        <X>0.000000</X>
-        <Y>0.000000</Y>
+        <X>1.000000</X>
+        <Y>21.000000</Y>
     </POINT>
     <POINT>
-        <X>106.666664</X>
-        <Y>0.000000</Y>
+        <X>314.000000</X>
+        <Y>14.000000</Y>
     </POINT>
     <POINT>
-        <X>213.333328</X>
-        <Y>0.000000</Y>
+        <X>4.000000</X>
+        <Y>232.000000</Y>
     </POINT>
     <POINT>
-        <X>320.000000</X>
-        <Y>0.000000</Y>
-    </POINT>
-    <POINT>
-        <X>0.000000</X>
-        <Y>240.000000</Y>
-    </POINT>
-    <POINT>
-        <X>106.666664</X>
-        <Y>240.000000</Y>
-    </POINT>
-    <POINT>
-        <X>213.333328</X>
-        <Y>240.000000</Y>
-    </POINT>
-    <POINT>
-        <X>320.000000</X>
-        <Y>240.000000</Y>
+        <X>316.000000</X>
+        <Y>227.000000</Y>
     </POINT>
 </SCREEN>
 <WARP>

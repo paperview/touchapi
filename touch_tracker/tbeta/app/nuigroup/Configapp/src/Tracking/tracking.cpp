@@ -1,11 +1,11 @@
 /*
  *  tracking.cpp
- *  tbeta
- *
+ *  
  *  Created by Ramsin Khoshabeh on 5/4/08.
- *  Copyright 2008 UCSD. All rights reserved.
+ *  Copyright 2008 risenparadigm. All rights reserved.
  *
  * Changelog:
+ * 08/15/08 -- Fixed a major bug in the track algorithm
  */
 
 #include "tracking.h"
@@ -41,14 +41,13 @@ void BlobTracker::track(ofxCvContourFinder* newBlobs)
 		 *****************************************************************/
 		int winner = trackKnn(newBlobs, &(trackedBlobs[i]), 3, 0);
 
-		if(winner==-1){ //track has died, mark it for deletion
-		
+		if(winner==-1) //track has died, mark it for deletion
+		{
 			//SEND BLOB OFF EVENT
 			doBlobOff( trackedBlobs[i] );
-
-			trackedBlobs[i].id = -1; //delete
+			//mark the blob for deletion
+			trackedBlobs[i].id = -1;
 		}
-		
 		else //still alive, have to update
 		{
 			//if winning new blob was labeled winner by another track\
@@ -56,7 +55,7 @@ void BlobTracker::track(ofxCvContourFinder* newBlobs)
 			if(newBlobs->blobs[winner].id!=-1)
 			{
 				//find the currently assigned blob
-				int j;
+				int j; //j will be the index of it
 				for(j=0; j<trackedBlobs.size(); j++)
 				{
 					if(trackedBlobs[j].id==newBlobs->blobs[winner].id)
@@ -79,59 +78,84 @@ void BlobTracker::track(ofxCvContourFinder* newBlobs)
 					double distOld = (x-xOld)*(x-xOld)+(y-yOld)*(y-yOld);
 					double distNew = (x-xNew)*(x-xNew)+(y-yNew)*(y-yNew);
 
-					//if this track is closer, update the ID of the blob\
-					//and update the track,\
+					//if this track is closer, update the ID of the blob
 					//otherwise delete this track.. it's dead
 					if(distNew<distOld) //update
 					{
 						newBlobs->blobs[winner].id = trackedBlobs[i].id;
-						trackedBlobs[i] = newBlobs->blobs[winner];
 						
-						//SEND BLOB MOVED EVENT
-						doBlobMoved( trackedBlobs[i] ); 
+//TODO--------------------------------------------------------------------------
+						//now the old winning blob has lost the win.
+						//I should also probably go through all the newBlobs
+						//at the end of this loop and if there are ones without
+						//any winning matches, check if they are close to this
+						//one. Right now I'm not doing that to prevent a
+						//recursive mess. It'll just be a new track.
+						
+						//SEND BLOB OFF EVENT
+						doBlobOff( trackedBlobs[j] );
+						//mark the blob for deletion
+						trackedBlobs[j].id = -1;
+//------------------------------------------------------------------------------						
 					}
 					else //delete
-
+					{
 						//SEND BLOB OFF EVENT
 						doBlobOff( trackedBlobs[i] );
-
+						//mark the blob for deletion
 						trackedBlobs[i].id = -1;
+					}
 				}
 			}
 			else //no conflicts, so simply update
 			{
 				newBlobs->blobs[winner].id = trackedBlobs[i].id;
-				trackedBlobs[i] = newBlobs->blobs[winner];		
-
-				//SEND BLOB MOVED EVENT
-				doBlobMoved( trackedBlobs[i] );  
 			}
 		}
 	}
 
+	//--Update All Current Tracks
 	//remove every track labeled as dead (ID='-1')
+	//find every track that's alive and copy it's data from newBlobs
 	for(int i=0; i<trackedBlobs.size(); i++)
 	{
-		if(trackedBlobs[i].id==-1)
+		if(trackedBlobs[i].id==-1) //dead
 		{
+			//erase track
 			trackedBlobs.erase(trackedBlobs.begin()+i,
 							   trackedBlobs.begin()+i+1);
 
-			i--; //decrement one since we removed an element
+			i--; //decrement one since we removed an element	
 		}
-	}
+		else //living, so update it's data
+		{
+			for(int j=0; j<newBlobs->nBlobs; j++)
+			{
+				if(trackedBlobs[i].id==newBlobs->blobs[j].id)
+				{
+					//update track
+					trackedBlobs[i]=newBlobs->blobs[j];
 
+					//SEND BLOB MOVED EVENT
+					doBlobMoved( trackedBlobs[i] ); 
+				}
+			}
+		}		
+	}
+    
+	//--Add New Living Tracks
 	//now every new blob should be either labeled with a tracked ID or\
 	//have ID of -1... if the ID is -1... we need to make a new track
 	for(int i=0; i<newBlobs->nBlobs; i++)
 	{
 		if(newBlobs->blobs[i].id==-1)
 		{
+			//add new track
 			newBlobs->blobs[i].id=IDCounter++;
 			trackedBlobs.push_back(newBlobs->blobs[i]);
 			
 			//SEND BLOB ON EVENT
-			doBlobOn( trackedBlobs[i] ); 
+			doBlobOn( trackedBlobs[i] );
 		}
 	}
 }

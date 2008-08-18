@@ -1,11 +1,11 @@
 /*
  *  tracking.h
- *  tbeta
- *
+ *  
  *  Created by Ramsin Khoshabeh on 5/4/08.
- *  Copyright 2008 UCSD. All rights reserved.
+ *  Copyright 2008 risenparadigm. All rights reserved.
  *
  * Changelog:
+ * 08/15/08 -- Fixed a major bug in the track algorithm
  */
 
 #ifndef __TRACKING
