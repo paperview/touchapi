@@ -740,6 +740,12 @@ void testApp::doCalibration(){
 			ofxCvBlob drawBlob2;
 			drawBlob2 = contourFinder.blobs[i];
 
+			calibrate.transformDimension(drawBlob2.boundingRect.width, drawBlob2.boundingRect.height, 
+				drawBlob2.boundingRect.x, drawBlob2.boundingRect.y); 
+
+			drawBlob2.boundingRect.width *= calibrate.screenBB.getWidth() * ofGetWidth();
+			drawBlob2.boundingRect.height *= calibrate.screenBB.getHeight() * ofGetHeight() ;
+
 			calibrate.cameraToScreenSpace(drawBlob2.centroid.x, drawBlob2.centroid.y);
 
 			//Get a random color for each blob
@@ -759,8 +765,8 @@ void testApp::doCalibration(){
 			ofImage tempFuzzy;
 			tempFuzzy.clone(fuzzy);
 			ofSetColor(blobcolor[drawBlob2.id]);
-			tempFuzzy.draw(drawBlob2.centroid.x * ofGetWidth() - drawBlob2.boundingRect.width - 20, drawBlob2.centroid.y * ofGetHeight() - drawBlob2.boundingRect.height - 20, 
-						   drawBlob2.boundingRect.width * 2 + 40, drawBlob2.boundingRect.height * 2 + 40);
+			tempFuzzy.draw(drawBlob2.centroid.x * ofGetWidth() - drawBlob2.boundingRect.width/2, drawBlob2.centroid.y * ofGetHeight() - drawBlob2.boundingRect.height/2, 
+						   drawBlob2.boundingRect.width, drawBlob2.boundingRect.height);
 			ofDisableAlphaBlending();
 
 			//Draw Targets
@@ -772,10 +778,10 @@ void testApp::doCalibration(){
 				glPushMatrix();
 				glLoadIdentity();
 				glTranslatef(drawBlob2.centroid.x * ofGetWidth(), ((drawBlob2.centroid.y * ofGetHeight()) * -1) + ofGetHeight(), 0);		
-				ofEllipse(0, 0, drawBlob2.boundingRect.width, drawBlob2.boundingRect.height);
+				ofEllipse(0, 0, drawBlob2.boundingRect.width/2, drawBlob2.boundingRect.height/2);
 	//			glRotatef(-45, 0, 0, 1);
-				ofLine(0, -drawBlob2.boundingRect.height, 0, drawBlob2.boundingRect.height); 
-				ofLine(-drawBlob2.boundingRect.width, 0, drawBlob2.boundingRect.width, 0);				   
+				ofLine(0, -drawBlob2.boundingRect.height/2, 0, drawBlob2.boundingRect.height/2); 
+				ofLine(-drawBlob2.boundingRect.width/2, 0, drawBlob2.boundingRect.width/2, 0);				   
 				glPopMatrix();
 			}
 			//Displat Text of blob information
