@@ -199,8 +199,6 @@ void testApp::grabFrameToGPU(GLuint target){
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glBindTexture(GL_TEXTURE_2D,0);
-
-
 	}
 	else{
 		glEnable(GL_TEXTURE_2D);
@@ -487,7 +485,7 @@ void testApp::draw(){
 
 			//Display Application information in bottom right
 			string str = "Tracker FPS:     ";
-			str+= ofToString(ofGetFrameRate(), 0)+"\n\n";	
+			str+= ofToString(ofGetFrameRate(), 0)+"\n\n";
 
 			if(bcamera)
 			{
@@ -765,8 +763,8 @@ void testApp::doCalibration(){
 			ofImage tempFuzzy;
 			tempFuzzy.clone(fuzzy);
 			ofSetColor(blobcolor[drawBlob2.id]);
-			tempFuzzy.draw(drawBlob2.centroid.x * ofGetWidth() - drawBlob2.boundingRect.width/2, drawBlob2.centroid.y * ofGetHeight() - drawBlob2.boundingRect.height/2, 
-						   drawBlob2.boundingRect.width, drawBlob2.boundingRect.height);
+			tempFuzzy.draw(drawBlob2.centroid.x * ofGetWidth() - drawBlob2.boundingRect.width * .75, drawBlob2.centroid.y * ofGetHeight() - drawBlob2.boundingRect.height * .75, 
+						   drawBlob2.boundingRect.width * 1.5, drawBlob2.boundingRect.height * 1.5);
 			ofDisableAlphaBlending();
 
 			//Draw Targets
@@ -1071,7 +1069,7 @@ void testApp::mouseReleased()
 *****************************************************************************/
 void testApp::blobOn( ofxCvBlob b)
 {
-	//printf("Blob DOWN %i \n", b.id); 
+	printf("Blob DOWN %i \n", b.id); 
 
 	if(bCalibration && contourFinder.nBlobs == 1)//If calibrating change target color when a finger is down
 	downColor = 0x2FB5FF; 
@@ -1098,7 +1096,8 @@ void testApp::blobMoved( ofxCvBlob b)
 
 void testApp::blobOff( ofxCvBlob b) 
 {
-	//printf("Blob UP %i \n", b.id);
+	printf("Blob UP %i \n", b.id);
+	
 	if(bCalibration)
 	downColor = 0xFF0000;
 
