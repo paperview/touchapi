@@ -300,8 +300,8 @@ void calibrationB::cameraToScreenSpace(float &x, float &y)
 		return;
 	}
 
-	x = 0;
-	y = 0;
+	x = -1;
+	y = -1;
 	// FIXME: what to do in the case that it's outside the mesh?
 }
 
@@ -321,11 +321,11 @@ void calibrationB::nextCalibrationStep()
 
 		if(calibrationStep >= GRID_POINTS)
 		{
-
 			printf("Calibration complete\n");
 
 			bCalibrating = false;
 			calibrationStep = 0;
+			saveCalibration();
 		}
 	}
 }
