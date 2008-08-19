@@ -356,7 +356,7 @@ void testApp::update()
 		
 		if (bNewFrame)
 		{
-//			ofBackground(110, 110, 110);
+			ofBackground(110, 110, 110);
 
 			//Calculate FPS of Camera
 			frames++;
@@ -1069,7 +1069,7 @@ void testApp::mouseReleased()
 *****************************************************************************/
 void testApp::blobOn( ofxCvBlob b)
 {
-	printf("Blob DOWN %i \n", b.id); 
+	//printf("Blob DOWN %i \n", b.id); 
 
 	if(bCalibration && contourFinder.nBlobs == 1)//If calibrating change target color when a finger is down
 	downColor = 0x2FB5FF; 
@@ -1096,7 +1096,7 @@ void testApp::blobMoved( ofxCvBlob b)
 
 void testApp::blobOff( ofxCvBlob b) 
 {
-	printf("Blob UP %i \n", b.id);
+	//printf("Blob UP %i \n", b.id);
 	
 	if(bCalibration)
 	downColor = 0xFF0000;
