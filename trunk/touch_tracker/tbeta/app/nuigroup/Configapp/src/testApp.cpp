@@ -815,6 +815,7 @@ void testApp::doCalibration(){
  *****************************************************************************/
 void testApp::keyPressed(int key)
 { 
+
 	switch(key)
 	{	
 		case 'b':
@@ -896,11 +897,15 @@ void testApp::keyPressed(int key)
 				bCalibration = false;
 				bFullscreen = false;
 			}
+			break;
 		case 'r': //Revert Calibration
 			if(calibrate.bCalibrating)calibrate.revertCalibrationStep();
-		case 'w': //Up
+			break;
+		case 'w': //Up			
+			if(bCalibration){
 			bW = true;
-			if(!bCalibration){
+			}
+			else{
 				bWarpImg ? bWarpImg = false : bWarpImg = true;
 				gui->update(appPtr->calibrationPanel_warp, kofxGui_Set_Bool, &appPtr->bWarpImg, sizeof(bool));
 			}
