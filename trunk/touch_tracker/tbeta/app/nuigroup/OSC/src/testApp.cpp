@@ -345,7 +345,7 @@ void testApp::update()
 			
 			if(contourFinder.nBlobs > 0){
 
-				fLearnRate = 0.0008f;
+				fLearnRate = 0.0003f;
 			}//End Background Learning rate
 
 
@@ -559,13 +559,12 @@ void testApp::mousePressed(int x, int y, int button)
 void testApp::blobOn( ofxCvBlob b)
 {
 	//printf("Blob DOWN %i \n", b.id); 
-
-	if(bCalibration)//If calibrating change target color when a finger is down
-	downColor = 0x2FB5FF; 
-		
+	
 	if(bTUIOMode)//If sending TUIO, add the blob to the map list
 	{
 		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);
+
+		if(b.centroid.x != 0 && b.centroid.y != 0)
 		myTUIO.blobs[b.id] = b;
 	}
 }
@@ -575,6 +574,8 @@ void testApp::blobMoved( ofxCvBlob b)
 	if(bTUIOMode)//If sending TUIO, update the move information for the blob
 	{
 		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);
+
+		if(b.centroid.x != 0 && b.centroid.y != 0)
 		myTUIO.blobs[b.id] = b;
 	}
 }  
@@ -582,17 +583,6 @@ void testApp::blobMoved( ofxCvBlob b)
 void testApp::blobOff( ofxCvBlob b) 
 {
 	//printf("Blob UP %i \n", b.id);
-
-	if(bCalibration)
-	downColor = 0xFF0000;
-	
-	if(calibrate.bCalibrating)//If Calibrating, register the calibration point on blobOff
-	{			
-		calibrate.cameraPoints[calibrate.calibrationStep] = vector2df(b.centroid.x, b.centroid.y);
-		calibrate.nextCalibrationStep();
-		
-		printf("%d (%f, %f)\n", calibrate.calibrationStep, b.centroid.x, b.centroid.y);
-	}
 
 	if(bTUIOMode)//If sending TUIO, Delete Blobs from map list
 	{

@@ -1,13 +1,11 @@
 #ifndef _CALIBRATION
 #define _CALIBRATION
 
-//#include "ofMain.h"
 #define OF_ADDON_USING_OFXXMLSETTINGS  // LOAD CONFIG.XML
 #include "ofAddons.h"
 
 //Used other calibration
 #include "rect2d.h"		
-//#include "mesh2d.h"
 #include "vector2d.h"
 
 
@@ -38,7 +36,7 @@ class calibrationB
 		rect2df getScreenBBox() { return screenBB; };
 
 		void cameraToScreenSpace(float &x, float &y);
-		void transformDimension(float &width, float &height, float centerX, float centerY);
+		void transformDimension(float &width, float &height);
 
 		void initScreenPoints();
 		void initCameraPoints(int camWidth, int camHeight);
@@ -57,6 +55,8 @@ class calibrationB
 		//! return to the last step
 		virtual void revertCalibrationStep();
 
+		void calculateBox();
+
 		bool bCalibrating;		
 		int calibrationStep;
 
@@ -65,9 +65,14 @@ class calibrationB
 		rect2df screenBB;
 
 		int GRID_POINTS;
-
 		int GRID_X;
 		int GRID_Y;
+		
+		float maxBoxX;
+		float minBoxX;
+		float maxBoxY;
+		float minBoxY;
+
 
 	private:
 		//---------------------------------------Calibration
@@ -79,9 +84,6 @@ class calibrationB
 
 		int	_camWidth;
 		int _camHeight;
-
-		
-		//mesh2df screenMesh;
 
 		bool bscreenPoints;
 		bool bcameraPoints;
