@@ -19,9 +19,9 @@
         <SNAPSHOT>0</SNAPSHOT>
         <OUTLINES>1</OUTLINES>
         <LEARNBG>0</LEARNBG>
-        <TUIO>1</TUIO>
+        <TUIO>0</TUIO>
         <VMIRROR>0</VMIRROR>
-        <HMIRROR>1</HMIRROR>
+        <HMIRROR>0</HMIRROR>
         <WARP>0</WARP>
         <HIGHPASS>1</HIGHPASS>
         <AMPLIFY>1</AMPLIFY>
@@ -31,9 +31,9 @@
     </BOOLEAN>
     <INT>
         <!--//FILTERS SETTERS//-->
-        <THRESHOLD>134</THRESHOLD>
-        <HIGHPASSBLUR>49</HIGHPASSBLUR>
-        <HIGHPASSNOISE>5</HIGHPASSNOISE>
+        <THRESHOLD>29</THRESHOLD>
+        <HIGHPASSBLUR>72</HIGHPASSBLUR>
+        <HIGHPASSNOISE>6</HIGHPASSNOISE>
         <HIGHPASSAMP>10</HIGHPASSAMP>
         <SMOOTH>3</SMOOTH>
     </INT>
@@ -46,20 +46,20 @@
     </NETWORK>
     <WARP>
         <BOTTOMLEFT>
-            <X>0.000000</X>
-            <Y>0.000000</Y>
+            <X>1.000000</X>
+            <Y>238.000000</Y>
         </BOTTOMLEFT>
         <BOTTOMRIGHT>
-            <X>320.000000</X>
-            <Y>0.000000</Y>
+            <X>317.000000</X>
+            <Y>239.000000</Y>
         </BOTTOMRIGHT>
         <TOPRIGHT>
-            <X>320.000000</X>
-            <Y>240.000000</Y>
+            <X>319.000000</X>
+            <Y>4.000000</Y>
         </TOPRIGHT>
         <TOPLEFT>
-            <X>0.000000</X>
-            <Y>240.000000</Y>
+            <X>4.000000</X>
+            <Y>2.000000</Y>
         </TOPLEFT>
     </WARP>
     <!--////////////////////////////////////////
