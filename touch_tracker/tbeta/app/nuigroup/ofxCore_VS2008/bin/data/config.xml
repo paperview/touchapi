@@ -79,6 +79,6 @@
         <DEVICE>0</DEVICE>
         <WIDTH>320</WIDTH>
         <HEIGHT>240</HEIGHT>
-        <FRAMERATE>600</FRAMERATE>
+        <FRAMERATE>0</FRAMERATE>
     </CAMERA_0>
 </CONFIG>
