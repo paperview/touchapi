@@ -13,10 +13,6 @@ calibrationB::calibrationB()
 //-------------------------------------------------------------- 
 void calibrationB::loadXMLSettings(){
 
-//////////////////////////////////////////////////////////////////
-//						CALIBRATION								//
-//////////////////////////////////////////////////////////////////
-
 	// Can this load via http?
 	if( calibrationXML.loadFile("calibration.xml")){
 		//WOOT!
@@ -92,6 +88,9 @@ void calibrationB::loadXMLSettings(){
 		}
 	}
 	//End calibrationXML Calibration Settings
+
+	//Set the camera calibated box.
+	calculateBox();
 }
 
 
@@ -117,7 +116,7 @@ void calibrationB::setGrid(int x, int y)
 
 	screenPoints = new vector2df[GRID_POINTS];
 	cameraPoints = new vector2df[GRID_POINTS];
-	triangles = new int[GRID_INDICES];
+	triangles    = new int[GRID_INDICES];
 
 	initTriangles();
 
@@ -216,25 +215,64 @@ float calibrationB::getScreenScale()
 }
 
 
-void calibrationB::transformDimension(float &width, float &height, float centerX, float centerY)
+void calibrationB::transformDimension(float &width, float &height)
 {
-	// transform width/height
+	//Transform width/height
     float halfX = width * 0.5f;
     float halfY = height * 0.5f;
 
+	//Take all blobs as if they're from the center of calibrated region
+	float centerX = ((maxBoxX - minBoxX)/2) + minBoxX;
+	float centerY = ((maxBoxY - minBoxY)/2) + minBoxY;
+
+	//Calculate x/y position of upperleft and lowerright x/y positions
     float ulX = centerX - halfX;
     float ulY = centerY - halfY;
     float lrX = centerX + halfX;
     float lrY = centerY + halfY;
 
-	//printf("%f:  %f:  %f:   %f:  \n", ulX, ulY, lrX, lrY);    
-	
+	//Transform these x/y positions to screenspace
 	cameraToScreenSpace(ulX, ulY);
-    cameraToScreenSpace(lrX, lrY);
+	cameraToScreenSpace(lrX, lrY);
 
-    width = lrX - ulX;
-    height = ulY - lrY;
+	//ofCircle(ulX * ofGetScreenWidth(), ulY * ofGetScreenHeight(), 30);
+    //ofCircle(lrX * ofGetScreenWidth(), lrY * ofGetScreenHeight(), 30);
+
+	//Calculate new height/width
+	width = lrX - ulX;
+	height = ulY - lrY;
 }
+
+void calibrationB::calculateBox()
+{		
+	//reset variables
+	maxBoxX = 0;
+	minBoxX = _camWidth;
+	maxBoxY = 0;
+	minBoxY = _camHeight;
+
+	//Calculate the max/min points based on cameraPoints
+	for(int i = 0; i < GRID_POINTS; i++){
+
+		if(cameraPoints[i].X > maxBoxX){
+
+			maxBoxX = cameraPoints[i].X;
+		}
+		else if(cameraPoints[i].X < minBoxX){
+
+			minBoxX = cameraPoints[i].X;
+		}		
+		if(cameraPoints[i].Y > maxBoxY){
+
+			maxBoxY = cameraPoints[i].Y;
+		}
+		if(cameraPoints[i].Y < minBoxY){
+
+			minBoxY = cameraPoints[i].Y;
+		}
+	}
+}
+
 
 bool calibrationB::isPointInTriangle(vector2df p, vector2df a, vector2df b, vector2df c)
 {
@@ -300,8 +338,8 @@ void calibrationB::cameraToScreenSpace(float &x, float &y)
 		return;
 	}
 
-	x = -1;
-	y = -1;
+	x = 0;
+	y = 0;
 	// FIXME: what to do in the case that it's outside the mesh?
 }
 
@@ -326,6 +364,7 @@ void calibrationB::nextCalibrationStep()
 			bCalibrating = false;
 			calibrationStep = 0;
 			saveCalibration();
+			calculateBox();
 		}
 	}
 }
@@ -342,10 +381,7 @@ void calibrationB::revertCalibrationStep()
 	}
 }
 
-
-/*************************
-* Save Calibration
-*************************/
+//Save Calibration Points to file
 void calibrationB::saveCalibration()
 {
 
@@ -387,5 +423,4 @@ void calibrationB::saveCalibration()
 		calibrationXML.popTag(); //Set XML root back to highest level
 	}
 	calibrationXML.saveFile("calibration.xml");
-	//message ="Exited...";
 }

@@ -51,7 +51,6 @@ void testApp::setup()
 	ofSetFrameRate(camRate);			//This will be based on camera fps in the future		
 	ofSetVerticalSync(false);	//Set vertical sync to false for better performance
 
-
 	//Pick the Source - camera or video
 	if(bcamera){
 
@@ -69,6 +68,7 @@ void testApp::setup()
 				camWidth, camHeight, grabW, grabH);
 	}
 	else{
+		
 		activeInput = true;	
 
         //vidPlayer.loadMovie("test_videos/FrontDI.m4v");
@@ -104,8 +104,6 @@ void testApp::setup()
 	giWarped.allocate(camWidth, camHeight);     //Warped Image (used for warped calibration)
 	giWarped.setUseTexture(false);
 	/********************************************************************************************************/
-
-
 
 
 	/**********************************************************/
@@ -218,9 +216,6 @@ void testApp::grabFrame(){
 		sourceImg.setFromPixels(vidGrabber.getPixels(), camWidth, camHeight);
 	else
 		sourceImg.setFromPixels(vidPlayer.getPixels(), 	camWidth, camHeight);
-	
-	int totalPixels = camWidth*camHeight*3;
-	unsigned char * pixels = vidGrabber.getPixels();
 }
 
 
@@ -391,7 +386,7 @@ void testApp::update()
 			
 			if(contourFinder.nBlobs > 0){
 
-				fLearnRate = 0.00001f;
+				fLearnRate = 0.0003f;
 			}//End Background Learning rate
 
 
@@ -530,7 +525,7 @@ void testApp::draw(){
 		/*********************************
 		* IF DRAWING BLOB OUTLINES
 		*********************************/
-		if(bDrawOutlines && bShowInterface && !bFastMode)
+		if(bShowInterface && !bFastMode)
 		{
 			//Find the blobs
 			for(int i=0; i<contourFinder.nBlobs; i++)
@@ -539,22 +534,25 @@ void testApp::draw(){
 				ofxCvBlob drawBlob;
 				drawBlob = contourFinder.blobs[i];
 
-				//Get the contour (points) so they can be drawn
-				for( int j=0; j<contourFinder.blobs[i].nPts; j++ )
+				if(bDrawOutlines)
 				{
-					drawBlob.pts[j].x = (320.0f/camWidth)  * (drawBlob.pts[j].x);
-					drawBlob.pts[j].y = (240.0f/camHeight) * (drawBlob.pts[j].y);
+					//Get the contour (points) so they can be drawn
+					for( int j=0; j<contourFinder.blobs[i].nPts; j++ )
+					{
+						drawBlob.pts[j].x = (320.0f/camWidth)  * (drawBlob.pts[j].x);
+						drawBlob.pts[j].y = (240.0f/camHeight) * (drawBlob.pts[j].y);
+					}
+			
+					//This adjusts the blob drawing for different cameras
+					drawBlob.boundingRect.width  *= (320.0f/camWidth);
+					drawBlob.boundingRect.height *= (240.0f/camHeight);
+					drawBlob.boundingRect.x		 *= (320.0f/camWidth);;
+					drawBlob.boundingRect.y		 *= (240.0f/camHeight);
+					
+					//Draw contours (outlines) on the tracked image
+					//drawBlob.draw(385, 30);
+					drawBlob.draw(40, 30);
 				}
-		
-				//This adjusts the blob drawing for different cameras
-				drawBlob.boundingRect.width  *= (320.0f/camWidth);
-				drawBlob.boundingRect.height *= (240.0f/camHeight);
-				drawBlob.boundingRect.x		 *= (320.0f/camWidth);;
-				drawBlob.boundingRect.y		 *= (240.0f/camHeight);
-				
-				//Draw contours (outlines) on the tracked image
-				//drawBlob.draw(385, 30);
-				drawBlob.draw(40, 30);
 
 				//Show ID label;
 				if(bShowLabels)
@@ -722,6 +720,7 @@ void testApp::doCalibration(){
 		ofRect(screenpts[i].X * ofGetWidth() - 10, screenpts[i].Y * ofGetHeight() - 2, 20, 4);
 	}
 
+	//Draw Bounding Box
 	ofSetColor(0xFFFFFF);
 	ofNoFill();
 	ofRect(calibrate.screenBB.upperLeftCorner.X * ofGetWidth(), calibrate.screenBB.upperLeftCorner.Y * ofGetHeight(), 
@@ -738,12 +737,12 @@ void testApp::doCalibration(){
 			ofxCvBlob drawBlob2;
 			drawBlob2 = contourFinder.blobs[i];
 
-			calibrate.transformDimension(drawBlob2.boundingRect.width, drawBlob2.boundingRect.height, 
-				drawBlob2.boundingRect.x, drawBlob2.boundingRect.y); 
-
+			//transform height/width to calibrated space
+			calibrate.transformDimension(drawBlob2.boundingRect.width, drawBlob2.boundingRect.height); 
 			drawBlob2.boundingRect.width *= calibrate.screenBB.getWidth() * ofGetWidth();
 			drawBlob2.boundingRect.height *= calibrate.screenBB.getHeight() * ofGetHeight() ;
 
+			//transform x/y position to calibrated space
 			calibrate.cameraToScreenSpace(drawBlob2.centroid.x, drawBlob2.centroid.y);
 
 			//Get a random color for each blob
@@ -768,7 +767,6 @@ void testApp::doCalibration(){
 			ofDisableAlphaBlending();
 
 			//Draw Targets
-
 			if(bShowTargets)
 			{
 				ofSetColor(0xFFFFFF);
@@ -777,19 +775,18 @@ void testApp::doCalibration(){
 				glLoadIdentity();
 				glTranslatef(drawBlob2.centroid.x * ofGetWidth(), ((drawBlob2.centroid.y * ofGetHeight()) * -1) + ofGetHeight(), 0);		
 				ofEllipse(0, 0, drawBlob2.boundingRect.width/2, drawBlob2.boundingRect.height/2);
-	//			glRotatef(-45, 0, 0, 1);
 				ofLine(0, -drawBlob2.boundingRect.height/2, 0, drawBlob2.boundingRect.height/2); 
 				ofLine(-drawBlob2.boundingRect.width/2, 0, drawBlob2.boundingRect.width/2, 0);				   
 				glPopMatrix();
 			}
 			//Displat Text of blob information
-			ofSetColor(0xFFFF00);
+			ofSetColor(0xFFFFFF);
 			glLineWidth(1);
 			char idStr[1024];	
 			sprintf(idStr, "id: %i \n x: %f \n y: %f",drawBlob2.id, ceil(drawBlob2.centroid.x * ofGetWidth()), 
 																	ceil(drawBlob2.centroid.y * ofGetHeight()));
-			verdana.drawString(idStr, drawBlob2.centroid.x * ofGetWidth() + drawBlob2.boundingRect.width/2 + 20, 
-									  drawBlob2.centroid.y * ofGetHeight() + drawBlob2.boundingRect.height/2 + 20);
+			verdana.drawString(idStr, drawBlob2.centroid.x * ofGetWidth() - drawBlob2.boundingRect.width/2 + 20, 
+									  drawBlob2.centroid.y * ofGetHeight() - drawBlob2.boundingRect.height/2 + 20);
 			}
 		}	
 
@@ -825,22 +822,46 @@ void testApp::keyPressed(int key)
 			break;		
 		case 'o':
 			bDrawOutlines ? bDrawOutlines = false : bDrawOutlines = true;
+			gui->update(appPtr->trackedPanel_outlines, kofxGui_Set_Bool, &appPtr->bDrawOutlines, sizeof(bool));
+			break;
+		case 'h':
+			bHorizontalMirror ? bHorizontalMirror = false : bHorizontalMirror = true;
+			gui->update(appPtr->propertiesPanel_flipH, kofxGui_Set_Bool, &appPtr->bHorizontalMirror, sizeof(bool));
+			break;
+		case 'j':
+			bVerticalMirror ? bVerticalMirror = false : bVerticalMirror = true;
+			gui->update(appPtr->propertiesPanel_flipV, kofxGui_Set_Bool, &appPtr->bVerticalMirror, sizeof(bool));
 			break;
 		case 't':
 			if(!bCalibration && bTUIOMode)
 			{
 				bTUIOMode = false;	
 				myTUIO.blobs.clear();
-				//ofSetWindowShape(700,600);
+				gui->update(appPtr->optionPanel_tuio, kofxGui_Set_Bool, &appPtr->bTUIOMode, sizeof(bool));
 			}
 			else
 			{	
 				bTUIOMode = true;	
-				//ofSetWindowShape(950,700);
+				gui->update(appPtr->optionPanel_tuio, kofxGui_Set_Bool, &appPtr->bTUIOMode, sizeof(bool));
 			}
 			bCalibration && bShowTargets ? bShowTargets = false : bShowTargets = true;
-
 			break;	
+		case 'g':
+			bGPUMode ? bGPUMode = false : bGPUMode = true;
+			gui->update(appPtr->gpuPanel_use, kofxGui_Set_Bool, &appPtr->bGPUMode, sizeof(bool));
+			bLearnBakground = true;
+			break;
+		case 'v':
+			if(bcamera)
+				vidGrabber.videoSettings();
+			break;	
+		case 'l':
+			bShowLabels ? bShowLabels = false : bShowLabels = true;
+			gui->update(appPtr->trackedPanel_ids, kofxGui_Set_Bool, &appPtr->bShowLabels, sizeof(bool));
+			break;
+		case 'p':
+			//bShowPressure ? bShowPressure = false : bShowPressure = true;
+			break;
 		case ' ':
 			if(bFastMode)
 			{	
@@ -856,22 +877,6 @@ void testApp::keyPressed(int key)
 				ofSetWindowShape(175,18); //minimized size
 				ofSetWindowTitle("Mini");
 			}
-			break;
-		case 'g':
-			bSnapshot = true;
-			break;
-		case 'v':
-			if(bcamera)
-				vidGrabber.videoSettings();
-			break;	
-		case 'l':
-			bShowLabels ? bShowLabels = false : bShowLabels = true;
-			break;
-		case 'i':
-			bShowInterface ? bShowInterface = false : bShowInterface = true;
-			break;
-		case 'p':
-			bShowPressure ? bShowPressure = false : bShowPressure = true;
 			break;
 		/***********************
 		* Keys for Calibration
@@ -895,6 +900,10 @@ void testApp::keyPressed(int key)
 			if(calibrate.bCalibrating)calibrate.revertCalibrationStep();
 		case 'w': //Up
 			bW = true;
+			if(!bCalibration){
+				bWarpImg ? bWarpImg = false : bWarpImg = true;
+				gui->update(appPtr->calibrationPanel_warp, kofxGui_Set_Bool, &appPtr->bWarpImg, sizeof(bool));
+			}
 			break;	
 		case 's': //Down
 			bS = true;
@@ -1078,7 +1087,7 @@ void testApp::blobOn( ofxCvBlob b)
 	{
 		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);		
 		//if blob is not otuside calibration mesh
-		if(b.centroid.x != -1)
+		if(b.centroid.x != 0 && b.centroid.y != 0)
 		myTUIO.blobs[b.id] = b;
 	}
 }
@@ -1089,7 +1098,7 @@ void testApp::blobMoved( ofxCvBlob b)
 	{
 		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);		
 		//if blob is not otuside calibration mesh
-		if(b.centroid.x != -1)
+		if(b.centroid.x != 0 && b.centroid.y != 0)
 		myTUIO.blobs[b.id] = b;
 	}
 }  

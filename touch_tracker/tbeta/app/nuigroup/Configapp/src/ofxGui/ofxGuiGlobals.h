@@ -36,7 +36,7 @@ public:
 	ofTrueTypeFont	mParamFont;
 	
 	ofxXmlSettings	mXml;
-	//ofxDirList		mDir;
+	ofxDirList		mDir;
 
 	string			mXmlfile;
 	

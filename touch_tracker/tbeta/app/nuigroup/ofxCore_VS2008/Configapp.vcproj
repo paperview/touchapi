@@ -893,6 +893,18 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="ofxDirList"
+				>
+				<File
+					RelativePath="..\..\..\addons\ofxDirList\src\ofxDirList.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\addons\ofxDirList\src\ofxDirList.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

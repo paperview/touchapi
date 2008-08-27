@@ -206,13 +206,13 @@ int ofxGuiFiles::getFileList()
 {	
 	mFilelist.clear();
 	
-	//mGlobals->mDir.reset();
-	//mGlobals->mDir.allowExt(mSuffix);
+	mGlobals->mDir.reset();
+	mGlobals->mDir.allowExt(mSuffix);
 	
-	//mNumberOfFiles	= mGlobals->mDir.listDir(mPath);
+	mNumberOfFiles	= mGlobals->mDir.listDir(mPath);
 	int maxWidth	= 0;
 	
-/*	for(int i = 0; i < mNumberOfFiles; i++)
+	for(int i = 0; i < mNumberOfFiles; i++)
 	{
 		string file = mGlobals->mDir.getName(i);
 		mFilelist.push_back(file);
@@ -222,7 +222,7 @@ int ofxGuiFiles::getFileList()
 		if(width > maxWidth)
 			maxWidth = width;
 	}
-*/	
+	
 	return maxWidth;
 }
 

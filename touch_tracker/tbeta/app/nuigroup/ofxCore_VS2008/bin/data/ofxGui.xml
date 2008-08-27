@@ -37,7 +37,7 @@
         <NAME>Source Properties</NAME>
         <LEFT>735.000000</LEFT>
         <TOP>10.000000</TOP>
-        <WIDTH>164.000000</WIDTH>
+        <WIDTH>165.000000</WIDTH>
         <HEIGHT>84.000000</HEIGHT>
         <MODE>0</MODE>
         <DISPLAY>2</DISPLAY>
@@ -47,7 +47,7 @@
         <OBJECT>
             <ID>3</ID>
             <TYPE>BUTTON</TYPE>
-            <NAME>Camera Settings (s)</NAME>
+            <NAME>Camera Settings (v)</NAME>
             <LEFT>12.000000</LEFT>
             <TOP>34.000000</TOP>
             <WIDTH>10.000000</WIDTH>
@@ -60,7 +60,7 @@
         <OBJECT>
             <ID>1</ID>
             <TYPE>BUTTON</TYPE>
-            <NAME>Flip Vertical (v)</NAME>
+            <NAME>Flip Vertical (j)</NAME>
             <LEFT>12.000000</LEFT>
             <TOP>54.000000</TOP>
             <WIDTH>10.000000</WIDTH>
@@ -81,7 +81,7 @@
             <MODE>2</MODE>
             <DISPLAY>2</DISPLAY>
             <STEPS>0</STEPS>
-            <VALUE>1</VALUE>
+            <VALUE>0</VALUE>
         </OBJECT>
     </OBJECT>
     <OBJECT>
@@ -184,7 +184,7 @@
         <NAME>files</NAME>
         <LEFT>735.000000</LEFT>
         <TOP>323.000000</TOP>
-        <WIDTH>118.000000</WIDTH>
+        <WIDTH>145.000000</WIDTH>
         <HEIGHT>42.000000</HEIGHT>
         <MODE>0</MODE>
         <DISPLAY>2</DISPLAY>
@@ -194,7 +194,7 @@
         <OBJECT>
             <ID>36</ID>
             <TYPE>BUTTON</TYPE>
-            <NAME>Save Settings</NAME>
+            <NAME>Save Settings (s)</NAME>
             <LEFT>10.000000</LEFT>
             <TOP>32.000000</TOP>
             <WIDTH>10.000000</WIDTH>
@@ -229,7 +229,7 @@
             <MODE>2</MODE>
             <DISPLAY>2</DISPLAY>
             <STEPS>0</STEPS>
-            <VALUE>0</VALUE>
+            <VALUE>1</VALUE>
         </OBJECT>
         <OBJECT>
             <ID>34</ID>
@@ -242,7 +242,7 @@
             <MODE>2</MODE>
             <DISPLAY>2</DISPLAY>
             <STEPS>0</STEPS>
-            <VALUE>0</VALUE>
+            <VALUE>1</VALUE>
         </OBJECT>
         <OBJECT>
             <ID>32</ID>
@@ -257,7 +257,7 @@
             <STEPS>0</STEPS>
             <MIN>0.000000</MIN>
             <MAX>255.000000</MAX>
-            <VALUE>92.000000</VALUE>
+            <VALUE>29.000000</VALUE>
         </OBJECT>
     </OBJECT>
     <OBJECT>
@@ -447,7 +447,7 @@
             <STEPS>0</STEPS>
             <MIN>0.000000</MIN>
             <MAX>200.000000</MAX>
-            <VALUE>49.000000</VALUE>
+            <VALUE>72.000000</VALUE>
         </OBJECT>
         <OBJECT>
             <ID>29</ID>
@@ -489,7 +489,7 @@
             <MODE>2</MODE>
             <DISPLAY>2</DISPLAY>
             <STEPS>0</STEPS>
-            <VALUE>1</VALUE>
+            <VALUE>0</VALUE>
         </OBJECT>
         <OBJECT>
             <ID>25</ID>
@@ -504,7 +504,7 @@
             <STEPS>0</STEPS>
             <MIN>0.000000</MIN>
             <MAX>300.000000</MAX>
-            <VALUE>21.000000</VALUE>
+            <VALUE>10.000000</VALUE>
         </OBJECT>
     </OBJECT>
 </UI>
