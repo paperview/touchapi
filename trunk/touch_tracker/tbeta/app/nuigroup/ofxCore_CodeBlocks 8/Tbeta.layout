@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="release" />
+	<File name="..\..\..\addons\ofxOsc\src\ofxOscMessage.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="676" topLine="12" />
+	</File>
+	<File name="..\Configapp\src\Communication\TUIOOSC.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1042" topLine="39" />
+	</File>
+	<File name="..\..\..\libs\openFrameworks\graphics\ofTrueTypeFont.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="193" topLine="0" />
+	</File>
+	<File name="..\..\..\libs\openFrameworks\video\ofQtUtils.h" open="0" top="0" tabpos="1">
+		<Cursor position="243" topLine="0" />
+	</File>
+</CodeBlocks_layout_file>
