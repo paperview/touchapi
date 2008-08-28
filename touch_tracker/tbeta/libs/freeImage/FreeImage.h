@@ -104,7 +104,7 @@ FI_STRUCT (FIBITMAP) { void *data; };
 FI_STRUCT (FIMULTIBITMAP) { void *data; };
 
 // Types used in the library (directly copied from Windows) -----------------
-
+#define _WINDOWS_
 #ifndef _WINDOWS_
 #define _WINDOWS_
 
