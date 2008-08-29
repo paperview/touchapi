@@ -2,20 +2,20 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Tbeta" />
+		<Option title="OSC" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="addons\;libs\;src\;libs\openframeworks\;libs\openframeworks\app\;libs\openframeworks\communication\;libs\openframeworks\graphics\;libs\openframeworks\sound\;libs\openframeworks\utils\;libs\openframeworks\video\;addons\ofxDirList\;addons\ofxDirList\src\;addons\ofxNetwork\;addons\ofxNetwork\src\;addons\ofxObjLoader\;addons\ofxObjLoader\src\;addons\ofxOpenCV\;addons\ofxOpenCV\src\;addons\ofxOsc\;addons\ofxOsc\src\;addons\ofxThread\;addons\ofxThread\src\;addons\ofxVectorMath\;addons\ofxXmlSettings\;addons\ofXmlSettings\src\;addons\ofXmlSettings\libs\;addons\ofxVectorGraphics\;addons\ofxVectorGraphics\src\;addons\ofxVectorGraphics\libs\;addons\ofxXmlSettings\libs\;addons\ofxXmlSettings\src\;src\Tracking\;src\ofxGui\;src\Filters\;src\Communication\;src\Calibration\;" />
+		<Option virtualFolders="addons\;libs\;src\;libs\openframeworks\;libs\openframeworks\app\;libs\openframeworks\communication\;libs\openframeworks\graphics\;libs\openframeworks\sound\;libs\openframeworks\utils\;libs\openframeworks\video\;addons\ofxDirList\;addons\ofxDirList\src\;addons\ofxNetwork\;addons\ofxNetwork\src\;addons\ofxObjLoader\;addons\ofxObjLoader\src\;addons\ofxOpenCV\;addons\ofxOpenCV\src\;addons\ofxOsc\;addons\ofxOsc\src\;addons\ofxThread\;addons\ofxThread\src\;addons\ofxVectorMath\;addons\ofxXmlSettings\;addons\ofXmlSettings\src\;addons\ofXmlSettings\libs\;addons\ofxVectorGraphics\;addons\ofxVectorGraphics\src\;addons\ofxVectorGraphics\libs\;addons\ofxXmlSettings\libs\;addons\ofxXmlSettings\src\;src\Tracking\;src\Filters\;src\Communication\;src\Calibration\;" />
 		<Build>
 			<Target title="release">
-				<Option output="bin\Configapp" prefix_auto="1" extension_auto="1" />
+				<Option output="bin\OSC" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin" />
 				<Option object_output="obj\release" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 			</Target>
 			<Target title="debug">
-				<Option output="bin\Configapp_DEBUG" prefix_auto="1" extension_auto="1" />
+				<Option output="bin\OSC_DEBUG" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin" />
 				<Option object_output="obj\debug\" />
 				<Option type="1" />
@@ -272,145 +272,55 @@
 		<Unit filename="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h">
 			<Option virtualFolder="addons\ofxXmlSettings\src\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Calibration\boxAlign.cpp">
+		<Unit filename="..\OSC\src\Calibration\boxAlign.cpp">
 			<Option virtualFolder="src\Calibration\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Calibration\boxAlign.h">
+		<Unit filename="..\OSC\src\Calibration\boxAlign.h">
 			<Option virtualFolder="src\Calibration\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Calibration\calibrationB.cpp">
+		<Unit filename="..\OSC\src\Calibration\calibrationB.cpp">
 			<Option virtualFolder="src\Calibration\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Calibration\calibrationB.h">
+		<Unit filename="..\OSC\src\Calibration\calibrationB.h">
 			<Option virtualFolder="src\Calibration\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Calibration\rect2d.h">
+		<Unit filename="..\OSC\src\Calibration\rect2d.h">
 			<Option virtualFolder="src\Calibration\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Calibration\vector2d.h">
+		<Unit filename="..\OSC\src\Calibration\vector2d.h">
 			<Option virtualFolder="src\Calibration\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Communication\TUIOOSC.cpp">
+		<Unit filename="..\OSC\src\Communication\TUIOOSC.cpp">
 			<Option virtualFolder="src\Communication\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Communication\TUIOOSC.h">
+		<Unit filename="..\OSC\src\Communication\TUIOOSC.h">
 			<Option virtualFolder="src\Communication\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Filters\ImageFilter.cpp">
+		<Unit filename="..\OSC\src\Filters\ImageFilter.cpp">
 			<Option virtualFolder="src\Filters\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Filters\ImageFilter.h">
+		<Unit filename="..\OSC\src\Filters\ImageFilter.h">
 			<Option virtualFolder="src\Filters\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Filters\ShaderProgram.cpp">
+		<Unit filename="..\OSC\src\Filters\ShaderProgram.cpp">
 			<Option virtualFolder="src\Filters\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Filters\ShaderProgram.h">
+		<Unit filename="..\OSC\src\Filters\ShaderProgram.h">
 			<Option virtualFolder="src\Filters\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Tracking\tracking.cpp">
+		<Unit filename="..\OSC\src\Tracking\tracking.cpp">
 			<Option virtualFolder="src\Tracking\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\Tracking\tracking.h">
+		<Unit filename="..\OSC\src\Tracking\tracking.h">
 			<Option virtualFolder="src\Tracking\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\gui.h">
+		<Unit filename="..\OSC\src\main.cpp">
 			<Option virtualFolder="src\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\main.cpp">
+		<Unit filename="..\OSC\src\testApp.cpp">
 			<Option virtualFolder="src\" />
 		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGui.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGui.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiButton.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiButton.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiColor.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiColor.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiFiles.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiFiles.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiGlobals.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiGlobals.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiKnob.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiKnob.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiMatrix.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiMatrix.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiObject.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiObject.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiPanel.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiPanel.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiPoints.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiPoints.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiRadar.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiRadar.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiScope.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiScope.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiSlider.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiSlider.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiTypes.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiXyPad.cpp">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\ofxGui\ofxGuiXyPad.h">
-			<Option virtualFolder="src\ofxGui\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\testApp.cpp">
-			<Option virtualFolder="src\" />
-		</Unit>
-		<Unit filename="..\Configapp\src\testApp.h">
+		<Unit filename="..\OSC\src\testApp.h">
 			<Option virtualFolder="src\" />
 		</Unit>
 		<Unit filename="..\..\..\libs\openFrameworks\app\ofAppGlutGlue.h">
