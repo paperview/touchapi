@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#ifdef TARGET_LINUX
-
 extern "C"
 {
 #include <avcodec.h>
@@ -179,7 +177,7 @@ void ofUCUtils::set_format(int w, int h) {
 	for (format_count = 0; SUCCESS (status) && (format_count < MAX_FORMATS); format_count++) {
 		status = unicap_enumerate_formats (handle, NULL, &formats[format_count], format_count);
 		if (SUCCESS (status)) {
-			if (formats[format_count].bpp == 24) {
+			if (formats[format_count].bpp == 8) {
 				rgb24 = format_count;
 			}
 			if(verbose) printf (
@@ -451,4 +449,3 @@ int ofUCUtils::getUC_Width(void) {
 
 }
 
-#endif
