@@ -1,0 +1,1228 @@
+# depslib dependency file v1.0
+1206045640 source:h:\tbeta\touch_tracker\tbeta\addons\ofxdirlist\src\ofxdirlist.cpp
+	"ofxDirList.h"
+
+1206045620 h:\tbeta\touch_tracker\tbeta\addons\ofxdirlist\src\ofxdirlist.h
+	"ofMain.h"
+	<stdio.h>
+	<iostream>
+	<string.h>
+	<dirent.h>
+	<windows.h>
+	<tchar.h>
+	<string.h>
+	<assert.h>
+
+1214885904 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\ofmain.h
+	"ofConstants.h"
+	"ofMath.h"
+	"ofUtils.h"
+	"ofTypes.h"
+	"ofSerial.h"
+	"ofTexture.h"
+	"ofTrueTypeFont.h"
+	"ofGraphics.h"
+	"ofImage.h"
+	"ofSimpleApp.h"
+	"ofAppRunner.h"
+	"ofSoundStream.h"
+	"ofSoundPlayer.h"
+	"ofVideoGrabber.h"
+	"ofVideoPlayer.h"
+
+1214885904 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\utils\ofconstants.h
+	<windows.h>
+	"GLee.h"
+	"glut.h"
+	<unistd.h>
+	"GLee.h"
+	<GLUT/glut.h>
+	<ApplicationServices/ApplicationServices.h>
+	<unistd.h>
+	"GLee.h"
+	<GL/glut.h>
+	<stdio.h>
+	<math.h>
+	<time.h>
+	<stdlib.h>
+	<string.h>
+	<iostream>
+	<vector>
+	<string>
+	<sstream>
+	<iomanip>
+
+1214885920 h:\tbeta\touch_tracker\tbeta\libs\glee\include\glee.h
+	<windows.h>
+	<GL/gl.h>
+	<OpenGL/gl.h>
+	<GL/gl.h>
+	<GL/glx.h>
+	<stddef.h>
+
+1214885919 h:\tbeta\touch_tracker\tbeta\libs\glut\glut.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1214885904 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\utils\ofmath.h
+	"ofConstants.h"
+
+1214885904 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\utils\ofutils.h
+	"ofConstants.h"
+	<shellapi.h>
+
+1214885904 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\utils\oftypes.h
+	"ofConstants.h"
+
+1214885904 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\communication\ofserial.h
+	"ofConstants.h"
+	<termios.h>
+	<sys/ioctl.h>
+	<getopt.h>
+	<dirent.h>
+	<Winbase.h>
+	<tchar.h>
+	<iostream>
+	<string.h>
+	<setupapi.h>
+	<regstr.h>
+	<winioctl.h>
+	<initguid.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<fcntl.h>
+	<errno.h>
+	<ctype.h>
+
+1214885903 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\graphics\oftexture.h
+	"ofConstants.h"
+	"ofGraphics.h"
+
+1214885903 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\graphics\ofgraphics.h
+	"ofConstants.h"
+
+1214885903 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\graphics\oftruetypefont.h
+	"ofConstants.h"
+	"ofGraphics.h"
+	"ofUtils.h"
+	"ofTypes.h"
+
+1214885904 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\graphics\ofimage.h
+	"ofConstants.h"
+	"ofTexture.h"
+	"ofGraphics.h"
+	"ofAppRunner.h"
+	"FreeImage.h"
+
+1214885903 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\app\ofapprunner.h
+	"ofMain.h"
+	"ofSimpleApp.h"
+	"ofGraphics.h"
+	"ofMath.h"
+	"ofUtils.h"
+
+1215467332 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\app\ofsimpleapp.h
+	"ofConstants.h"
+	"ofUtils.h"
+
+1220164837 h:\tbeta\touch_tracker\tbeta\libs\freeimage\freeimage.h
+	<wchar.h>
+	<inttypes.h>
+	<stdint.h>
+
+1214885904 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\sound\ofsoundstream.h
+	"ofConstants.h"
+	"ofSimpleApp.h"
+
+1214885904 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\sound\ofsoundplayer.h
+	"ofConstants.h"
+	"fmod.h"
+	"fmod_errors.h"
+
+1214885903 h:\tbeta\touch_tracker\tbeta\libs\fmodex\inc\fmod.h
+	"fmod_codec.h"
+	"fmod_dsp.h"
+
+1214885903 h:\tbeta\touch_tracker\tbeta\libs\fmodex\inc\fmod_codec.h
+
+1214885903 h:\tbeta\touch_tracker\tbeta\libs\fmodex\inc\fmod_dsp.h
+
+1214885903 h:\tbeta\touch_tracker\tbeta\libs\fmodex\inc\fmod_errors.h
+	"fmod.h"
+
+1219003289 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\video\ofvideograbber.h
+	"ofConstants.h"
+	"ofTexture.h"
+	"ofGraphics.h"
+	"ofQtUtils.h"
+	"videoInput.h"
+	"ofUCUtils.h"
+
+1219953070 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\video\ofqtutils.h
+	"ofConstants.h"
+	"ofGraphics.h"
+	<Quicktime/QuickTime.h>
+	<CoreServices/CoreServices.h>
+	<ApplicationServices/ApplicationServices.h>
+	<QTML.h>
+	<FixMath.h>
+	<QuickTimeComponents.h>
+	<TextUtils.h>
+
+1036154448 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\qtml.h
+	<MacTypes.h>
+	<MacMemory.h>
+	<MacWindows.h>
+	<OSUtils.h>
+	<Files.h>
+
+1036154446 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\mactypes.h
+	<ConditionalMacros.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\conditionalmacros.h
+
+1034685592 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\macmemory.h
+	<MacTypes.h>
+	<MixedMode.h>
+
+1036154446 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\mixedmode.h
+	<MacTypes.h>
+
+1036154446 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\macwindows.h
+	<MacTypes.h>
+	<Aliases.h>
+	<AppleEvents.h>
+	<Collections.h>
+	<Drag.h>
+	<Events.h>
+	<Menus.h>
+	<MixedMode.h>
+	<QDOffscreen.h>
+	<Quickdraw.h>
+	<TextCommon.h>
+	<Icons.h>
+	<MacErrors.h>
+
+1036154442 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\aliases.h
+	<MacTypes.h>
+	<AppleTalk.h>
+	<Files.h>
+
+1036154442 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\appletalk.h
+	<MacTypes.h>
+	<OSUtils.h>
+
+1036154446 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\osutils.h
+	<MacTypes.h>
+	<MixedMode.h>
+	<MacMemory.h>
+	<Patches.h>
+	<DateTimeUtils.h>
+	<Endian.h>
+
+1036154446 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\patches.h
+	<MacTypes.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\datetimeutils.h
+	<ConditionalMacros.h>
+	<MacTypes.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\endian.h
+	<ConditionalMacros.h>
+	<MacTypes.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\files.h
+	<MacTypes.h>
+	<MixedMode.h>
+	<OSUtils.h>
+	<TextCommon.h>
+	<UTCUtils.h>
+	<Finder.h>
+
+1036154450 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\textcommon.h
+	<MacTypes.h>
+
+1036154450 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\utcutils.h
+	<MacTypes.h>
+	<MacErrors.h>
+
+1036154446 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\macerrors.h
+	<ConditionalMacros.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\finder.h
+	<MacTypes.h>
+
+1036154442 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\appleevents.h
+	<MacTypes.h>
+	<MixedMode.h>
+	<Notification.h>
+	<Events.h>
+	<AEDataModel.h>
+
+1036154446 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\notification.h
+	<MacTypes.h>
+	<OSUtils.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\events.h
+	<OSUtils.h>
+	<Quickdraw.h>
+	<MacTypes.h>
+	<Endian.h>
+
+1036154448 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\quickdraw.h
+	<Components.h>
+	<MacTypes.h>
+	<MixedMode.h>
+	<QuickdrawText.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\components.h
+	<MacErrors.h>
+	<MacTypes.h>
+	<MixedMode.h>
+
+1036154448 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\quickdrawtext.h
+	<MacTypes.h>
+	<MixedMode.h>
+
+1036154442 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\aedatamodel.h
+	<MacTypes.h>
+	<MixedMode.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\collections.h
+	<MacTypes.h>
+	<MixedMode.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\drag.h
+	<MacTypes.h>
+	<Events.h>
+	<Files.h>
+	<AppleEvents.h>
+	<Quickdraw.h>
+
+1036154446 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\menus.h
+	<MacTypes.h>
+	<Events.h>
+	<Quickdraw.h>
+	<Fonts.h>
+	<TextCommon.h>
+	<Processes.h>
+	<AppleEvents.h>
+	<Collections.h>
+	<MacErrors.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\fonts.h
+	<MacTypes.h>
+	<Files.h>
+	<Quickdraw.h>
+	<TextCommon.h>
+	<MacErrors.h>
+
+1036154448 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\processes.h
+	<MacTypes.h>
+	<Events.h>
+	<Files.h>
+
+1036154448 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\qdoffscreen.h
+	<MacErrors.h>
+	<Quickdraw.h>
+
+1034685590 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\icons.h
+	<MacTypes.h>
+	<Quickdraw.h>
+	<Files.h>
+	<CodeFragments.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\codefragments.h
+	<MacTypes.h>
+	<Files.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\fixmath.h
+	<MacTypes.h>
+
+1036154448 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\quicktimecomponents.h
+	<MacTypes.h>
+	<MixedMode.h>
+	<Components.h>
+	<ImageCompression.h>
+	<Movies.h>
+	<Quickdraw.h>
+	<Video.h>
+	<Sound.h>
+	<QuickTimeMusic.h>
+
+1036154446 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\imagecompression.h
+	<MacTypes.h>
+	<Quickdraw.h>
+	<QDOffscreen.h>
+	<Components.h>
+	<StandardFile.h>
+
+1036154450 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\standardfile.h
+	<MacTypes.h>
+	<Dialogs.h>
+	<Files.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\dialogs.h
+	<MacTypes.h>
+	<MixedMode.h>
+	<Events.h>
+	<MacWindows.h>
+	<TextEdit.h>
+	<Controls.h>
+	<MacErrors.h>
+
+1036154450 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\textedit.h
+	<MacTypes.h>
+	<Quickdraw.h>
+	<MixedMode.h>
+
+1036154444 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\controls.h
+	<MacTypes.h>
+	<Quickdraw.h>
+	<Menus.h>
+	<TextEdit.h>
+	<Drag.h>
+	<Icons.h>
+	<Collections.h>
+	<MacErrors.h>
+
+1036154446 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\movies.h
+	<Quickdraw.h>
+	<Aliases.h>
+	<Events.h>
+	<Menus.h>
+	<Components.h>
+	<ImageCompression.h>
+
+1036154450 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\video.h
+	<Quickdraw.h>
+
+1036154448 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\sound.h
+	<MacTypes.h>
+	<Dialogs.h>
+	<Components.h>
+	<MixedMode.h>
+	<Movies.h>
+
+1036154448 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\quicktimemusic.h
+	<Components.h>
+	<ImageCompression.h>
+	<Movies.h>
+	<Quickdraw.h>
+	<Video.h>
+	<MacMemory.h>
+	<Sound.h>
+	<Endian.h>
+
+1036154450 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\textutils.h
+	<MacTypes.h>
+	<NumberFormatting.h>
+	<StringCompare.h>
+	<DateTimeUtils.h>
+
+1036154446 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\numberformatting.h
+	<ConditionalMacros.h>
+	<MacTypes.h>
+	<IntlResources.h>
+
+1036154446 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\intlresources.h
+	<MacTypes.h>
+
+1036154450 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\stringcompare.h
+	<MacTypes.h>
+	<TextCommon.h>
+	<Script.h>
+
+1036154448 h:\tbeta\touch_tracker\tbeta\libs\quicktime\cincludes\script.h
+	<MacTypes.h>
+	<Quickdraw.h>
+	<IntlResources.h>
+	<Events.h>
+
+1214885910 h:\tbeta\touch_tracker\tbeta\libs\videoinput\include\videoinput.h
+	<stdlib.h>
+	<stdio.h>
+	<math.h>
+	<string.h>
+	<wchar.h>
+	<windows.h>
+
+1219990018 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\video\ofucutils.h
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	"unicap.h"
+	<unistd.h>
+	<string.h>
+
+1214885904 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\video\ofvideoplayer.h
+	"ofConstants.h"
+	"ofTexture.h"
+	"Decoder.h"
+	"ofQtUtils.h"
+
+1214885662 source:h:\tbeta\touch_tracker\tbeta\addons\ofxnetwork\src\ofxtcpclient.cpp
+	"ofxTCPClient.h"
+	"ofAppRunner.h"
+
+1214885662 h:\tbeta\touch_tracker\tbeta\addons\ofxnetwork\src\ofxtcpclient.h
+	"ofConstants.h"
+	"ofxThread.h"
+	"ofxTCPManager.h"
+
+1214885661 h:\tbeta\touch_tracker\tbeta\addons\ofxthread\src\ofxthread.h
+	"ofConstants.h"
+	<process.h>
+	<pthread.h>
+	<semaphore.h>
+
+1214885662 h:\tbeta\touch_tracker\tbeta\addons\ofxnetwork\src\ofxtcpmanager.h
+	"ofConstants.h"
+	<string.h>
+	<wchar.h>
+	<stdio.h>
+	<ctype.h>
+	<netdb.h>
+	<string.h>
+	<fcntl.h>
+	<time.h>
+	<errno.h>
+	<unistd.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<sys/timeb.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<sys/time.h>
+	<sys/ioctl.h>
+	<sys/signal.h>
+	<winsock2.h>
+	<Ws2tcpip.h>
+
+1214885662 source:h:\tbeta\touch_tracker\tbeta\addons\ofxnetwork\src\ofxtcpmanager.cpp
+	"ofxTCPManager.h"
+	<stdio.h>
+
+1214885662 source:h:\tbeta\touch_tracker\tbeta\addons\ofxnetwork\src\ofxtcpserver.cpp
+	"ofxTCPServer.h"
+	"ofxTCPClient.h"
+
+1214885662 h:\tbeta\touch_tracker\tbeta\addons\ofxnetwork\src\ofxtcpserver.h
+	"ofConstants.h"
+	"ofxThread.h"
+	"ofxTCPManager.h"
+
+1214885662 source:h:\tbeta\touch_tracker\tbeta\addons\ofxnetwork\src\ofxudpmanager.cpp
+	"ofxUDPManager.h"
+
+1214885662 h:\tbeta\touch_tracker\tbeta\addons\ofxnetwork\src\ofxudpmanager.h
+	"ofConstants.h"
+	<string.h>
+	<wchar.h>
+	<stdio.h>
+	<ctype.h>
+	<netdb.h>
+	<string.h>
+	<fcntl.h>
+	<errno.h>
+	<unistd.h>
+	<arpa/inet.h>
+	<netinet/in.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<sys/time.h>
+	<sys/ioctl.h>
+	<netinet/tcp.h>
+	<winsock2.h>
+	<Ws2tcpip.h>
+
+1214885879 source:h:\tbeta\touch_tracker\tbeta\addons\ofxobjloader\src\ofxobjloader.cpp
+	"ofxObjLoader.h"
+
+1214885879 h:\tbeta\touch_tracker\tbeta\addons\ofxobjloader\src\ofxobjloader.h
+	"ofMain.h"
+	<fstream>
+	<iostream>
+	<deque>
+
+1219794610 source:h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvcolorimage.cpp
+	"ofxCvGrayscaleImage.h"
+	"ofxCvColorImage.h"
+	"ofxCvFloatImage.h"
+
+1219794610 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvgrayscaleimage.h
+	"ofxCvImage.h"
+	"ofxCvBlob.h"
+
+1219794610 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvimage.h
+	"ofxCvConstants.h"
+
+1219883279 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvconstants.h
+	<iostream>
+	"cv.h"
+	<vector>
+	"ofMain.h"
+	"ofxCvBlob.h"
+
+1219794624 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\libs\opencv\include\cv.h
+	<chdl.h>
+	"cxcore.h"
+	"cvtypes.h"
+	"cv.hpp"
+	"cvcompat.h"
+
+1219794624 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\libs\opencv\include\cxcore.h
+	"ipl.h"
+	"ipl/ipl.h"
+	"cxtypes.h"
+	"cxerror.h"
+	"cvver.h"
+	"cxcore.hpp"
+
+1219794624 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\libs\opencv\include\cxtypes.h
+	<assert.h>
+	<stdlib.h>
+	<string.h>
+	<float.h>
+	<emmintrin.h>
+	<fastmath.h>
+	<mathimf.h>
+	<math.h>
+	<ipl.h>
+	<ipl/ipl.h>
+
+1219794624 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\libs\opencv\include\cxerror.h
+
+1219794624 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\libs\opencv\include\cvver.h
+
+1219794624 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\libs\opencv\include\cxcore.hpp
+
+1219794624 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\libs\opencv\include\cvtypes.h
+	<assert.h>
+	<stdlib.h>
+
+1219794624 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\libs\opencv\include\cv.hpp
+
+1219794624 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\libs\opencv\include\cvcompat.h
+	<string.h>
+
+1219794610 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvblob.h
+	"ofxCvConstants.h"
+
+1219794610 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvcolorimage.h
+	"ofxCvImage.h"
+
+1219794610 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvfloatimage.h
+	"ofxCvImage.h"
+
+1219794610 source:h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvcontourfinder.cpp
+	"ofxCvContourFinder.h"
+
+1219794610 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvcontourfinder.h
+	"ofxCvConstants.h"
+	"ofxCvBlob.h"
+	"ofxCvGrayscaleImage.h"
+
+1219794610 source:h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvfloatimage.cpp
+	"ofxCvGrayscaleImage.h"
+	"ofxCvColorImage.h"
+	"ofxCvFloatImage.h"
+
+1219794610 source:h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvgrayscaleimage.cpp
+	"ofxCvGrayscaleImage.h"
+	"ofxCvColorImage.h"
+	"ofxCvFloatImage.h"
+
+1219794610 source:h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvhaarfinder.cpp
+	"ofxCvHaarFinder.h"
+
+1219794610 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvhaarfinder.h
+	"ofMain.h"
+	"ofxCvMain.h"
+
+1219794610 h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvmain.h
+	"ofxCvConstants.h"
+	"ofxCvImage.h"
+	"ofxCvGrayscaleImage.h"
+	"ofxCvColorImage.h"
+	"ofxCvFloatImage.h"
+	"ofxCvContourFinder.h"
+
+1219794610 source:h:\tbeta\touch_tracker\tbeta\addons\ofxopencv\src\ofxcvimage.cpp
+	"ofxCvImage.h"
+	"ofxCvGrayscaleImage.h"
+	"ofxCvColorImage.h"
+	"ofxCvFloatImage.h"
+
+1218116792 source:h:\tbeta\touch_tracker\tbeta\addons\ofxosc\src\ofxoscbundle.cpp
+	"ofxOscBundle.h"
+
+1218116792 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\src\ofxoscbundle.h
+	<vector>
+	"ofxOscMessage.h"
+
+1218116792 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\src\ofxoscmessage.h
+	"ofxOscArg.h"
+	<vector>
+	<string>
+
+1218116792 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\src\ofxoscarg.h
+	<ofConstants.h>
+	<string>
+
+1218116792 source:h:\tbeta\touch_tracker\tbeta\addons\ofxosc\src\ofxoscmessage.cpp
+	"ofxOscMessage.h"
+	<iostream>
+	<assert.h>
+
+1218116792 source:h:\tbeta\touch_tracker\tbeta\addons\ofxosc\src\ofxoscreceiver.cpp
+	"ofxOscReceiver.h"
+	<pthread.h>
+	<iostream>
+	<assert.h>
+
+1218116792 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\src\ofxoscreceiver.h
+	<deque>
+	<ofMain.h>
+	<windows.h>
+	<pthread.h>
+	<OscTypes.h>
+	<OscPacketListener.h>
+	<UdpSocket.h>
+	"ofxOscMessage.h"
+
+1214885654 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\libs\oscpack\include\osc\osctypes.h
+
+1214885654 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\libs\oscpack\include\osc\oscpacketlistener.h
+	"OscReceivedElements.h"
+	"../ip/PacketListener.h"
+
+1214885654 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\libs\oscpack\include\osc\oscreceivedelements.h
+	"OscTypes.h"
+	"OscException.h"
+
+1214885654 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\libs\oscpack\include\osc\oscexception.h
+	<exception>
+
+1214885655 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\libs\oscpack\include\ip\packetlistener.h
+
+1214885655 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\libs\oscpack\include\ip\udpsocket.h
+	"NetworkingUtils.h"
+	"IpEndpointName.h"
+
+1214885655 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\libs\oscpack\include\ip\networkingutils.h
+
+1214885655 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\libs\oscpack\include\ip\ipendpointname.h
+
+1218116792 source:h:\tbeta\touch_tracker\tbeta\addons\ofxosc\src\ofxoscsender.cpp
+	"ofxOscSender.h"
+	<UdpSocket.h>
+	<assert.h>
+
+1218116792 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\src\ofxoscsender.h
+	<string>
+	"OscTypes.h"
+	"OscOutboundPacketStream.h"
+	"ofxOscBundle.h"
+	"ofxOscMessage.h"
+
+1214885654 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\libs\oscpack\include\osc\oscoutboundpacketstream.h
+	"OscTypes.h"
+	"OscException.h"
+
+1214885661 source:h:\tbeta\touch_tracker\tbeta\addons\ofxthread\src\ofxthread.cpp
+	"ofxThread.h"
+
+1214885653 source:h:\tbeta\touch_tracker\tbeta\addons\ofxvectorgraphics\libs\creeps.cpp
+	"CreEPS.hpp"
+	<stdlib.h>
+	<stdarg.h>
+	<string.h>
+	<stdio.h>
+	<math.h>
+	<time.h>
+
+1214885653 h:\tbeta\touch_tracker\tbeta\addons\ofxvectorgraphics\libs\creeps.hpp
+	<stdio.h>
+
+1214885653 source:h:\tbeta\touch_tracker\tbeta\addons\ofxvectorgraphics\src\ofxvectorgraphics.cpp
+	"ofxVectorGraphics.h"
+
+1214885653 h:\tbeta\touch_tracker\tbeta\addons\ofxvectorgraphics\src\ofxvectorgraphics.h
+	"CreEPS.hpp"
+	"ofMain.h"
+	<vector>
+
+1218244458 source:h:\tbeta\touch_tracker\tbeta\addons\ofxxmlsettings\libs\tinyxml.cpp
+	<ctype.h>
+	<sstream>
+	<iostream>
+	"tinyxml.h"
+
+1214885880 h:\tbeta\touch_tracker\tbeta\addons\ofxxmlsettings\libs\tinyxml.h
+	<ctype.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<string>
+	<iostream>
+	<sstream>
+	"tinystr.h"
+
+1214885880 source:h:\tbeta\touch_tracker\tbeta\addons\ofxxmlsettings\libs\tinyxmlerror.cpp
+	"tinyxml.h"
+
+1214885880 source:h:\tbeta\touch_tracker\tbeta\addons\ofxxmlsettings\libs\tinyxmlparser.cpp
+	<ctype.h>
+	<stddef.h>
+	"tinyxml.h"
+	<windows.h>
+
+1214943779 source:h:\tbeta\touch_tracker\tbeta\addons\ofxxmlsettings\src\ofxxmlsettings.cpp
+	"ofxXmlSettings.h"
+	<vector>
+	<string>
+	<iostream>
+
+1214942531 h:\tbeta\touch_tracker\tbeta\addons\ofxxmlsettings\src\ofxxmlsettings.h
+	"ofMain.h"
+	<string.h>
+	"tinyxml.h"
+
+1219794006 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\calibration\boxalign.cpp
+	"boxAlign.h"
+
+1219794006 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\calibration\boxalign.h
+	"ofMain.h"
+	"ofxCvMain.h"
+	"ofxVectorMath.h"
+
+1214885873 h:\tbeta\touch_tracker\tbeta\addons\ofxvectormath\src\ofxvectormath.h
+	"ofxPoint2f.h"
+	"ofxPoint3f.h"
+	"ofxPoint4f.h"
+	"ofxVec2f.h"
+	"ofxVec3f.h"
+	"ofxVec4f.h"
+	"ofxMatrix3x3.h"
+
+1214885873 h:\tbeta\touch_tracker\tbeta\addons\ofxvectormath\src\ofxpoint2f.h
+	"ofxVec2f.h"
+
+1214885873 h:\tbeta\touch_tracker\tbeta\addons\ofxvectormath\src\ofxvec2f.h
+	"ofConstants.h"
+
+1214885873 h:\tbeta\touch_tracker\tbeta\addons\ofxvectormath\src\ofxpoint3f.h
+	"ofxVec3f.h"
+
+1214885873 h:\tbeta\touch_tracker\tbeta\addons\ofxvectormath\src\ofxvec3f.h
+	"ofConstants.h"
+
+1214885873 h:\tbeta\touch_tracker\tbeta\addons\ofxvectormath\src\ofxpoint4f.h
+	"ofxVec4f.h"
+
+1214885873 h:\tbeta\touch_tracker\tbeta\addons\ofxvectormath\src\ofxvec4f.h
+	"ofConstants.h"
+
+1214885873 h:\tbeta\touch_tracker\tbeta\addons\ofxvectormath\src\ofxmatrix3x3.h
+
+1219810071 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\calibration\calibrationb.cpp
+	"calibrationB.h"
+
+1219796340 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\calibration\calibrationb.h
+	"ofAddons.h"
+	"rect2d.h"
+	"vector2d.h"
+
+1214885881 h:\tbeta\touch_tracker\tbeta\addons\ofaddons.h
+	"AParameterUI.h"
+	"ofxCvMain.h"
+	"ofxObjLoader.h"
+	"ofxDirList.h"
+	"ofxVectorMath.h"
+	"ofxNetwork.h"
+	"ofxVectorGraphics.h"
+	"ofxOsc.h"
+	"ofxThread.h"
+	"ofxXmlSettings.h"
+
+1214885662 h:\tbeta\touch_tracker\tbeta\addons\ofxnetwork\src\ofxnetwork.h
+	"ofxThread.h"
+	"ofxTCPClient.h"
+	"ofxTCPManager.h"
+	"ofxTCPServer.h"
+	"ofxUDPManager.h"
+
+1218116792 h:\tbeta\touch_tracker\tbeta\addons\ofxosc\src\ofxosc.h
+	"ofxOscArg.h"
+	"ofxOscMessage.h"
+	"ofxOscSender.h"
+	"ofxOscReceiver.h"
+
+1219794006 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\calibration\rect2d.h
+	"vector2d.h"
+
+1219794006 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\calibration\vector2d.h
+	<math.h>
+
+1219794006 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\communication\tuioosc.cpp
+	"TUIOOSC.h"
+
+1219794006 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\communication\tuioosc.h
+	"ofxCvContourFinder.h"
+	"ofAddons.h"
+	<map>
+
+1219794006 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\filters\imagefilter.cpp
+	"ImageFilter.h"
+	<stdio.h>
+	"tinyxml.h"
+
+1219794006 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\filters\imagefilter.h
+	"ShaderProgram.h"
+	<map>
+	<string>
+
+1219794006 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\filters\shaderprogram.h
+	<OpenGL/gl.h>
+	<GLUT/glut.h>
+	<stdlib.h>
+	"GLee.h"
+	<GL/gl.h>
+
+1219794006 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\filters\shaderprogram.cpp
+	"ShaderProgram.h"
+	<stdio.h>
+	<stdlib.h>
+
+1219794005 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\tracking\tracking.cpp
+	"tracking.h"
+
+1219794005 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\tracking\tracking.h
+	<list>
+	<map>
+	"ofxCvContourFinder.h"
+
+1219794007 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\main.cpp
+	"ofMain.h"
+	"testApp.h"
+
+1219794007 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\testapp.h
+	"ofMain.h"
+	"ofAddons.h"
+	"Tracking/tracking.h"
+	"Filters/ImageFilter.h"
+	"Calibration/boxAlign.h"
+	"Calibration/calibrationB.h"
+	"Communication/TUIOOSC.h"
+	"ofxGui/ofxGui.h"
+	"ofxGui/ofxGuiTypes.h"
+
+1219794004 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxgui.h
+	"ofxGuiTypes.h"
+	"ofxGuiPanel.h"
+	"ofxGuiObject.h"
+	"ofxGuiGlobals.h"
+
+1219794005 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguitypes.h
+	"ofMain.h"
+	"ofAddons.h"
+
+1219794005 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguipanel.h
+	"ofxGuiObject.h"
+	"ofxGuiGlobals.h"
+	"ofxGuiSlider.h"
+	"ofxGuiXYPad.h"
+	"ofxGuiPoints.h"
+	"ofxGuiButton.h"
+	"ofxGuiFiles.h"
+	"ofxGuiColor.h"
+	"ofxGuiMatrix.h"
+	"ofxGuiScope.h"
+	"ofxGuiKnob.h"
+
+1219794005 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguiobject.h
+	"ofxGuiTypes.h"
+	"ofxGuiGlobals.h"
+
+1219799591 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguiglobals.h
+	"ofxGuiTypes.h"
+
+1219794005 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguislider.h
+	"ofxGuiTypes.h"
+	"ofxGuiObject.h"
+
+1219794005 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguixypad.h
+	"ofxGuiTypes.h"
+	"ofxGuiObject.h"
+
+1219794004 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguipoints.h
+	"ofxGuiTypes.h"
+	"ofxGuiObject.h"
+
+1219794004 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguibutton.h
+	"ofxGuiTypes.h"
+	"ofxGuiObject.h"
+
+1219794005 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguifiles.h
+	"ofxGuiTypes.h"
+	"ofxGuiObject.h"
+
+1219794004 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguicolor.h
+	"ofxGuiTypes.h"
+	"ofxGuiObject.h"
+
+1219794005 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguimatrix.h
+	"ofxGuiTypes.h"
+	"ofxGuiObject.h"
+
+1219794004 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguiscope.h
+	"ofxGuiTypes.h"
+	"ofxGuiObject.h"
+
+1219794005 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguiknob.h
+	"ofxGuiTypes.h"
+	"ofxGuiObject.h"
+
+1219794004 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxgui.cpp
+	"ofxGui.h"
+
+1219794005 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguibutton.cpp
+	"ofxGuiButton.h"
+
+1219794004 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguicolor.cpp
+	"ofxGuiColor.h"
+
+1219799637 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguifiles.cpp
+	"ofxGuiFiles.h"
+
+1219794004 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguiglobals.cpp
+	"ofxGuiGlobals.h"
+
+1219794005 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguiknob.cpp
+	"ofxGuiKnob.h"
+
+1219794005 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguimatrix.cpp
+	"ofxGuiMatrix.h"
+
+1219794005 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguiobject.cpp
+	"ofxGuiObject.h"
+
+1219794005 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguipanel.cpp
+	"ofxGuiPanel.h"
+
+1219794004 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguipoints.cpp
+	"ofxGuiPoints.h"
+
+1219794005 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguiradar.cpp
+	"ofxGuiRadar.h"
+
+1219794005 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguiradar.h
+	"ofxGuiTypes.h"
+	"ofxGuiObject.h"
+
+1219794005 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguiscope.cpp
+	"ofxGuiScope.h"
+
+1219794004 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguislider.cpp
+	"ofxGuiSlider.h"
+
+1219794004 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\ofxgui\ofxguixypad.cpp
+	"ofxGuiXYPad.h"
+
+1219956256 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\testapp.cpp
+	"testApp.h"
+	"gui.h"
+
+1219807696 h:\tbeta\touch_tracker\tbeta\app\nuigroup\configapp\src\gui.h
+	"testApp.h"
+
+1214885903 source:h:\tbeta\touch_tracker\tbeta\libs\openframeworks\app\ofapprunner.cpp
+	"ofAppRunner.h"
+	"ofAppGlutGlue.h"
+
+1218332244 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\app\ofappglutglue.h
+
+1214885904 source:h:\tbeta\touch_tracker\tbeta\libs\openframeworks\communication\ofserial.cpp
+	"ofSerial.h"
+
+1214885903 source:h:\tbeta\touch_tracker\tbeta\libs\openframeworks\graphics\ofgraphics.cpp
+	"ofGraphics.h"
+	<OpenGL/glu.h>
+	"GL/glu.h"
+	"glu.h"
+	<vector>
+
+1214885915 h:\tbeta\touch_tracker\tbeta\libs\glu\glu.h
+	"glu_mangle.h"
+	<GL/gl.h>
+
+1216924506 source:h:\tbeta\touch_tracker\tbeta\libs\openframeworks\graphics\ofimage.cpp
+	"ofImage.h"
+
+1214885903 source:h:\tbeta\touch_tracker\tbeta\libs\openframeworks\graphics\oftexture.cpp
+	"ofTexture.h"
+	"ofUtils.h"
+	"ofAppRunner.h"
+
+1216943991 source:h:\tbeta\touch_tracker\tbeta\libs\openframeworks\graphics\oftruetypefont.cpp
+	"ofTrueTypeFont.h"
+	<ft2build.h>
+	<freetype/freetype.h>
+	<freetype/ftglyph.h>
+	<freetype/ftoutln.h>
+	<freetype/fttrigon.h>
+	"ft2build.h"
+	"freetype.h"
+	"ftglyph.h"
+	"ftoutln.h"
+	"fttrigon.h"
+
+993847680 h:\tbeta\touch_tracker\tbeta\libs\freetype\include\ft2build.h
+	<freetype/config/ftheader.h>
+
+1042764480 h:\tbeta\touch_tracker\tbeta\libs\freetype\include\freetype2\freetype\config\ftheader.h
+
+1042767780 h:\tbeta\touch_tracker\tbeta\libs\freetype\include\freetype2\freetype\freetype.h
+	<ft2build.h>
+
+1042653180 h:\tbeta\touch_tracker\tbeta\libs\freetype\include\freetype2\freetype\ftglyph.h
+	<ft2build.h>
+
+1030576800 h:\tbeta\touch_tracker\tbeta\libs\freetype\include\freetype2\freetype\ftoutln.h
+	<ft2build.h>
+
+1027771740 h:\tbeta\touch_tracker\tbeta\libs\freetype\include\freetype2\freetype\fttrigon.h
+
+1214885904 source:h:\tbeta\touch_tracker\tbeta\libs\openframeworks\sound\ofsoundplayer.cpp
+	"ofSoundPlayer.h"
+	"ofUtils.h"
+
+1214885904 source:h:\tbeta\touch_tracker\tbeta\libs\openframeworks\sound\ofsoundstream.cpp
+	"ofSoundStream.h"
+	"RtAudio.h"
+
+1219004347 h:\tbeta\touch_tracker\tbeta\libs\rtaudio\rtaudio.h
+	"RtError.h"
+	<string>
+	<vector>
+	<windows.h>
+	<process.h>
+	<pthread.h>
+	<CoreAudio/AudioHardware.h>
+
+1127770842 h:\tbeta\touch_tracker\tbeta\libs\rtaudio\rterror.h
+	<iostream>
+	<string>
+
+1214885904 source:h:\tbeta\touch_tracker\tbeta\libs\openframeworks\utils\ofmath.cpp
+	"ofMath.h"
+
+1219953061 source:h:\tbeta\touch_tracker\tbeta\libs\openframeworks\utils\ofutils.cpp
+	"ofUtils.h"
+
+1214885904 source:h:\tbeta\touch_tracker\tbeta\libs\openframeworks\video\ofqtutils.cpp
+	"ofQtUtils.h"
+
+1219003310 source:h:\tbeta\touch_tracker\tbeta\libs\openframeworks\video\ofvideograbber.cpp
+	"ofVideoGrabber.h"
+	"ofV4LUtils.h"
+
+1214885904 h:\tbeta\touch_tracker\tbeta\libs\openframeworks\video\ofv4lutils.h
+	"ofConstants.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<errno.h>
+	<fcntl.h>
+	<unistd.h>
+	<sys/ioctl.h>
+	<sys/stat.h>
+	<sys/mman.h>
+	<sys/types.h>
+	<time.h>
+	<linux/videodev.h>
+
+1217567779 source:h:\tbeta\touch_tracker\tbeta\libs\openframeworks\video\ofvideoplayer.cpp
+	"ofVideoPlayer.h"
+	"ofUtils.h"
+
+1219794006 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\calibration\boxalign.cpp
+	"boxAlign.h"
+
+1219794006 h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\calibration\boxalign.h
+	"ofMain.h"
+	"ofxCvMain.h"
+	"ofxVectorMath.h"
+
+1219810071 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\calibration\calibrationb.cpp
+	"calibrationB.h"
+
+1219796340 h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\calibration\calibrationb.h
+	"ofAddons.h"
+	"rect2d.h"
+	"vector2d.h"
+
+1219794006 h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\calibration\rect2d.h
+	"vector2d.h"
+
+1219794006 h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\calibration\vector2d.h
+	<math.h>
+
+1218341932 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\communication\tuioosc.cpp
+	"TUIOOSC.h"
+
+1218340943 h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\communication\tuioosc.h
+	"ofxCvContourFinder.h"
+	"ofAddons.h"
+	<map>
+
+1218243315 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\filters\imagefilter.cpp
+	"ImageFilter.h"
+	<stdio.h>
+	"tinyxml.h"
+
+1217823570 h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\filters\imagefilter.h
+	"ShaderProgram.h"
+	<map>
+	<string>
+
+1217823570 h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\filters\shaderprogram.h
+	<OpenGL/gl.h>
+	<GLUT/glut.h>
+	<stdlib.h>
+	"GLee.h"
+	<GL/gl.h>
+
+1217823570 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\filters\shaderprogram.cpp
+	"ShaderProgram.h"
+	<stdio.h>
+	<stdlib.h>
+
+1219794005 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\tracking\tracking.cpp
+	"tracking.h"
+
+1219794005 h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\tracking\tracking.h
+	<list>
+	<map>
+	"ofxCvContourFinder.h"
+
+1218330091 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\main.cpp
+	"ofMain.h"
+	"testApp.h"
+
+1219883287 h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\testapp.h
+	"ofMain.h"
+	"ofAddons.h"
+	"Tracking/tracking.h"
+	"Filters/ImageFilter.h"
+	"Calibration/boxAlign.h"
+	"Calibration/calibrationB.h"
+	"Communication/TUIOOSC.h"
+
+1219883295 source:h:\tbeta\touch_tracker\tbeta\app\nuigroup\osc\src\testapp.cpp
+	"testApp.h"
+
