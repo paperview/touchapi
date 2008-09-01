@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#ifdef TARGET_LINUX
+
 extern "C"
 {
 #include <avcodec.h>
@@ -449,3 +451,4 @@ int ofUCUtils::getUC_Width(void) {
 
 }
 
+#endif

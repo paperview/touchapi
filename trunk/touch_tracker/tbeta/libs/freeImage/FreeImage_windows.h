@@ -48,7 +48,7 @@
 
 #define FREEIMAGE_MAJOR_VERSION   3
 #define FREEIMAGE_MINOR_VERSION   9
-#define FREEIMAGE_RELEASE_SERIAL  3
+#define FREEIMAGE_RELEASE_SERIAL  2
 
 // Compiler options ---------------------------------------------------------
 
@@ -60,10 +60,10 @@
 #else
 
 #define DLL_CALLCONV __stdcall
-// The following ifdef block is the standard way of creating macros which make exporting
+// The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the FREEIMAGE_EXPORTS
 // symbol defined on the command line. this symbol should not be defined on any project
-// that uses this DLL. This way any other project whose source files include this file see
+// that uses this DLL. This way any other project whose source files include this file see 
 // DLL_API functions as being imported from a DLL, wheras this DLL sees symbols
 // defined with this macro as being exported.
 #ifdef FREEIMAGE_EXPORTS
@@ -104,10 +104,7 @@ FI_STRUCT (FIBITMAP) { void *data; };
 FI_STRUCT (FIMULTIBITMAP) { void *data; };
 
 // Types used in the library (directly copied from Windows) -----------------
-#ifdef TARGET_WIN32
 #define _WINDOWS_
-#endif
-
 #ifndef _WINDOWS_
 #define _WINDOWS_
 
@@ -129,7 +126,6 @@ FI_STRUCT (FIMULTIBITMAP) { void *data; };
 
 #ifndef _MSC_VER
 // define portable types for 32-bit / 64-bit OS
-#include <inttypes.h>
 #include <stdint.h>
 typedef int32_t BOOL;
 typedef uint8_t BYTE;
@@ -184,20 +180,20 @@ typedef struct tagRGBTRIPLE {
 
 typedef struct tagBITMAPINFOHEADER{
   DWORD biSize;
-  LONG  biWidth;
-  LONG  biHeight;
-  WORD  biPlanes;
+  LONG  biWidth; 
+  LONG  biHeight; 
+  WORD  biPlanes; 
   WORD  biBitCount;
-  DWORD biCompression;
-  DWORD biSizeImage;
-  LONG  biXPelsPerMeter;
-  LONG  biYPelsPerMeter;
-  DWORD biClrUsed;
+  DWORD biCompression; 
+  DWORD biSizeImage; 
+  LONG  biXPelsPerMeter; 
+  LONG  biYPelsPerMeter; 
+  DWORD biClrUsed; 
   DWORD biClrImportant;
-} BITMAPINFOHEADER, *PBITMAPINFOHEADER;
+} BITMAPINFOHEADER, *PBITMAPINFOHEADER; 
 
-typedef struct tagBITMAPINFO {
-  BITMAPINFOHEADER bmiHeader;
+typedef struct tagBITMAPINFO { 
+  BITMAPINFOHEADER bmiHeader; 
   RGBQUAD          bmiColors[1];
 } BITMAPINFO, *PBITMAPINFO;
 
@@ -211,7 +207,7 @@ typedef struct tagBITMAPINFO {
 #pragma pack(1)
 #endif // WIN32
 
-/** 48-bit RGB
+/** 48-bit RGB 
 */
 typedef struct tagFIRGB16 {
 	WORD red;
@@ -315,7 +311,7 @@ typedef struct tagFICOMPLEX {
 #define FIICC_DEFAULT			0x00
 #define FIICC_COLOR_IS_CMYK		0x01
 
-FI_STRUCT (FIICCPROFILE) {
+FI_STRUCT (FIICCPROFILE) { 
 	WORD    flags;	// info flag
 	DWORD	size;	// profile's size measured in bytes
 	void   *data;	// points to a block of contiguous memory containing the profile
@@ -405,8 +401,7 @@ FI_ENUM(FREE_IMAGE_DITHER) {
 	FID_BAYER8x8	= 2,	// Bayer ordered dispersed dot dithering (order 3 dithering matrix)
 	FID_CLUSTER6x6	= 3,	// Ordered clustered dot dithering (order 3 - 6x6 matrix)
 	FID_CLUSTER8x8	= 4,	// Ordered clustered dot dithering (order 4 - 8x8 matrix)
-	FID_CLUSTER16x16= 5,	// Ordered clustered dot dithering (order 8 - 16x16 matrix)
-	FID_BAYER16x16	= 6		// Bayer ordered dispersed dot dithering (order 4 dithering matrix)
+	FID_CLUSTER16x16= 5		// Ordered clustered dot dithering (order 8 - 16x16 matrix)
 };
 
 /** Lossless JPEG transformations
@@ -431,7 +426,7 @@ FI_ENUM(FREE_IMAGE_TMO) {
 	FITMO_REINHARD05 = 1,	// Dynamic range reduction inspired by photoreceptor physiology (E. Reinhard, 2005)
 };
 
-/** Upsampling / downsampling filters.
+/** Upsampling / downsampling filters. 
 Constants used in FreeImage_Rescale.
 */
 FI_ENUM(FREE_IMAGE_FILTER) {
@@ -467,21 +462,21 @@ FI_ENUM(FREE_IMAGE_COLOR_CHANNEL) {
   Note: RATIONALs are the ratio of two 32-bit integer values.
 */
 FI_ENUM(FREE_IMAGE_MDTYPE) {
-	FIDT_NOTYPE		= 0,	// placeholder
-	FIDT_BYTE		= 1,	// 8-bit unsigned integer
-	FIDT_ASCII		= 2,	// 8-bit bytes w/ last byte null
-	FIDT_SHORT		= 3,	// 16-bit unsigned integer
-	FIDT_LONG		= 4,	// 32-bit unsigned integer
-	FIDT_RATIONAL	= 5,	// 64-bit unsigned fraction
-	FIDT_SBYTE		= 6,	// 8-bit signed integer
-	FIDT_UNDEFINED	= 7,	// 8-bit untyped data
-	FIDT_SSHORT		= 8,	// 16-bit signed integer
-	FIDT_SLONG		= 9,	// 32-bit signed integer
-	FIDT_SRATIONAL	= 10,	// 64-bit signed fraction
-	FIDT_FLOAT		= 11,	// 32-bit IEEE floating point
-	FIDT_DOUBLE		= 12,	// 64-bit IEEE floating point
-	FIDT_IFD		= 13,	// 32-bit unsigned integer (offset)
-	FIDT_PALETTE	= 14	// 32-bit RGBQUAD
+	FIDT_NOTYPE		= 0,	// placeholder 
+	FIDT_BYTE		= 1,	// 8-bit unsigned integer 
+	FIDT_ASCII		= 2,	// 8-bit bytes w/ last byte null 
+	FIDT_SHORT		= 3,	// 16-bit unsigned integer 
+	FIDT_LONG		= 4,	// 32-bit unsigned integer 
+	FIDT_RATIONAL	= 5,	// 64-bit unsigned fraction 
+	FIDT_SBYTE		= 6,	// 8-bit signed integer 
+	FIDT_UNDEFINED	= 7,	// 8-bit untyped data 
+	FIDT_SSHORT		= 8,	// 16-bit signed integer 
+	FIDT_SLONG		= 9,	// 32-bit signed integer 
+	FIDT_SRATIONAL	= 10,	// 64-bit signed fraction 
+	FIDT_FLOAT		= 11,	// 32-bit IEEE floating point 
+	FIDT_DOUBLE		= 12,	// 64-bit IEEE floating point 
+	FIDT_IFD		= 13,	// 32-bit unsigned integer (offset) 
+	FIDT_PALETTE	= 14	// 32-bit RGBQUAD 
 };
 
 /**
@@ -607,16 +602,16 @@ typedef void (DLL_CALLCONV *FI_InitProc)(Plugin *plugin, int format_id);
 #define ICO_DEFAULT         0
 #define ICO_MAKEALPHA		1		// convert to 32bpp and create an alpha channel from the AND-mask when loading
 #define IFF_DEFAULT         0
-#define JPEG_DEFAULT        0		// loading (see JPEG_FAST); saving (see JPEG_QUALITYGOOD)
-#define JPEG_FAST           0x0001	// load the file as fast as possible, sacrificing some quality
-#define JPEG_ACCURATE       0x0002	// load the file with the best quality, sacrificing some speed
-#define JPEG_CMYK			0x0004	// load separated CMYK "as is" (use | to combine with other load flags)
-#define JPEG_QUALITYSUPERB  0x80	// save with superb quality (100:1)
-#define JPEG_QUALITYGOOD    0x0100	// save with good quality (75:1)
-#define JPEG_QUALITYNORMAL  0x0200	// save with normal quality (50:1)
-#define JPEG_QUALITYAVERAGE 0x0400	// save with average quality (25:1)
-#define JPEG_QUALITYBAD     0x0800	// save with bad quality (10:1)
-#define JPEG_PROGRESSIVE	0x2000	// save as a progressive-JPEG (use | to combine with other save flags)
+#define JPEG_DEFAULT        0
+#define JPEG_FAST           1
+#define JPEG_ACCURATE       2
+#define JPEG_QUALITYSUPERB  0x80
+#define JPEG_QUALITYGOOD    0x100
+#define JPEG_QUALITYNORMAL  0x200
+#define JPEG_QUALITYAVERAGE 0x400
+#define JPEG_QUALITYBAD     0x800
+#define JPEG_CMYK			0x1000	// load separated CMYK "as is" (use | to combine with other flags)
+#define JPEG_PROGRESSIVE	0x2000	// save as a progressive-JPEG (use | to combine with other flags)
 #define KOALA_DEFAULT       0
 #define LBM_DEFAULT         0
 #define MNG_DEFAULT         0
