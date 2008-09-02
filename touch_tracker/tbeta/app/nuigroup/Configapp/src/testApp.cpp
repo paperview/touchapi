@@ -354,14 +354,14 @@ void testApp::update()
 			ofBackground(110, 110, 110);
 
 			//Calculate FPS of Camera
-			frames++;
+	/*		frames++;
 			float time = ofGetElapsedTimeMillis();
 			if(time > (lastFPSlog + 1000)){		
 				fps = frames;
 				frames = 0;
 				lastFPSlog = time;			
 			}//End calculation
-
+*/
 		
 			if(bGPUMode){
 				grabFrameToGPU(gpuSourceTex);
@@ -369,9 +369,16 @@ void testApp::update()
 				contourFinder.findContours(gpuReadBackImageGS, 1, (camWidth*camHeight)/25, 20, false);
 			}
 			else{
+
+				float currentTime = ofGetElapsedTimeMillis();
+
 				grabFrame();
 				applyImageFilters();
 				contourFinder.findContours(processedImg, 1, (camWidth*camHeight)/25, 20, false);
+
+				fps = 1000/(ofGetElapsedTimeMillis() - currentTime);
+
+				
 			}
 			
 			//Track found contours/blobs
@@ -800,12 +807,12 @@ void testApp::doCalibration(){
 	
 	if(calibrate.bCalibrating){
 		sprintf(reportStr, 
-		"CALIBRATING: \n\n\-Touch current circle target and lift up to calibrate point \n\-Press [b] to recapture background (if there's false blobs) \n\-Press [r] to go back to previous point(s) \n");
+		"CALIBRATING: \n\n-Touch current circle target and lift up to calibrate point \n-Press [b] to recapture background (if there's false blobs) \n-Press [r] to go back to previous point(s) \n");
 		calibrationText.drawString(reportStr, ofGetWidth()/2 - calibrationText.stringWidth(reportStr)/2, ofGetHeight()/2 - calibrationText.stringHeight(reportStr)/2);
 	}else
 	{
 		sprintf(reportStr,  
-		"CALIBRATION \n\n\-Press [c] to start calibrating \n-Press [x] to return main screen \n-Press [b] to recapture background \n-Press [t] to toggle blob targets \n\n\CHANGING GRID SIZE (number of points): \n\n\-Current Grid Size is %i x %i \n\-Press [+]/[-] to add/remove points on X axis \n\-Press [shift][+]/[-] to add/remove points on Y axis \n\n\ALINGING BOUNDING BOX TO PROJECTION SCREEN: \n\n\-Use arrow keys to move bounding box\n\-Press and hold [w],[a],[s],[d] (top, left, bottom, right) and arrow keys to adjust each side\n", calibrate.GRID_X + 1, calibrate.GRID_Y + 1);
+		"CALIBRATION \n\n-Press [c] to start calibrating \n-Press [x] to return main screen \n-Press [b] to recapture background \n-Press [t] to toggle blob targets \n\nCHANGING GRID SIZE (number of points): \n\n-Current Grid Size is %i x %i \n-Press [+]/[-] to add/remove points on X axis \n-Press [shift][+]/[-] to add/remove points on Y axis \n\nALINGING BOUNDING BOX TO PROJECTION SCREEN: \n\n-Use arrow keys to move bounding box\n-Press and hold [w],[a],[s],[d] (top, left, bottom, right) and arrow keys to adjust each side\n", calibrate.GRID_X + 1, calibrate.GRID_Y + 1);
 		calibrationText.drawString(reportStr, ofGetWidth()/2 - calibrationText.stringWidth(reportStr)/2, ofGetHeight()/2 - calibrationText.stringHeight(reportStr)/2);
 	}
 }
