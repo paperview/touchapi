@@ -1,6 +1,7 @@
 #include "testApp.h"
 #include "gui.h"
 
+
 /******************************************************************************
  * The setup function is run once to perform initializations in the application
  *****************************************************************************/
@@ -11,10 +12,6 @@ void testApp::setup()
 	*********************/
 	fuzzy.loadImage("particle.png");
 	fuzzy.setUseTexture(true);
-
-	ofImage blah;
-	blah.clone(fuzzy);
-	
 
 	//For screengrab
 	snapCounter	= 6; 
@@ -37,7 +34,7 @@ void testApp::setup()
 	bDrawVideo = true;
 	bFullscreen = false;
 
-	ofSetBackgroundAuto(false);
+//	ofSetBackgroundAuto(false);
 
 	//Load Settings from config.xml file 
 	loadXMLSettings();
@@ -178,7 +175,7 @@ void testApp::setup()
 
 	gui = ofxGui::Instance(this);
 	setupGUI();
-	
+
 	printf("Touchlib application is setup!\n");
 }
 
@@ -282,8 +279,8 @@ void testApp::applyImageFilters(){
 	grayImg = processedImg; //for drawing
 
 	if(bWarpImg){
-		giWarped.warpIntoMe(processedImg, warp_box.fHandles, dstPts );				
-		processedImg = giWarped;
+//		giWarped.warpIntoMe(processedImg, warp_box.fHandles, dstPts );				
+//		processedImg = giWarped;
 	}
 
 	//Dynamic background with learn rate...eventually learnrate will have GUI sliders
@@ -299,9 +296,6 @@ void testApp::applyImageFilters(){
 
 	//Background Subtraction
 	processedImg.absDiff(grayBg, processedImg);
-
-//	if(contourFinder.blobs.size() > 0)
-//	processedImg.contrastStretch();
 
 	if(bSmooth){
 		processedImg.blur((smooth * 2) + 1); //needs to be an odd number
@@ -323,8 +317,6 @@ void testApp::applyImageFilters(){
 	//Set a threshold value
 	processedImg.threshold(threshold);
 	grayDiff = processedImg; //for drawing
-
-	//fidTrack.findFiducials(processedImg);
 }
 
 
@@ -354,46 +346,39 @@ void testApp::update()
 			ofBackground(110, 110, 110);
 
 			//Calculate FPS of Camera
-	/*		frames++;
+			frames++;
 			float time = ofGetElapsedTimeMillis();
 			if(time > (lastFPSlog + 1000)){		
 				fps = frames;
 				frames = 0;
 				lastFPSlog = time;			
 			}//End calculation
-*/
+
 		
 			if(bGPUMode){
 				grabFrameToGPU(gpuSourceTex);
 				applyGPUImageFilters();
-				contourFinder.findContours(gpuReadBackImageGS, 1, (camWidth*camHeight)/25, 20, false);
+				contourFinder.findContours(gpuReadBackImageGS, 1, (camWidth*camHeight)/25, 50, false);
 			}
 			else{
-
-				float currentTime = ofGetElapsedTimeMillis();
-
 				grabFrame();
 				applyImageFilters();
-				contourFinder.findContours(processedImg, 1, (camWidth*camHeight)/25, 20, false);
-
-				fps = 1000/(ofGetElapsedTimeMillis() - currentTime);
-
-				
+				contourFinder.findContours(processedImg, 1, (camWidth*camHeight)/25, 50, false);
 			}
-			
+
 			//Track found contours/blobs
 			tracker.track(&contourFinder);
-
+			
 			/**************************************************
 			* Background subtraction LearRate
 			* If there are no blobs, add the background faster.
 			* If there ARE blobs, add the background slower.
 			***************************************************/
-			fLearnRate = 0.01f;
-			
-			if(contourFinder.nBlobs > 0){
-
-				fLearnRate = 0.0003f;
+			if(bDynamicBG){
+				fLearnRate = 0.01f;			
+				if(contourFinder.nBlobs > 0){
+					fLearnRate = 0.0003f;
+				}
 			}//End Background Learning rate
 
 
@@ -415,7 +400,7 @@ void testApp::draw(){
 
 	ofSetFullscreen(bFullscreen);
 
-    if (bNewFrame){
+ //   if (bNewFrame){ //Apparently this causes flickering on some machines?
 
 		/*********************************
 		* IF CALIBRATING
@@ -442,8 +427,8 @@ void testApp::draw(){
 			ofTriangle(680, 420, 680, 460, 700, 440);
 			ofTriangle(70, 420, 70, 460, 50, 440);
 			ofSetColor(255, 255, 0);
-			ofNoFill();
-			ofTriangle(70, 420, 70, 460, 50, 440);
+//			ofNoFill();
+//			ofTriangle(70, 420, 70, 460, 50, 440);
 			
 			ofSetColor(0xFFFFFF);
 
@@ -474,9 +459,11 @@ void testApp::draw(){
 			else             {bigvideo.drawString("Source Image", 140, 20);}		
 							  bigvideo.drawString("Tracked Image", 475, 20);	
 			//Warped Box
-			if(bWarpImg)
-			warp_box.draw( 0, 0);
+//			if(bWarpImg)
+//			warp_box.draw( 0, 0);
 		} 
+
+
 		/*********************************
 		* IF NOT CALIBRATING
 		*********************************/
@@ -578,7 +565,7 @@ void testApp::draw(){
 
 		if(!bCalibration)
 			gui->draw();
-	}
+//	}
 }
 
 
@@ -750,7 +737,7 @@ void testApp::doCalibration(){
 			drawBlob2.boundingRect.height *= calibrate.screenBB.getHeight() * ofGetHeight() ;
 
 			//transform x/y position to calibrated space
-			calibrate.cameraToScreenSpace(drawBlob2.centroid.x, drawBlob2.centroid.y);
+			calibrate.cameraToScreenPosition(drawBlob2.centroid.x, drawBlob2.centroid.y);
 
 			//Get a random color for each blob
 			if(blobcolor[drawBlob2.id] == 0)
@@ -792,8 +779,8 @@ void testApp::doCalibration(){
 			char idStr[1024];	
 			sprintf(idStr, "id: %i \n x: %f \n y: %f",drawBlob2.id, ceil(drawBlob2.centroid.x * ofGetWidth()), 
 																	ceil(drawBlob2.centroid.y * ofGetHeight()));
-			verdana.drawString(idStr, drawBlob2.centroid.x * ofGetWidth() - drawBlob2.boundingRect.width/2 + 20, 
-									  drawBlob2.centroid.y * ofGetHeight() - drawBlob2.boundingRect.height/2 + 20);
+			verdana.drawString(idStr, drawBlob2.centroid.x * ofGetWidth() - drawBlob2.boundingRect.width/2 + 40, 
+									  drawBlob2.centroid.y * ofGetHeight() - drawBlob2.boundingRect.height/2 + 40);
 			}
 		}	
 
@@ -1097,7 +1084,7 @@ void testApp::blobOn( ofxCvBlob b)
 		
 	if(bTUIOMode)//If sending TUIO, add the blob to the map list
 	{
-		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);		
+		calibrate.cameraToScreenPosition(b.centroid.x, b.centroid.y);		
 		//if blob is not otuside calibration mesh
 		if(b.centroid.x != 0 && b.centroid.y != 0)
 		myTUIO.blobs[b.id] = b;
@@ -1108,7 +1095,7 @@ void testApp::blobMoved( ofxCvBlob b)
 {	
 	if(bTUIOMode)//If sending TUIO, add the blob to the map list
 	{
-		calibrate.cameraToScreenSpace(b.centroid.x, b.centroid.y);		
+		calibrate.cameraToScreenPosition(b.centroid.x, b.centroid.y);		
 		//if blob is not otuside calibration mesh
 		if(b.centroid.x != 0 && b.centroid.y != 0)
 		myTUIO.blobs[b.id] = b;

@@ -91,6 +91,7 @@ void calibrationB::loadXMLSettings(){
 
 	//Set the camera calibated box.
 	calculateBox();
+	computeCameraToScreenMap();
 }
 
 
@@ -103,6 +104,29 @@ void calibrationB::setScreenBBox(rect2df &box)
 {
 	screenBB = box;
 	initScreenPoints();
+}
+
+//Compute a map of camera to screen coordinates
+void calibrationB::computeCameraToScreenMap()
+{
+	cameraToScreenMap = new vector2df[_camWidth * _camHeight];
+
+	int p = 0;
+	for(int y = 0; y < _camHeight; y++)
+	{
+		for(int x = 0; x < _camWidth; x++)
+		{
+			//cast to float
+			float transformedX = (float)x;
+			float transformedY = (float)y;
+
+			//convert camera to screenspace for all possible camera positions
+			cameraToScreenSpace(transformedX, transformedY);
+			//save these into a map of transformed camera to screenspace positions
+			cameraToScreenMap[p] = vector2df(transformedX, transformedY);
+			p++;
+		}
+	}
 }
 
 
@@ -214,6 +238,15 @@ float calibrationB::getScreenScale()
 	return 1.0f - (2.0f * minVal);	
 }
 
+void calibrationB::cameraToScreenPosition(float &x, float &y)
+{
+	int pos = (int)y * (int)_camWidth + (int)x;
+
+	x = cameraToScreenMap[pos].X;
+	y = cameraToScreenMap[pos].Y;
+
+	return;
+}
 
 void calibrationB::transformDimension(float &width, float &height)
 {
@@ -232,8 +265,12 @@ void calibrationB::transformDimension(float &width, float &height)
     float lrY = centerY + halfY;
 
 	//Transform these x/y positions to screenspace
-	cameraToScreenSpace(ulX, ulY);
-	cameraToScreenSpace(lrX, lrY);
+	cameraToScreenPosition(ulX, ulY);
+	cameraToScreenPosition(lrX, lrY);
+
+	printf("lrx: %f  lry: %f \n", lrX, lrY);
+	//cameraToScreenSpace(ulX, ulY);
+	//cameraToScreenSpace(lrX, lrY);
 
 	//ofCircle(ulX * ofGetScreenWidth(), ulY * ofGetScreenHeight(), 30);
     //ofCircle(lrX * ofGetScreenWidth(), lrY * ofGetScreenHeight(), 30);
@@ -271,31 +308,6 @@ void calibrationB::calculateBox()
 			minBoxY = cameraPoints[i].Y;
 		}
 	}
-}
-
-
-bool calibrationB::isPointInTriangle(vector2df p, vector2df a, vector2df b, vector2df c)
-{
-	if (vector2df::isOnSameSide(p,a, b,c) && vector2df::isOnSameSide(p,b, a,c) && vector2df::isOnSameSide(p, c, a, b))
-		return true;
-    else 
-		return false;
-}
-
-
-int calibrationB::findTriangleWithin(vector2df pt)
-{
-	int t;
-
-	for(t=0; t<GRID_INDICES; t+=3)
-	{
-		if( isPointInTriangle(pt, cameraPoints[triangles[t]], cameraPoints[triangles[t+1]], cameraPoints[triangles[t+2]]) )
-		{
-			return t;
-		}
-	}
-
-	return -1;
 }
 
 
@@ -343,6 +355,30 @@ void calibrationB::cameraToScreenSpace(float &x, float &y)
 	// FIXME: what to do in the case that it's outside the mesh?
 }
 
+bool calibrationB::isPointInTriangle(vector2df p, vector2df a, vector2df b, vector2df c)
+{
+	if (vector2df::isOnSameSide(p,a, b,c) && vector2df::isOnSameSide(p,b, a,c) && vector2df::isOnSameSide(p, c, a, b))
+		return true;
+    else 
+		return false;
+}
+
+
+int calibrationB::findTriangleWithin(vector2df pt)
+{
+	int t;
+
+	for(t=0; t<GRID_INDICES; t+=3)
+	{
+		if( isPointInTriangle(pt, cameraPoints[triangles[t]], cameraPoints[triangles[t+1]], cameraPoints[triangles[t+2]]) )
+		{
+			return t;
+		}
+	}
+
+	return -1;
+}
+
 
 void calibrationB::beginCalibration()
 {
@@ -365,6 +401,7 @@ void calibrationB::nextCalibrationStep()
 			calibrationStep = 0;
 			saveCalibration();
 			calculateBox();
+			computeCameraToScreenMap();
 		}
 	}
 }
