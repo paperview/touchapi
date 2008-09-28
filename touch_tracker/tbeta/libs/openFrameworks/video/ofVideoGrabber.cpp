@@ -179,6 +179,32 @@ void ofVideoGrabber::listDevices(){
 
 }
 
+int ofVideoGrabber::getDeviceCount(){
+
+	//---------------------------------
+	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
+	//---------------------------------
+	
+		SGDeviceList deviceList;
+		SGGetChannelDeviceList (gVideoChannel, sgDeviceListIncludeInputs, &deviceList);
+		numDevices =  (*deviceList)->count;		
+		return numDevices;	
+	//---------------------------------
+	#endif
+	//---------------------------------
+
+	//---------------------------------
+	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
+	//---------------------------------
+
+		return VI.devicesFound;
+	
+	//---------------------------------
+	#endif
+	//---------------------------------		
+}
+
+
 //--------------------------------------------------------------------
 void ofVideoGrabber::setVerbose(bool bTalkToMe){
 	bVerbose = bTalkToMe;

@@ -33,6 +33,7 @@ class ofVideoGrabber{
 		~ofVideoGrabber();
 
 		void 			listDevices();
+		int				getDeviceCount();
 		bool 			isFrameNew();
 		void			grabFrame();
 		void			close();
