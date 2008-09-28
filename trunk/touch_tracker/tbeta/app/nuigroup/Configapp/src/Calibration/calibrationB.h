@@ -35,6 +35,8 @@ class calibrationB
 		float getScreenScale();
 		rect2df getScreenBBox() { return screenBB; };
 
+		void computeCameraToScreenMap();
+		void cameraToScreenPosition(float &x, float &y);
 		void cameraToScreenSpace(float &x, float &y);
 		void transformDimension(float &width, float &height);
 
@@ -81,6 +83,7 @@ class calibrationB
 		int GRID_INDICES;
 
 		int* triangles;								// GRID_X * GRID_Y * 2t * 3i indices for the points
+		vector2df* cameraToScreenMap;
 
 		int	_camWidth;
 		int _camHeight;

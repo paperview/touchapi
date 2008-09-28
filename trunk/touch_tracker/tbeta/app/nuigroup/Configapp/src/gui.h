@@ -65,10 +65,10 @@ void testApp::setupGUI()
 
 		ofxGuiPanel* cPanel = gui->addPanel(appPtr->calibrationPanel, "Calibration", 735, 240, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
 		cPanel->addButton(appPtr->calibrationPanel_calibrate, "Enter Calibration (c)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
-		cPanel->addButton(appPtr->calibrationPanel_warp, "Warp (w)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
+//		cPanel->addButton(appPtr->calibrationPanel_warp, "Warp (w)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Switch, "");
 		cPanel->mObjWidth = 200;
 
-		ofxGuiPanel* panel2 = gui->addPanel(appPtr->savePanel, "files", 735, 323, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
+		ofxGuiPanel* panel2 = gui->addPanel(appPtr->savePanel, "files", 735, 303, OFXGUI_PANEL_BORDER, OFXGUI_PANEL_SPACING);
 		//savePanel->addFiles(kParameter_File, "files", 110, OFXGUI_FILES_HEIGHT, "", "", "xml");
 		panel2->addButton(appPtr->kParameter_SaveXml, "Save Settings (s)", OFXGUI_BUTTON_HEIGHT, OFXGUI_BUTTON_HEIGHT, kofxGui_Button_Off, kofxGui_Button_Trigger, "");
 		panel2->mObjWidth = 200;
@@ -157,7 +157,7 @@ void testApp::setupGUI()
 		gui->update(appPtr->sourcePanel_video, kofxGui_Set_Bool, &bvideo, sizeof(bool));
 		}
 		//Calibration
-		gui->update(appPtr->calibrationPanel_warp, kofxGui_Set_Bool, &appPtr->bWarpImg, sizeof(bool));
+//		gui->update(appPtr->calibrationPanel_warp, kofxGui_Set_Bool, &appPtr->bWarpImg, sizeof(bool));
 		gui->update(appPtr->calibrationPanel_calibrate, kofxGui_Set_Bool, &appPtr->bCalibration, sizeof(bool));
 		//Dynamic Background
 		gui->update(appPtr->backgroundPanel_dynamic, kofxGui_Set_Bool, &appPtr->bDynamicBG, sizeof(bool));
@@ -231,6 +231,8 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 							camHeight = vidGrabber.height;
 							vidGrabber.initGrabber(camWidth,camHeight);
 
+							calibrate.setCamRes(camHeight, camWidth);								
+							calibrate.computeCameraToScreenMap();
 
 							//reset gpu textures and filters
 							resetGPUTextures();
@@ -285,10 +287,11 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 							camHeight = vidPlayer.height;
 							camWidth = vidPlayer.width;
 
+							calibrate.setCamRes(camHeight, camWidth);								
+							calibrate.computeCameraToScreenMap();
 
 							//reset gpu textures and filters
 							resetGPUTextures();
-
 
 							processedImg.allocate(camWidth, camHeight); //Processed Image
 							processedImg.setUseTexture(false);
@@ -333,13 +336,15 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 						activeInput = false; //this stops the app from doing everything when changing source
 
 						deviceID += 1;
-						vidGrabber.close();
-						vidGrabber.setDeviceID(deviceID);
-						vidGrabber.setVerbose(false);		
-						vidGrabber.initGrabber(camWidth,camHeight);
-					
+						if(deviceID >= vidGrabber.getDeviceCount()) {deviceID = vidGrabber.getDeviceCount();}			
+						else{
+							vidGrabber.close();
+							vidGrabber.setDeviceID(deviceID);
+							vidGrabber.setVerbose(true);		
+							vidGrabber.initGrabber(camWidth,camHeight);
+							bLearnBakground = true;
+						}					
 						activeInput = true;
-						bLearnBakground = true;
 					}					
 				}
 				break;
@@ -350,14 +355,16 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 					{
 						activeInput = false; //this stops the app from doing everything when changing source
 
-						deviceID -= 1;
-						vidGrabber.close();
-						vidGrabber.setDeviceID(deviceID);
-						vidGrabber.setVerbose(false);		
-						vidGrabber.initGrabber(camWidth,camHeight);
-					
+						deviceID -= 1;		
+						if(deviceID < 0) deviceID = 0;
+						else{								
+							vidGrabber.close();
+							vidGrabber.setDeviceID(deviceID);
+							vidGrabber.setVerbose(true);		
+							vidGrabber.initGrabber(camWidth,camHeight);
+							bLearnBakground = true;
+						}													
 						activeInput = true;
-						bLearnBakground = true;
 					}					
 				}
 				break;
@@ -378,7 +385,7 @@ void testApp::handleGui(int parameterId, int task, void* data, int length)
 				break;
 			case calibrationPanel_warp:
 				if(length == sizeof(bool))
-					bWarpImg = *(bool*)data;
+//					bWarpImg = *(bool*)data;
 				break;
 			//Source 
 			case propertiesPanel_flipH:
