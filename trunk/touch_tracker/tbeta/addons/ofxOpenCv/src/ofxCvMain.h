@@ -21,5 +21,11 @@
 // Effects and Filters
 //#include "ofxCvSmoothImage.h"
 
+//--------------------------
+// optical flow
+
+//#include "ofCvOpticalFlowLK.h"
+//#include "ofCvOpticalFlowBM.h"
+
 
 #endif
