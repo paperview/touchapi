@@ -375,24 +375,16 @@ void testApp::update()
 				applyImageFilters();
 				contourFinder.findContours(processedImg, 1, (camWidth*camHeight)/25, 50, false);
 				if(bFlowing){	
-				//FLOW
-				
-					
-					
-			}
-
-
-					grayImg.threshold(100);
+				//FLOW				
+			        grayImg.threshold(100);	
+					opticalFlowLK.calc(grayImg,processedImg,11);
 					grayImg.blurHeavily();
-					opticalFlowLK.calc(grayImg,processedImg,5);
 					opticalFlowBM.calc(grayImg,processedImg,5);}
+				}
+			
 			//Track found contours/blobs
 			tracker.track(&contourFinder);
-			
-		
-	
-		
-			
+					
 			/**************************************************
 			* Background subtraction LearRate
 			* If there are no blobs, add the background faster.
@@ -542,6 +534,26 @@ void testApp::draw(){
 				ofNoFill();
 			}
 		}
+		
+		
+		if(bFlowing){	
+//FLOW
+	//ofFill();
+	//ofSetColor(0x333333);
+	//ofRect(100,100,320,240);
+	/*ofSetColor(0xffffff);*/
+		ofSetColor(0x00FF00);
+	glPushMatrix();
+		glTranslatef(385,30,0);
+		opticalFlowLK.draw();
+	glPopMatrix();	
+ofSetColor(0xffffff);
+	glPushMatrix();
+		glTranslatef(45,35,0);
+		opticalFlowBM.draw();
+		glPopMatrix();
+		}
+
 		/*********************************
 		* IF DRAWING BLOB OUTLINES
 		*********************************/
@@ -593,23 +605,7 @@ void testApp::draw(){
 			gui->draw();
 //	}
 
-		if(bFlowing){	
-//FLOW
-	//ofFill();
-	//ofSetColor(0x333333);
-	//ofRect(100,100,320,240);
-	/*ofSetColor(0xffffff);*/
-	glPushMatrix();
-		glTranslatef(390,30,0);
-		opticalFlowLK.draw();
-	glPopMatrix();	
-
-	glPushMatrix();
-		glTranslatef(45,35,0);
-		opticalFlowBM.draw();
-		glPopMatrix();
-		}
-
+		
 }
 
 
