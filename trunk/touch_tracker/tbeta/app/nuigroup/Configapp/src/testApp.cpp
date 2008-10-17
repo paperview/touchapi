@@ -7,6 +7,8 @@
  *****************************************************************************/
 void testApp::setup()
 {	
+	
+
 	/********************
 	* Initalize Variables
 	*********************/
@@ -28,12 +30,13 @@ void testApp::setup()
 	bA			= false;
 	bS			= false;
 	bD			= false;
-
+	
 	downColor = 0xFF0000;
 
 	bDrawVideo = true;
 	bFullscreen = false;
 
+	//bFlowing	= false;
 //	ofSetBackgroundAuto(false);
 
 	//Load Settings from config.xml file 
@@ -100,6 +103,12 @@ void testApp::setup()
 	//For camera warp
 	giWarped.allocate(camWidth, camHeight);     //Warped Image (used for warped calibration)
 	giWarped.setUseTexture(false);
+
+   if(bFlowing){	
+	//FLOW
+	//opticalFlowLK.allocate(camWidth, camHeight);
+	   opticalFlowBM.allocate(camWidth, camHeight);
+   }
 	/********************************************************************************************************/
 
 
@@ -344,7 +353,8 @@ void testApp::update()
 		if (bNewFrame)
 		{
 			ofBackground(110, 110, 110);
-
+			
+				
 			//Calculate FPS of Camera
 			frames++;
 			float time = ofGetElapsedTimeMillis();
@@ -364,10 +374,21 @@ void testApp::update()
 				grabFrame();
 				applyImageFilters();
 				contourFinder.findContours(processedImg, 1, (camWidth*camHeight)/25, 50, false);
+				if(bFlowing){	
+				//FLOW
+				//opticalFlowLK.calc(grayImg,processedImg,5);
+
+					grayImg.threshold(100);
+					grayImg.blurHeavily();
+					opticalFlowBM.calc(grayImg,processedImg,5);}
 			}
 
 			//Track found contours/blobs
 			tracker.track(&contourFinder);
+			
+		
+	
+		
 			
 			/**************************************************
 			* Background subtraction LearRate
@@ -397,6 +418,8 @@ void testApp::update()
  * The draw function paints the textures onto the screen. It runs after update.
  *****************************************************************************/
 void testApp::draw(){
+	
+	
 
 	ofSetFullscreen(bFullscreen);
 
@@ -521,7 +544,7 @@ void testApp::draw(){
 		*********************************/
 		if(bShowInterface && !bFastMode)
 		{
-			//Find the blobs
+		//Find the blobs
 			for(int i=0; i<contourFinder.nBlobs; i++)
 			{
 				//temp blob to rescale and draw on screen  
@@ -566,6 +589,24 @@ void testApp::draw(){
 		if(!bCalibration)
 			gui->draw();
 //	}
+
+		if(bFlowing){	
+//FLOW
+	//ofFill();
+	//ofSetColor(0x333333);
+	//ofRect(100,100,320,240);
+	/*ofSetColor(0xffffff);
+	glPushMatrix();
+		glTranslatef(0,0,0);
+		opticalFlowLK.draw();
+	glPopMatrix();	*/
+
+	glPushMatrix();
+		glTranslatef(45,35,0);
+		opticalFlowBM.draw();
+		glPopMatrix();
+		}
+
 }
 
 
@@ -871,6 +912,16 @@ void testApp::keyPressed(int key)
 				//bToggleHelp = false;
 				ofSetWindowShape(175,18); //minimized size
 				ofSetWindowTitle("Mini");
+			}
+			break;
+		case 'k':
+			if(bFlowing)
+			{	
+				bFlowing = false;	
+			}
+			else
+			{	
+				bFlowing = true;
 			}
 			break;
 		/***********************

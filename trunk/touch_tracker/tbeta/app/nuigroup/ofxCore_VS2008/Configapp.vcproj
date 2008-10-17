@@ -647,6 +647,22 @@
 						RelativePath="..\..\..\addons\ofxOpenCv\src\ofxCvMain.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\..\addons\ofxOpenCv\src\ofxCvOpticalFlowBM.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\addons\ofxOpenCv\src\ofxCvOpticalFlowBM.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\addons\ofxOpenCv\src\ofxCvOpticalFlowLK.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\addons\ofxOpenCv\src\ofxCvOpticalFlowLK.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
