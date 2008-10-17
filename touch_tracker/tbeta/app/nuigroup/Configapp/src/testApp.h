@@ -201,7 +201,7 @@ public:
 		bool				bShowLabels;
 		bool				bNewFrame;
 		bool				bWarpImg;
-
+		bool				bFlowing;
 		bool				bcamera;
 
 		//filters
@@ -260,6 +260,10 @@ public:
 		BlobTracker			tracker;
 
 		float				downColor;
+
+//---------------------------------------FLOW	
+		//ofxCvOpticalFlowLK	opticalFlowLK;
+		ofxCvOpticalFlowBM	opticalFlowBM;
 
 
 string				tmpLocalHost;
