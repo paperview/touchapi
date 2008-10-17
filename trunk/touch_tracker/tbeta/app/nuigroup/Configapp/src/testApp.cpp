@@ -106,7 +106,7 @@ void testApp::setup()
 
    if(bFlowing){	
 	//FLOW
-	//opticalFlowLK.allocate(camWidth, camHeight);
+	   opticalFlowLK.allocate(camWidth, camHeight);
 	   opticalFlowBM.allocate(camWidth, camHeight);
    }
 	/********************************************************************************************************/
@@ -376,13 +376,16 @@ void testApp::update()
 				contourFinder.findContours(processedImg, 1, (camWidth*camHeight)/25, 50, false);
 				if(bFlowing){	
 				//FLOW
-				//opticalFlowLK.calc(grayImg,processedImg,5);
+				
+					
+					
+			}
+
 
 					grayImg.threshold(100);
 					grayImg.blurHeavily();
+					opticalFlowLK.calc(grayImg,processedImg,5);
 					opticalFlowBM.calc(grayImg,processedImg,5);}
-			}
-
 			//Track found contours/blobs
 			tracker.track(&contourFinder);
 			
@@ -583,7 +586,7 @@ void testApp::draw(){
 					verdana.drawString(idStr, xpos + 365, ypos + drawBlob.boundingRect.height/2 + 45);			
 				}
 			}
-			ofSetColor(0xFFFFFF);
+			//ofSetColor(0xFFFFFF);
 		}
 
 		if(!bCalibration)
@@ -595,11 +598,11 @@ void testApp::draw(){
 	//ofFill();
 	//ofSetColor(0x333333);
 	//ofRect(100,100,320,240);
-	/*ofSetColor(0xffffff);
+	/*ofSetColor(0xffffff);*/
 	glPushMatrix();
-		glTranslatef(0,0,0);
+		glTranslatef(390,30,0);
 		opticalFlowLK.draw();
-	glPopMatrix();	*/
+	glPopMatrix();	
 
 	glPushMatrix();
 		glTranslatef(45,35,0);

@@ -262,7 +262,7 @@ public:
 		float				downColor;
 
 //---------------------------------------FLOW	
-		//ofxCvOpticalFlowLK	opticalFlowLK;
+		ofxCvOpticalFlowLK	opticalFlowLK;
 		ofxCvOpticalFlowBM	opticalFlowBM;
 
 
